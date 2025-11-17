@@ -1,0 +1,327 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// AUTHENTICATION & USER MANAGEMENT
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String?   @unique
+  password_hash String?
+  createdAt     DateTime  @default(now())
+  lastLoginAt   DateTime?
+  isBanned      Boolean   @default(false)
+  bannedUntil   DateTime?
+  banReason     String?
+  isAdmin       Boolean   @default(false)
+
+  // Relations
+  socialAccounts     SocialAccount[]
+  playerProfile      PlayerProfile?
+  listingsOwned      Listing[]
+  listingApplications ListingApplication[]
+  messagesSent       ListingMessage[]
+  ratingsGiven       PlayerRating[]      @relation("RaterUser")
+  ratingsReceived    PlayerRating[]      @relation("TargetUser")
+  reportsSubmitted   Report[]            @relation("ReporterUser")
+  reportsReceived    Report[]            @relation("TargetUser")
+  blocksInitiated    Block[]             @relation("BlockerUser")
+  blocksReceived     Block[]             @relation("BlockedUser")
+  sessions           Session[]
+  accounts           Account[]
+
+  @@map("users")
+}
+
+model SocialAccount {
+  id             String @id @default(cuid())
+  userId         String
+  provider       String // "discord"
+  providerUserId String
+  username       String
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerUserId])
+  @@map("social_accounts")
+}
+
+// NextAuth required models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ============================================
+// PLAYER PROFILE
+// ============================================
+
+enum ValorantRank {
+  IRON
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+  DIAMOND
+  ASCENDANT
+  IMMORTAL
+  RADIANT
+}
+
+enum PlayerRole {
+  DUELIST
+  CONTROLLER
+  SENTINEL
+  INITIATOR
+  FLEX
+}
+
+enum Seriousness {
+  CASUAL
+  NORMAL
+  TRYHARD
+}
+
+model PlayerProfile {
+  id              String        @id @default(cuid())
+  userId          String        @unique
+  nickname        String
+  tagline         String // e.g. "#1234"
+  region          String // e.g. "TR", "EUW"
+  rankCurrent     ValorantRank
+  rankPeak        ValorantRank
+  mainRole        PlayerRole
+  languages       String[] // e.g. ["TR", "EN"]
+  mic             Boolean       @default(true)
+  seriousness     Seriousness   @default(NORMAL)
+  typicalPlaytime String? // e.g. "Weekdays evening"
+  bio             String?
+
+  // Relations
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  playerAgents PlayerAgent[]
+
+  @@map("player_profiles")
+}
+
+model PlayerAgent {
+  id        String  @id @default(cuid())
+  profileId String
+  agentName String // e.g. "Jett", "Sage"
+  priority  String // "main" or "secondary"
+
+  // Relations
+  profile PlayerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@map("player_agents")
+}
+
+// ============================================
+// LISTINGS
+// ============================================
+
+enum ListingType {
+  TEAM // 4-stack looking for 5th
+  SOLO // solo player looking to be 5th
+}
+
+enum ListingStatus {
+  OPEN
+  CLOSED
+  EXPIRED
+}
+
+enum GameMode {
+  RANKED
+  PREMIER
+  UNRATED
+  CUSTOM
+}
+
+model Listing {
+  id            String        @id @default(cuid())
+  ownerUserId   String
+  listingType   ListingType
+  status        ListingStatus @default(OPEN)
+  title         String
+  mode          GameMode
+  region        String
+  languages     String[]
+  seriousness   Seriousness
+  voiceRequired Boolean       @default(true)
+  minRank       ValorantRank
+  maxRank       ValorantRank
+  stackSize     Int? // For team listings, e.g. 4 if they "need 1"
+  desiredRole   PlayerRole? // Role they're looking for (team) or role they play (solo)
+  description   String?
+  createdAt     DateTime      @default(now())
+  expiresAt     DateTime
+  expiryMinutes Int // Duration selected by owner (30, 60, 120, 240)
+
+  // Relations
+  owner        User                 @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+  applications ListingApplication[]
+  messages     ListingMessage[]
+  ratings      PlayerRating[]
+
+  @@index([status, expiresAt])
+  @@index([listingType, status])
+  @@map("listings")
+}
+
+model ListingApplication {
+  id              String   @id @default(cuid())
+  listingId       String
+  applicantUserId String
+  message         String?
+  status          String   @default("pending") // pending / accepted / declined
+  createdAt       DateTime @default(now())
+
+  // Relations
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  applicant User    @relation(fields: [applicantUserId], references: [id], onDelete: Cascade)
+
+  @@unique([listingId, applicantUserId])
+  @@map("listing_applications")
+}
+
+// ============================================
+// CHAT
+// ============================================
+
+model ListingMessage {
+  id         String   @id @default(cuid())
+  listingId  String
+  senderUserId String
+  content    String
+  createdAt  DateTime @default(now())
+
+  // Relations
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  sender  User    @relation(fields: [senderUserId], references: [id], onDelete: Cascade)
+
+  @@index([listingId, createdAt])
+  @@map("listing_messages")
+}
+
+// ============================================
+// REPUTATION
+// ============================================
+
+model PlayerRating {
+  id           String   @id @default(cuid())
+  raterUserId  String
+  targetUserId String
+  listingId    String
+  score        Int // +1 or -1
+  tags         String[] // e.g. ["calm", "shotcaller"] or ["tilt", "toxic"]
+  comment      String?
+  createdAt    DateTime @default(now())
+
+  // Relations
+  rater   User    @relation("RaterUser", fields: [raterUserId], references: [id], onDelete: Cascade)
+  target  User    @relation("TargetUser", fields: [targetUserId], references: [id], onDelete: Cascade)
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@unique([raterUserId, targetUserId, listingId])
+  @@map("player_ratings")
+}
+
+// ============================================
+// SAFETY & MODERATION
+// ============================================
+
+enum ReportReason {
+  TOXIC_VOICE
+  VERBAL_ABUSE
+  INSULTS
+  RACISM
+  SEXISM
+  HARASSMENT
+  GRIEFING
+  CHEATING_SUSPICION
+  SPAM
+  OTHER
+}
+
+enum ReportStatus {
+  OPEN
+  UNDER_REVIEW
+  CLOSED
+}
+
+model Report {
+  id             String       @id @default(cuid())
+  reporterUserId String
+  targetUserId   String
+  listingId      String?
+  reason         ReportReason
+  description    String
+  status         ReportStatus @default(OPEN)
+  createdAt      DateTime     @default(now())
+
+  // Relations
+  reporter User @relation("ReporterUser", fields: [reporterUserId], references: [id], onDelete: Cascade)
+  target   User @relation("TargetUser", fields: [targetUserId], references: [id], onDelete: Cascade)
+
+  @@map("reports")
+}
+
+model Block {
+  id             String   @id @default(cuid())
+  blockerUserId  String
+  blockedUserId  String
+  createdAt      DateTime @default(now())
+
+  // Relations
+  blocker User @relation("BlockerUser", fields: [blockerUserId], references: [id], onDelete: Cascade)
+  blocked User @relation("BlockedUser", fields: [blockedUserId], references: [id], onDelete: Cascade)
+
+  @@unique([blockerUserId, blockedUserId])
+  @@map("blocks")
+}

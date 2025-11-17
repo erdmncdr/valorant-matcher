@@ -1,0 +1,96 @@
+import Link from "next/link"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Clock, MapPin, Users, Mic, MicOff } from "lucide-react"
+import { getRankBadgeClass, getRoleColor } from "@/lib/constants"
+import { formatExpiresIn } from "@/lib/utils"
+import { ListingWithOwner } from "@/types"
+
+interface ListingCardProps {
+  listing: ListingWithOwner
+}
+
+export function ListingCard({ listing }: ListingCardProps) {
+  const profile = listing.owner.playerProfile
+
+  return (
+    <Link href={`/listings/${listing.id}`}>
+      <Card className="border-valorant-red/20 hover:border-valorant-red/40 transition-all cursor-pointer hover:glow-red">
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <CardTitle className="text-lg text-white mb-1">{listing.title}</CardTitle>
+              <div className="flex items-center gap-2 text-sm text-gray-400">
+                <span>{profile?.nickname || "Unknown"}</span>
+                <span>•</span>
+                <Badge className={`${getRankBadgeClass(profile?.rankCurrent || "IRON")} rank-badge text-xs`}>
+                  {profile?.rankCurrent}
+                </Badge>
+              </div>
+            </div>
+            <Badge
+              variant={listing.listingType === "TEAM" ? "default" : "secondary"}
+              className="shrink-0"
+            >
+              {listing.listingType === "TEAM" ? "Team LF1" : "Solo LFT"}
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex flex-wrap gap-2">
+            <Badge variant="mode" className="text-xs">
+              {listing.mode}
+            </Badge>
+            <Badge variant="outline" className="text-xs">
+              {listing.seriousness}
+            </Badge>
+            {listing.desiredRole && (
+              <Badge variant="role" className="text-xs">
+                {listing.desiredRole}
+              </Badge>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 text-sm">
+            <div className="flex items-center text-gray-400">
+              <MapPin className="h-4 w-4 mr-1" />
+              {listing.region}
+            </div>
+            <div className="flex items-center text-gray-400">
+              {listing.voiceRequired ? (
+                <>
+                  <Mic className="h-4 w-4 mr-1 text-green-500" />
+                  <span className="text-green-500">Mic Required</span>
+                </>
+              ) : (
+                <>
+                  <MicOff className="h-4 w-4 mr-1" />
+                  Optional
+                </>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between text-xs">
+            <div className="flex items-center text-gray-400">
+              <Clock className="h-3 w-3 mr-1" />
+              {formatExpiresIn(listing.expiresAt)}
+            </div>
+            {listing._count && listing._count.applications > 0 && (
+              <div className="flex items-center text-valorant-cyan">
+                <Users className="h-3 w-3 mr-1" />
+                {listing._count.applications} interested
+              </div>
+            )}
+          </div>
+
+          {listing.description && (
+            <p className="text-sm text-gray-300 line-clamp-2">
+              {listing.description}
+            </p>
+          )}
+        </CardContent>
+      </Card>
+    </Link>
+  )
+}

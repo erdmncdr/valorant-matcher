@@ -1,0 +1,151 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 97%;
+    --foreground: 220 10% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 10% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 10% 10%;
+    --primary: 220 90% 56%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 10% 91%;
+    --secondary-foreground: 220 10% 10%;
+    --muted: 220 10% 95%;
+    --muted-foreground: 220 5% 40%;
+    --accent: 220 10% 91%;
+    --accent-foreground: 220 10% 10%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 10% 89%;
+    --input: 220 10% 89%;
+    --ring: 220 90% 56%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Valorant-inspired dark theme */
+    --background: 215 28% 7%; /* #0A0E12 */
+    --foreground: 210 20% 98%;
+    --card: 217 27% 11%; /* #0F1923 */
+    --card-foreground: 210 20% 98%;
+    --popover: 217 27% 11%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 351 100% 65%; /* Valorant Red #FF4655 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 180 100% 50%; /* Valorant Cyan #00F5FF */
+    --secondary-foreground: 0 0% 0%;
+    --muted: 217 27% 15%;
+    --muted-foreground: 215 15% 60%;
+    --accent: 267 100% 66%; /* Valorant Purple #9D4DFF */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 217 27% 20%;
+    --input: 217 27% 20%;
+    --ring: 351 100% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom scrollbar for dark theme */
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-muted;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-primary/30 rounded;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary/50;
+  }
+
+  /* Glow effects for Valorant aesthetic */
+  .glow-red {
+    box-shadow: 0 0 20px rgba(255, 70, 85, 0.3);
+  }
+
+  .glow-cyan {
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+  }
+
+  .glow-purple {
+    box-shadow: 0 0 20px rgba(157, 77, 255, 0.3);
+  }
+}
+
+/* Rank badge styles */
+.rank-badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide;
+}
+
+.rank-iron {
+  @apply bg-gray-600 text-gray-100;
+}
+
+.rank-bronze {
+  @apply bg-amber-700 text-amber-100;
+}
+
+.rank-silver {
+  @apply bg-gray-400 text-gray-900;
+}
+
+.rank-gold {
+  @apply bg-yellow-500 text-yellow-950;
+}
+
+.rank-platinum {
+  @apply bg-cyan-400 text-cyan-950;
+}
+
+.rank-diamond {
+  @apply bg-purple-500 text-purple-100;
+}
+
+.rank-ascendant {
+  @apply bg-green-500 text-green-950;
+}
+
+.rank-immortal {
+  @apply bg-red-600 text-red-100;
+}
+
+.rank-radiant {
+  @apply bg-yellow-300 text-yellow-950;
+  box-shadow: 0 0 15px rgba(253, 224, 71, 0.5);
+}
+
+/* Animation for new listings */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in {
+  animation: slideInRight 0.3s ease-out;
+}
