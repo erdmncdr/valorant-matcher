@@ -2,6 +2,17 @@
 
 A full-stack web application for Valorant players to find compatible 5th teammates through a structured listing system with reputation tracking and moderation.
 
+## 📚 Documentation
+
+- 🚀 **[Hızlı Başlangıç (Quick Start)](./HIZLI-BASLANGIC.md)** - 5 dakikada çalıştır! (Türkçe)
+- 📘 **[Detaylı Kurulum Rehberi (Installation Guide)](./KURULUM.md)** - Adım adım kurulum (Türkçe)
+- 🏗️ **[Architecture](./ARCHITECTURE.md)** - Technical architecture and design decisions
+- 📖 **[README (English)](./README.md)** - This file
+
+**New to the project?** Start with [Quick Start Guide](./HIZLI-BASLANGIC.md)!
+
+---
+
 ## Features
 
 ### Phase 1 (Implemented)
@@ -23,15 +34,58 @@ A full-stack web application for Valorant players to find compatible 5th teammat
 - **Real-time**: WebSockets (ws library)
 - **UI Components**: shadcn/ui (Radix UI)
 
+## 🚀 Quick Start
+
+Want to get started quickly? See our **[Quick Start Guide](./HIZLI-BASLANGIC.md)** for a 5-minute setup!
+
+### TL;DR
+
+```bash
+# 1. Clone and install
+git clone <repository-url>
+cd valorant-matcher
+npm install
+
+# 2. Start PostgreSQL (Docker)
+docker run --name needone-postgres \
+  -e POSTGRES_PASSWORD=needone2024 \
+  -e POSTGRES_DB=needone \
+  -p 5432:5432 -d postgres:15
+
+# 3. Setup environment
+cp .env.example .env
+# Edit .env: Add DATABASE_URL and NEXTAUTH_SECRET
+
+# 4. Setup database
+npm run db:generate
+npm run db:push
+npm run db:seed
+
+# 5. Run!
+npm run dev
+```
+
+Open http://localhost:3000 🎉
+
+**Test Account:** `admin@needone.gg` / `password123`
+
+For detailed instructions, see [Installation Guide](./KURULUM.md).
+
+---
+
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js 18+ and npm
-- PostgreSQL database
+- PostgreSQL database (or Docker)
 - Discord OAuth app (optional, for Discord login)
 
 ### Installation
+
+For detailed step-by-step instructions in Turkish, see **[KURULUM.md](./KURULUM.md)**.
+
+#### Basic Setup
 
 1. **Clone the repository**
    ```bash
@@ -46,35 +100,26 @@ A full-stack web application for Valorant players to find compatible 5th teammat
 
 3. **Set up environment variables**
 
-   Copy `.env.example` to `.env` and fill in your values:
+   Copy `.env.example` to `.env`:
    ```bash
-   cp .env.example .env
+   cp .env.example .env   # macOS/Linux
+   copy .env.example .env # Windows
    ```
 
-   Required environment variables:
+   Update `.env`:
    ```env
-   # Database
-   DATABASE_URL="postgresql://user:password@localhost:5432/needone"
-
-   # NextAuth
-   NEXTAUTH_SECRET="generate-with: openssl rand -base64 32"
+   DATABASE_URL="postgresql://postgres:needone2024@localhost:5432/needone"
+   NEXTAUTH_SECRET="<generate-with-openssl-rand-base64-32>"
    NEXTAUTH_URL="http://localhost:3000"
-
-   # Discord OAuth (optional)
-   DISCORD_CLIENT_ID="your-discord-client-id"
-   DISCORD_CLIENT_SECRET="your-discord-client-secret"
+   DISCORD_CLIENT_ID=""  # Optional
+   DISCORD_CLIENT_SECRET=""  # Optional
    ```
 
 4. **Set up the database**
    ```bash
-   # Generate Prisma Client
    npm run db:generate
-
-   # Push schema to database
    npm run db:push
-
-   # Seed the database with sample data (optional)
-   npm run db:seed
+   npm run db:seed  # Adds test accounts
    ```
 
 5. **Run the development server**
