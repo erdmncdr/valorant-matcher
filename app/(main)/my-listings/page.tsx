@@ -110,14 +110,14 @@ export default function MyListingsPage() {
 
   if (status === "loading" || isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-black flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-valorant-red" />
+      <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-black">
+    <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-background">
       <Navbar profile={profile} currentPage="my-listings" />
 
       {/* Main Content */}
@@ -125,8 +125,8 @@ export default function MyListingsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-3">
             <div className="mb-8">
-              <h1 className="text-4xl font-bold text-white mb-2">{t.myListings.title}</h1>
-              <p className="text-gray-400">{t.myListings.subtitle}</p>
+              <h1 className="text-4xl font-bold text-foreground mb-2">{t.myListings.title}</h1>
+              <p className="text-muted-foreground">{t.myListings.subtitle}</p>
             </div>
 
         <Tabs defaultValue="listings" className="space-y-6">
@@ -139,14 +139,14 @@ export default function MyListingsPage() {
             {myListings.length === 0 ? (
               <Card className="border-dashed">
                 <CardContent className="py-12 text-center">
-                  <p className="text-gray-400 mb-4">{t.myListings.noActiveListings}</p>
+                  <p className="text-muted-foreground mb-4">{t.myListings.noActiveListings}</p>
                   <Link href="/listings/create">
                     <Button variant="valorant">{t.listings.createTeamListing}</Button>
                   </Link>
                 </CardContent>
               </Card>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 {myListings.map((listing) => (
                   <ListingCard key={listing.id} listing={listing} />
                 ))}
@@ -158,7 +158,7 @@ export default function MyListingsPage() {
             {myApplications.length === 0 ? (
               <Card className="border-dashed">
                 <CardContent className="py-12 text-center">
-                  <p className="text-gray-400 mb-4">{t.myListings.noApplications}</p>
+                  <p className="text-muted-foreground mb-4">{t.myListings.noApplications}</p>
                   <Link href="/listings">
                     <Button variant="valorant">{t.listings.title}</Button>
                   </Link>
@@ -174,16 +174,16 @@ export default function MyListingsPage() {
                   const isClosed = listing?.status !== "OPEN"
 
                   return (
-                    <Card key={application.id} className="border-valorant-cyan/20 hover:border-valorant-cyan/40 transition-colors">
-                      <CardHeader>
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
+                    <Card key={application.id} className="border-secondary/20 hover:border-secondary/40 transition-colors overflow-hidden">
+                      <CardHeader className="pb-3">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1 min-w-0">
                             <Link href={`/listings/${listing?.id}`}>
-                              <CardTitle className="text-white hover:text-valorant-cyan transition-colors cursor-pointer line-clamp-1">
+                              <CardTitle className="hover:text-secondary transition-colors cursor-pointer line-clamp-2 break-words">
                                 {listing?.title}
                               </CardTitle>
                             </Link>
-                            <div className="flex items-center gap-2 mt-2">
+                            <div className="flex items-center flex-wrap gap-2 mt-2">
                               <Badge
                                 variant={
                                   application.status === "accepted"
@@ -226,20 +226,20 @@ export default function MyListingsPage() {
                         </div>
 
                         <div className="grid grid-cols-2 gap-3 text-sm">
-                          <div>
-                            <p className="text-gray-400 mb-1">
+                          <div className="min-w-0">
+                            <p className="text-muted-foreground mb-1">
                               <MapPin className="h-3 w-3 inline mr-1" />
                               {t.listings.region || "Region"}
                             </p>
-                            <p className="text-white">{listing?.region}</p>
+                            <p className="text-foreground truncate">{listing?.region}</p>
                           </div>
-                          <div>
-                            <p className="text-gray-400 mb-1">{t.listings.rankRange || "Rank Range"}</p>
-                            <div className="flex items-center gap-1">
+                          <div className="min-w-0">
+                            <p className="text-muted-foreground mb-1">{t.listings.rankRange || "Rank Range"}</p>
+                            <div className="flex items-center gap-1 flex-wrap">
                               <Badge className={`${getRankBadgeClass(listing?.minRank || "IRON")} rank-badge text-xs`}>
                                 {listing?.minRank}
                               </Badge>
-                              <span className="text-gray-400">-</span>
+                              <span className="text-muted-foreground">-</span>
                               <Badge className={`${getRankBadgeClass(listing?.maxRank || "RADIANT")} rank-badge text-xs`}>
                                 {listing?.maxRank}
                               </Badge>
@@ -248,20 +248,20 @@ export default function MyListingsPage() {
                         </div>
 
                         {/* Owner Info */}
-                        <div>
-                          <p className="text-gray-400 text-xs mb-2">{t.listings.postedBy || "Posted by"}</p>
-                          <div className="flex items-center gap-2">
-                            <Avatar className="h-8 w-8">
-                              <AvatarFallback className="bg-valorant-red text-white text-xs">
+                        <div className="min-w-0">
+                          <p className="text-muted-foreground text-xs mb-2">{t.listings.postedBy || "Posted by"}</p>
+                          <div className="flex items-center gap-2 min-w-0">
+                            <Avatar className="h-8 w-8 shrink-0">
+                              <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                                 {ownerProfile?.nickname?.charAt(0) || "U"}
                               </AvatarFallback>
                             </Avatar>
-                            <div>
-                              <p className="text-white text-sm font-medium">
+                            <div className="min-w-0 flex-1">
+                              <p className="text-foreground text-sm font-medium truncate">
                                 {ownerProfile?.nickname}
-                                <span className="text-gray-400">{ownerProfile?.tagline}</span>
+                                <span className="text-muted-foreground">{ownerProfile?.tagline}</span>
                               </p>
-                              <div className="flex items-center gap-1">
+                              <div className="flex items-center gap-1 flex-wrap">
                                 <Badge className={`${getRankBadgeClass(ownerProfile?.rankCurrent || "IRON")} rank-badge text-xs`}>
                                   {ownerProfile?.rankCurrent}
                                 </Badge>
@@ -272,15 +272,15 @@ export default function MyListingsPage() {
 
                         {/* Application Message */}
                         {application.message && (
-                          <div className="bg-valorant-dark/30 rounded p-3">
-                            <p className="text-xs text-gray-400 mb-1">{t.common.comment || "Your message"}:</p>
-                            <p className="text-sm text-white">{application.message}</p>
+                          <div className="bg-muted/50 rounded p-3">
+                            <p className="text-xs text-muted-foreground mb-1">{t.common.comment || "Your message"}:</p>
+                            <p className="text-sm text-foreground break-words">{application.message}</p>
                           </div>
                         )}
 
                         {/* Timestamps */}
-                        <div className="flex items-center justify-between text-xs text-gray-400 pt-2 border-t border-white/10">
-                          <span>{t.listings.applied || "Applied"} {formatTimeAgo(new Date(application.createdAt))}</span>
+                        <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t border-border">
+                          <span className="truncate">{t.listings.applied || "Applied"} {formatTimeAgo(new Date(application.createdAt))}</span>
                           {listing && !isExpired && !isClosed && (
                             <span className="flex items-center gap-1">
                               <Clock className="h-3 w-3" />

@@ -100,14 +100,14 @@ export default function LeaderboardPage() {
 
   if (status === "loading" || isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-black flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-valorant-red" />
+      <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-black">
+    <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-background">
       <Navbar profile={profile} currentPage="leaderboard" />
 
       <div className="container mx-auto px-4 py-8">
@@ -117,25 +117,25 @@ export default function LeaderboardPage() {
             <div className="mb-8">
               <div className="flex items-center gap-3 mb-2">
                 <Trophy className="h-8 w-8 text-yellow-500" />
-                <h1 className="text-4xl font-bold text-white">
+                <h1 className="text-4xl font-bold text-foreground">
                   {t.leaderboard?.title || "İtibar Sıralaması"}
                 </h1>
               </div>
-              <p className="text-gray-400">
+              <p className="text-muted-foreground">
                 {t.leaderboard?.subtitle || "En yüksek itibar puanlı oyuncular"}
               </p>
             </div>
 
             <Card className="border-yellow-500/20">
               <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2">
                   <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
                   {t.leaderboard?.topPlayers || "En İyi Oyuncular"}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {topPlayers.length === 0 ? (
-                  <div className="text-center text-gray-400 py-8">
+                  <div className="text-center text-muted-foreground py-8">
                     {t.leaderboard?.noPlayers || "Henüz sıralamada oyuncu yok"}
                   </div>
                 ) : (
@@ -149,9 +149,9 @@ export default function LeaderboardPage() {
                         >
                           <div className="flex items-center gap-4">
                             {/* Rank Number */}
-                            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-valorant-dark/50 border border-white/10 group-hover:border-yellow-500/50 transition-all">
+                            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-card border border-border group-hover:border-yellow-500/50 transition-all">
                               {getRankIcon(index) || (
-                                <span className="text-xl font-bold text-white">
+                                <span className="text-xl font-bold text-foreground">
                                   {index + 1}
                                 </span>
                               )}
@@ -159,31 +159,31 @@ export default function LeaderboardPage() {
 
                             {/* Avatar */}
                             <div className="relative">
-                              <Avatar className="h-14 w-14 ring-2 ring-white/10 group-hover:ring-yellow-500/50 transition-all">
+                              <Avatar className="h-14 w-14 ring-2 ring-border group-hover:ring-yellow-500/50 transition-all">
                                 <AvatarFallback
                                   className={
                                     player.user.isAdmin
-                                      ? "bg-gradient-to-br from-valorant-red to-valorant-purple text-white font-bold text-lg"
-                                      : "bg-valorant-purple text-white font-bold text-lg"
+                                      ? "bg-gradient-to-br from-primary to-accent text-white font-bold text-lg"
+                                      : "bg-accent text-accent-foreground font-bold text-lg"
                                   }
                                 >
                                   {player.nickname.charAt(0)}
                                 </AvatarFallback>
                               </Avatar>
                               {isOnline(player.user.lastSeenAt) && (
-                                <span className="absolute -bottom-1 -right-1 h-4 w-4 bg-green-500 rounded-full border-2 border-valorant-dark" />
+                                <span className="absolute -bottom-1 -right-1 h-4 w-4 bg-green-500 rounded-full border-2 border-card" />
                               )}
                             </div>
 
                             {/* Player Info */}
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-1">
-                                <p className="text-lg font-bold text-white group-hover:text-yellow-500 transition-colors">
+                                <p className="text-lg font-bold text-foreground group-hover:text-yellow-500 transition-colors">
                                   {player.nickname}
                                 </p>
-                                <p className="text-gray-400 text-sm">{player.tagline}</p>
+                                <p className="text-muted-foreground text-sm">{player.tagline}</p>
                                 {player.user.isAdmin && (
-                                  <Badge className="bg-gradient-to-r from-valorant-red to-valorant-purple text-white text-xs border-0">
+                                  <Badge className="bg-gradient-to-r from-primary to-accent text-white text-xs border-0">
                                     ⚡ ADMIN
                                   </Badge>
                                 )}
@@ -216,7 +216,7 @@ export default function LeaderboardPage() {
                                   {player.reputationScore}
                                 </span>
                               </div>
-                              <span className="text-xs text-gray-400">
+                              <span className="text-xs text-muted-foreground">
                                 {t.leaderboard?.reputation || "İtibar"}
                               </span>
                             </div>
