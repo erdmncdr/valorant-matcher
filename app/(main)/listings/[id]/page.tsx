@@ -404,7 +404,7 @@ export default function ListingDetailPage() {
                                   ? 'ring-2 ring-valorant-red hover:ring-valorant-purple animate-pulse'
                                   : 'hover:ring-2 hover:ring-valorant-purple'
                               }`}
-                              onClick={() => openProfileModal(message.senderId)}
+                              onClick={() => openProfileModal(message.sender.id)}
                             >
                               <AvatarFallback className={isAdmin ? "bg-gradient-to-br from-valorant-red to-valorant-purple text-white text-xs font-bold" : "bg-valorant-purple text-white text-xs"}>
                                 {message.sender.playerProfile?.nickname?.charAt(0) || "U"}
@@ -413,7 +413,7 @@ export default function ListingDetailPage() {
                             <div className="flex-1">
                               <div className="flex items-baseline gap-2 flex-wrap">
                                 <button
-                                  onClick={() => openProfileModal(message.senderId)}
+                                  onClick={() => openProfileModal(message.sender.id)}
                                   className={`text-sm font-medium transition-colors ${
                                     isAdmin
                                       ? 'text-valorant-red hover:text-valorant-purple font-bold'
