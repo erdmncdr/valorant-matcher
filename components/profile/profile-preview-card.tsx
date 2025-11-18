@@ -86,7 +86,7 @@ export function ProfilePreviewCard({ userId, listingId, onViewProfile }: Profile
               </Badge>
             )}
           </div>
-          <p className="text-sm text-gray-400">#{profile.tagline}</p>
+          <p className="text-sm text-gray-400">{profile.tagline}</p>
           <div className="flex items-center gap-2 mt-1">
             <Badge className={`${getRankBadgeClass(profile.rankCurrent)} rank-badge text-xs`}>
               {profile.rankCurrent}

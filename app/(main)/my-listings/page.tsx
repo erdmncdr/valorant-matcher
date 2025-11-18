@@ -218,7 +218,7 @@ export default function MyListingsPage() {
                             <div>
                               <p className="text-white text-sm font-medium">
                                 {ownerProfile?.nickname}
-                                <span className="text-gray-400">#{ownerProfile?.tagline}</span>
+                                <span className="text-gray-400">{ownerProfile?.tagline}</span>
                               </p>
                               <div className="flex items-center gap-1">
                                 <Badge className={`${getRankBadgeClass(ownerProfile?.rankCurrent || "IRON")} rank-badge text-xs`}>

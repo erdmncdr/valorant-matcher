@@ -82,7 +82,7 @@ export function UserProfileModal({ userId, isOpen, onClose, listingId }: UserPro
                 <div className="flex-1">
                   <h3 className="text-xl font-bold text-white">
                     {user.playerProfile?.nickname}
-                    <span className="text-gray-400">#{user.playerProfile?.tagline}</span>
+                    <span className="text-gray-400">{user.playerProfile?.tagline}</span>
                   </h3>
                   <div className="flex gap-2 mt-2">
                     <Badge className={`${getRankBadgeClass(user.playerProfile?.rankCurrent)} rank-badge`}>
@@ -203,7 +203,7 @@ export function UserProfileModal({ userId, isOpen, onClose, listingId }: UserPro
                             )}
                             <div className="flex-1">
                               <p className="text-sm text-gray-400">
-                                {rating.rater ? `${rating.rater.nickname}#${rating.rater.tagline}` : (t.common.userNotFound || "Unknown User")}
+                                {rating.rater ? `${rating.rater.nickname}${rating.rater.tagline}` : (t.common.userNotFound || "Unknown User")}
                               </p>
                               <div className="flex flex-wrap gap-1 mt-1">
                                 {rating.tags.map((tag: string, idx: number) => (

@@ -146,7 +146,7 @@ export default function UserProfilePage() {
                     <h1 className="text-2xl font-bold text-white">
                       {profile?.nickname}
                     </h1>
-                    <p className="text-gray-400 text-lg">#{profile?.tagline}</p>
+                    <p className="text-gray-400 text-lg">{profile?.tagline}</p>
 
                     {user.isAdmin && (
                       <Badge className="bg-gradient-to-r from-valorant-red to-valorant-purple text-white border-0 shadow-lg">
@@ -344,7 +344,7 @@ export default function UserProfilePage() {
                           )}
                           <div className="flex-1">
                             <p className="text-sm text-gray-400 mb-2">
-                              {rating.rater ? `${rating.rater.nickname}#${rating.rater.tagline}` : (t.common.userNotFound || "Unknown User")}
+                              {rating.rater ? `${rating.rater.nickname}${rating.rater.tagline}` : (t.common.userNotFound || "Unknown User")}
                             </p>
                             <div className="flex flex-wrap gap-2 mb-2">
                               {rating.tags.map((tag: string, idx: number) => (

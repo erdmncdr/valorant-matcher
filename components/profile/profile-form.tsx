@@ -165,15 +165,24 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
             </div>
             <div className="space-y-2">
               <Label htmlFor="tagline">Tagline *</Label>
-              <Input
-                id="tagline"
-                value={formData.tagline}
-                onChange={(e) => setFormData({ ...formData, tagline: e.target.value })}
-                placeholder="#1234"
-                required
-                pattern="^#[A-Za-z0-9]{3,5}$"
-              />
-              <p className="text-xs text-muted-foreground">Format: #1234</p>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold">#</span>
+                <Input
+                  id="tagline"
+                  value={formData.tagline.replace(/^#/, '')}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/^#/, '').replace(/[^A-Za-z0-9]/g, '').slice(0, 5)
+                    setFormData({ ...formData, tagline: `#${value}` })
+                  }}
+                  placeholder="1234"
+                  className="pl-7"
+                  required
+                  pattern="[A-Za-z0-9]{3,5}"
+                  minLength={3}
+                  maxLength={5}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">3-5 alphanumeric characters</p>
             </div>
           </div>
 
