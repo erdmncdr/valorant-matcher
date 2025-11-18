@@ -8,10 +8,11 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Loader2, ThumbsUp, ThumbsDown, ExternalLink, Shield, Flag } from "lucide-react"
+import { Loader2, ThumbsUp, ThumbsDown, ExternalLink, Shield, Flag, Star } from "lucide-react"
 import { getRankBadgeClass } from "@/lib/constants"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { ReportForm } from "@/components/reports/report-form"
+import { RatingForm } from "@/components/profile/rating-form"
 
 interface ProfilePreviewCardProps {
   userId: string
@@ -25,6 +26,7 @@ export function ProfilePreviewCard({ userId, listingId, onViewProfile }: Profile
   const [user, setUser] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [showReportDialog, setShowReportDialog] = useState(false)
+  const [showRatingDialog, setShowRatingDialog] = useState(false)
 
   useEffect(() => {
     if (userId) {
@@ -45,6 +47,11 @@ export function ProfilePreviewCard({ userId, listingId, onViewProfile }: Profile
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const handleRatingSuccess = () => {
+    setShowRatingDialog(false)
+    fetchUserPreview() // Refresh to show updated reputation
   }
 
   if (isLoading) {
@@ -147,6 +154,19 @@ export function ProfilePreviewCard({ userId, listingId, onViewProfile }: Profile
           </Button>
         </Link>
 
+        {/* Rate Player Button - only show if not viewing own profile and listingId exists */}
+        {session?.user?.id && session.user.id !== userId && listingId && (
+          <Button
+            variant="default"
+            className="w-full bg-yellow-600 hover:bg-yellow-700 border-yellow-500"
+            size="sm"
+            onClick={() => setShowRatingDialog(true)}
+          >
+            <Star className="mr-2 h-4 w-4" />
+            {t.common.ratePlayer || "Rate Player"}
+          </Button>
+        )}
+
         {/* Report Button - only show if not viewing own profile */}
         {session?.user?.id && session.user.id !== userId && (
           <Button
@@ -160,6 +180,23 @@ export function ProfilePreviewCard({ userId, listingId, onViewProfile }: Profile
           </Button>
         )}
       </div>
+
+      {/* Rating Dialog */}
+      <Dialog open={showRatingDialog} onOpenChange={setShowRatingDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {t.common.ratePlayer || "Rate Player"}: {user?.playerProfile?.nickname}
+            </DialogTitle>
+          </DialogHeader>
+          <RatingForm
+            targetUserId={userId}
+            listingId={listingId || ""}
+            onSuccess={handleRatingSuccess}
+            onCancel={() => setShowRatingDialog(false)}
+          />
+        </DialogContent>
+      </Dialog>
 
       {/* Report Dialog */}
       <Dialog open={showReportDialog} onOpenChange={setShowReportDialog}>
