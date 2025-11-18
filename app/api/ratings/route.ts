@@ -79,3 +79,65 @@ export async function POST(req: Request) {
     )
   }
 }
+
+// GET ratings for a user
+export async function GET(req: Request) {
+  try {
+    const session = await getServerSession(authOptions)
+
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      )
+    }
+
+    const { searchParams } = new URL(req.url)
+    const targetUserId = searchParams.get("targetUserId")
+    const listingId = searchParams.get("listingId")
+
+    if (!targetUserId) {
+      return NextResponse.json(
+        { error: "targetUserId is required" },
+        { status: 400 }
+      )
+    }
+
+    const where: any = {
+      targetUserId,
+    }
+
+    if (listingId) {
+      where.listingId = listingId
+    }
+
+    const ratings = await prisma.playerRating.findMany({
+      where,
+      include: {
+        rater: {
+          select: {
+            id: true,
+            playerProfile: {
+              select: {
+                nickname: true,
+                tagline: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 50,
+    })
+
+    return NextResponse.json({ ratings })
+  } catch (error) {
+    console.error("Get ratings error:", error)
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    )
+  }
+}
