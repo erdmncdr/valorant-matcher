@@ -37,25 +37,25 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
   }, [])
 
   return (
-    <nav className={`sticky top-0 z-50 border-b border-white/10 transition-all duration-300 ${
+    <nav className={`sticky top-0 z-50 border-b border-border transition-all duration-300 ${
       scrolled
-        ? 'bg-valorant-dark/95 backdrop-blur-xl shadow-lg shadow-black/50'
-        : 'bg-valorant-dark/50 backdrop-blur-sm'
+        ? 'bg-background/95 backdrop-blur-xl shadow-lg'
+        : 'bg-background/50 backdrop-blur-sm'
     }`}>
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-6">
             <Link href="/listings" className="flex items-center space-x-2">
-              <div className="h-8 w-8 rounded bg-valorant-red flex items-center justify-center">
-                <span className="text-white font-bold text-xl">N1</span>
+              <div className="h-8 w-8 rounded bg-primary flex items-center justify-center">
+                <span className="text-primary-foreground font-bold text-xl">N1</span>
               </div>
-              <span className="text-white font-bold text-xl">{t.nav.logo}</span>
+              <span className="text-foreground font-bold text-xl">{t.nav.logo}</span>
             </Link>
             <div className="hidden md:flex items-center space-x-4">
               <Link href="/listings">
                 <Button
                   variant="ghost"
-                  className={currentPage === 'listings' ? 'text-valorant-red' : 'text-white'}
+                  className={currentPage === 'listings' ? 'text-primary' : 'text-foreground'}
                 >
                   {t.nav.findPlayers}
                 </Button>
@@ -63,7 +63,7 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
               <Link href="/leaderboard">
                 <Button
                   variant="ghost"
-                  className={currentPage === 'leaderboard' ? 'text-valorant-red' : 'text-white'}
+                  className={currentPage === 'leaderboard' ? 'text-primary' : 'text-foreground'}
                 >
                   {t.nav.leaderboard}
                 </Button>
@@ -71,7 +71,7 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
               <Link href="/my-listings">
                 <Button
                   variant="ghost"
-                  className={currentPage === 'my-listings' ? 'text-valorant-red' : 'text-white'}
+                  className={currentPage === 'my-listings' ? 'text-primary' : 'text-foreground'}
                 >
                   {t.nav.myListings}
                 </Button>
@@ -84,7 +84,7 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
               variant="outline"
               size="sm"
               onClick={() => setLanguage(language === 'tr' ? 'en' : 'tr')}
-              className="border-valorant-purple/50 hover:border-valorant-purple hover:bg-valorant-purple/10 text-white hover:text-white flex items-center gap-1.5 px-3"
+              className="border-accent/50 hover:border-accent hover:bg-accent/10 flex items-center gap-1.5 px-3"
             >
               <Languages className="h-4 w-4" />
               <span className="font-semibold text-base">{language === 'tr' ? '🇹🇷 TR' : '🇬🇧 EN'}</span>
@@ -98,10 +98,10 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="flex items-center space-x-2">
                     <div className="text-right hidden sm:block">
-                      <p className="text-sm font-medium text-white">{profile.nickname}</p>
-                      <p className="text-xs text-gray-400">{profile.tagline}</p>
+                      <p className="text-sm font-medium text-foreground">{profile.nickname}</p>
+                      <p className="text-xs text-muted-foreground">{profile.tagline}</p>
                     </div>
-                    <ChevronDown className="h-4 w-4 text-gray-400" />
+                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">

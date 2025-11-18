@@ -25,6 +25,13 @@
     --input: 220 10% 90%;
     --ring: 351 100% 60%;
     --radius: 0.5rem;
+
+    /* Valorant brand colors for light theme */
+    --valorant-red: 351 100% 60%;
+    --valorant-cyan: 180 100% 45%;
+    --valorant-purple: 267 100% 60%;
+    --valorant-dark: 220 10% 90%;
+    --valorant-darker: 220 10% 95%;
   }
 
   .dark {
@@ -48,6 +55,13 @@
     --border: 217 27% 20%;
     --input: 217 27% 20%;
     --ring: 351 100% 65%;
+
+    /* Valorant brand colors for dark theme */
+    --valorant-red: 351 100% 65%;
+    --valorant-cyan: 180 100% 50%;
+    --valorant-purple: 267 100% 66%;
+    --valorant-dark: 217 27% 11%;
+    --valorant-darker: 215 28% 7%;
   }
 }
 

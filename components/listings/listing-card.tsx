@@ -22,15 +22,15 @@ export function ListingCard({ listing }: ListingCardProps) {
 
   return (
     <Link href={`/listings/${listing.id}`}>
-      <Card className="border-valorant-red/20 hover:border-valorant-red/40 transition-all cursor-pointer hover:glow-red">
+      <Card className="border-primary/20 hover:border-primary/40 transition-all cursor-pointer hover:glow-red">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <CardTitle className="text-lg text-white mb-1">{listing.title}</CardTitle>
-              <div className="flex items-center gap-2 text-sm text-gray-400">
+              <CardTitle className="text-lg mb-1">{listing.title}</CardTitle>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <div className="relative">
-                  <Avatar className="h-6 w-6 ring-1 ring-white/10">
-                    <AvatarFallback className="bg-valorant-purple text-white text-xs">
+                  <Avatar className="h-6 w-6 ring-1 ring-border">
+                    <AvatarFallback className="bg-accent text-accent-foreground text-xs">
                       {profile?.nickname?.charAt(0) || "U"}
                     </AvatarFallback>
                   </Avatar>
@@ -42,7 +42,7 @@ export function ListingCard({ listing }: ListingCardProps) {
                     e.stopPropagation()
                     setShowProfileModal(true)
                   }}
-                  className="hover:text-valorant-purple hover:underline transition-colors"
+                  className="hover:text-accent hover:underline transition-colors"
                 >
                   {profile?.nickname || "Unknown"}
                 </button>
@@ -76,11 +76,11 @@ export function ListingCard({ listing }: ListingCardProps) {
           </div>
 
           <div className="grid grid-cols-2 gap-2 text-sm">
-            <div className="flex items-center text-gray-400">
+            <div className="flex items-center text-muted-foreground">
               <MapPin className="h-4 w-4 mr-1" />
               {listing.region}
             </div>
-            <div className="flex items-center text-gray-400">
+            <div className="flex items-center text-muted-foreground">
               {listing.voiceRequired ? (
                 <>
                   <Mic className="h-4 w-4 mr-1 text-green-500" />
@@ -96,12 +96,12 @@ export function ListingCard({ listing }: ListingCardProps) {
           </div>
 
           <div className="flex items-center justify-between text-xs">
-            <div className="flex items-center text-gray-400">
+            <div className="flex items-center text-muted-foreground">
               <Clock className="h-3 w-3 mr-1" />
               {formatExpiresIn(listing.expiresAt)}
             </div>
             {listing._count && listing._count.applications > 0 && (
-              <div className="flex items-center text-valorant-cyan">
+              <div className="flex items-center text-secondary">
                 <Users className="h-3 w-3 mr-1" />
                 {listing._count.applications} interested
               </div>
@@ -109,7 +109,7 @@ export function ListingCard({ listing }: ListingCardProps) {
           </div>
 
           {listing.description && (
-            <p className="text-sm text-gray-300 line-clamp-2">
+            <p className="text-sm text-muted-foreground line-clamp-2">
               {listing.description}
             </p>
           )}
