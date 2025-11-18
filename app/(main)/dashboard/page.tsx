@@ -9,7 +9,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Loader2, UserCircle, Users, MessageCircle, Star } from "lucide-react"
 import { getRankBadgeClass } from "@/lib/constants"
-import { Navbar } from "@/components/navigation/navbar"
 
 export default function DashboardPage() {
   const { data: session, status } = useSession()
@@ -60,7 +59,40 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-black">
-      <Navbar profile={profile} />
+      {/* Navigation */}
+      <nav className="border-b border-white/10 bg-valorant-dark/50 backdrop-blur-sm">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-6">
+              <Link href="/dashboard" className="flex items-center space-x-2">
+                <div className="h-8 w-8 rounded bg-valorant-red flex items-center justify-center">
+                  <span className="text-white font-bold text-xl">N1</span>
+                </div>
+                <span className="text-white font-bold text-xl">NeedOne</span>
+              </Link>
+              <div className="hidden md:flex items-center space-x-4">
+                <Link href="/listings">
+                  <Button variant="ghost" className="text-white">Find Players</Button>
+                </Link>
+                <Link href="/my-listings">
+                  <Button variant="ghost" className="text-white">My Listings</Button>
+                </Link>
+              </div>
+            </div>
+            <div className="flex items-center space-x-4">
+              <Link href="/profile/edit">
+                <Button variant="outline">Edit Profile</Button>
+              </Link>
+              <div className="flex items-center space-x-2">
+                <div className="text-right">
+                  <p className="text-sm font-medium text-white">{profile.nickname}</p>
+                  <p className="text-xs text-gray-400">{profile.tagline}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">

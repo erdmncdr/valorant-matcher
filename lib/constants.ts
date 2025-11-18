@@ -100,27 +100,3 @@ export function getRoleColor(role: PlayerRole): string {
   }
   return roleMap[role] || "text-gray-400"
 }
-
-// Preset Avatar URLs - Valorant themed
-export const PRESET_AVATARS = [
-  { id: 1, url: "https://api.dicebear.com/7.x/bottts/svg?seed=valorant1&backgroundColor=ff4655" },
-  { id: 2, url: "https://api.dicebear.com/7.x/bottts/svg?seed=valorant2&backgroundColor=53212b" },
-  { id: 3, url: "https://api.dicebear.com/7.x/bottts/svg?seed=valorant3&backgroundColor=0f1923" },
-  { id: 4, url: "https://api.dicebear.com/7.x/bottts/svg?seed=jett&backgroundColor=429cc4" },
-  { id: 5, url: "https://api.dicebear.com/7.x/bottts/svg?seed=phoenix&backgroundColor=ff4655" },
-  { id: 6, url: "https://api.dicebear.com/7.x/bottts/svg?seed=sage&backgroundColor=5dc9a8" },
-  { id: 7, url: "https://api.dicebear.com/7.x/bottts/svg?seed=sova&backgroundColor=4a8bc2" },
-  { id: 8, url: "https://api.dicebear.com/7.x/bottts/svg?seed=viper&backgroundColor=4d9b6b" },
-  { id: 9, url: "https://api.dicebear.com/7.x/bottts/svg?seed=cypher&backgroundColor=bd9a68" },
-  { id: 10, url: "https://api.dicebear.com/7.x/bottts/svg?seed=reyna&backgroundColor=9d4dbb" },
-  { id: 11, url: "https://api.dicebear.com/7.x/bottts/svg?seed=killjoy&backgroundColor=ffd23f" },
-  { id: 12, url: "https://api.dicebear.com/7.x/bottts/svg?seed=breach&backgroundColor=ff6a39" },
-  { id: 13, url: "https://api.dicebear.com/7.x/bottts/svg?seed=omen&backgroundColor=4650db" },
-  { id: 14, url: "https://api.dicebear.com/7.x/bottts/svg?seed=raze&backgroundColor=ff6347" },
-  { id: 15, url: "https://api.dicebear.com/7.x/bottts/svg?seed=skye&backgroundColor=87ceeb" },
-  { id: 16, url: "https://api.dicebear.com/7.x/bottts/svg?seed=yoru&backgroundColor=4169e1" },
-  { id: 17, url: "https://api.dicebear.com/7.x/bottts/svg?seed=astra&backgroundColor=9370db" },
-  { id: 18, url: "https://api.dicebear.com/7.x/bottts/svg?seed=chamber&backgroundColor=daa520" },
-  { id: 19, url: "https://api.dicebear.com/7.x/bottts/svg?seed=neon&backgroundColor=00bfff" },
-  { id: 20, url: "https://api.dicebear.com/7.x/bottts/svg?seed=fade&backgroundColor=483d8b" },
-]
