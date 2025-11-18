@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { signOut } from "next-auth/react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -23,9 +24,23 @@ interface NavbarProps {
 
 export function Navbar({ profile, currentPage }: NavbarProps) {
   const { t, language, setLanguage } = useLanguage()
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   return (
-    <nav className="border-b border-white/10 bg-valorant-dark/50 backdrop-blur-sm">
+    <nav className={`sticky top-0 z-50 border-b border-white/10 transition-all duration-300 ${
+      scrolled
+        ? 'bg-valorant-dark/95 backdrop-blur-xl shadow-lg shadow-black/50'
+        : 'bg-valorant-dark/50 backdrop-blur-sm'
+    }`}>
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-6">

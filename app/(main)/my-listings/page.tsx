@@ -10,20 +10,23 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ListingCard } from "@/components/listings/listing-card"
-import { Loader2, Clock, MapPin, Users, CheckCircle, XCircle } from "lucide-react"
+import { Loader2, Clock, MapPin, Users, CheckCircle, XCircle, Trash2 } from "lucide-react"
 import { Navbar } from "@/components/layout/navbar"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { getRankBadgeClass } from "@/lib/constants"
 import { formatTimeAgo, formatExpiresIn } from "@/lib/utils"
+import { useToast } from "@/hooks/use-toast"
 
 export default function MyListingsPage() {
   const { status } = useSession()
   const router = useRouter()
   const { t } = useLanguage()
+  const { toast } = useToast()
   const [profile, setProfile] = useState<any>(null)
   const [myListings, setMyListings] = useState<any[]>([])
   const [myApplications, setMyApplications] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [cancellingId, setCancellingId] = useState<string | null>(null)
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -66,6 +69,39 @@ export default function MyListingsPage() {
       console.error("Failed to fetch data:", error)
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handleCancelApplication = async (applicationId: string) => {
+    setCancellingId(applicationId)
+    try {
+      const response = await fetch(`/api/applications/${applicationId}`, {
+        method: "DELETE",
+      })
+
+      if (response.ok) {
+        toast({
+          title: t.common.success || "Success",
+          description: "Application cancelled successfully",
+        })
+        // Refresh applications list
+        fetchMyData()
+      } else {
+        const data = await response.json()
+        toast({
+          title: t.common.error || "Error",
+          description: data.error || "Failed to cancel application",
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      toast({
+        title: t.common.error || "Error",
+        description: "Failed to cancel application",
+        variant: "destructive",
+      })
+    } finally {
+      setCancellingId(null)
     }
   }
 
@@ -248,12 +284,29 @@ export default function MyListingsPage() {
                           )}
                         </div>
 
-                        {/* View Listing Button */}
-                        <Link href={`/listings/${listing?.id}`}>
-                          <Button variant="outline" className="w-full">
-                            {t.common.viewListing || "View Listing"}
-                          </Button>
-                        </Link>
+                        {/* Action Buttons */}
+                        <div className="flex gap-2">
+                          <Link href={`/listings/${listing?.id}`} className="flex-1">
+                            <Button variant="outline" className="w-full">
+                              {t.common.viewListing || "View Listing"}
+                            </Button>
+                          </Link>
+                          {application.status === "pending" && (
+                            <Button
+                              variant="destructive"
+                              size="icon"
+                              onClick={() => handleCancelApplication(application.id)}
+                              disabled={cancellingId === application.id}
+                              title="Cancel Application"
+                            >
+                              {cancellingId === application.id ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <Trash2 className="h-4 w-4" />
+                              )}
+                            </Button>
+                          )}
+                        </div>
                       </CardContent>
                     </Card>
                   )
