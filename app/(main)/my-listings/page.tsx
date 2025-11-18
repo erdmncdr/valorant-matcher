@@ -10,10 +10,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ListingCard } from "@/components/listings/listing-card"
 import { Loader2 } from "lucide-react"
 import { Navbar } from "@/components/layout/navbar"
+import { useLanguage } from "@/lib/i18n/language-context"
 
 export default function MyListingsPage() {
   const { status } = useSession()
   const router = useRouter()
+  const { t } = useLanguage()
   const [profile, setProfile] = useState<any>(null)
   const [myListings, setMyListings] = useState<any[]>([])
   const [myApplications, setMyApplications] = useState<any[]>([])
@@ -46,18 +48,16 @@ export default function MyListingsPage() {
   const fetchMyData = async () => {
     setIsLoading(true)
     try {
-      // Fetch user's own listings
-      const listingsResponse = await fetch("/api/listings")
+      // Fetch user's own listings using the "my" parameter
+      const listingsResponse = await fetch("/api/listings?my=true")
       const listingsData = await listingsResponse.json()
-
-      // Filter to only show user's listings (this should be done on the backend ideally)
-      // For now, we'll fetch all and filter client-side
-      // In a production app, add a "my" query parameter to the API
 
       setMyListings(listingsData.listings || [])
 
-      // Note: In a real app, you'd have an endpoint like /api/listings/my
-      // and /api/applications/my to get user-specific data
+      // TODO: Fetch user's applications
+      // const applicationsResponse = await fetch("/api/applications?my=true")
+      // const applicationsData = await applicationsResponse.json()
+      // setMyApplications(applicationsData.applications || [])
     } catch (error) {
       console.error("Failed to fetch data:", error)
     } finally {
@@ -80,29 +80,29 @@ export default function MyListingsPage() {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">My Listings</h1>
-          <p className="text-gray-400">Manage your listings and applications</p>
+          <h1 className="text-4xl font-bold text-white mb-2">{t.myListings.title}</h1>
+          <p className="text-gray-400">{t.myListings.subtitle}</p>
         </div>
 
         <Tabs defaultValue="listings" className="space-y-6">
           <TabsList className="grid w-full max-w-md grid-cols-2">
-            <TabsTrigger value="listings">My Listings</TabsTrigger>
-            <TabsTrigger value="applications">My Applications</TabsTrigger>
+            <TabsTrigger value="listings">{t.myListings.myActiveListings}</TabsTrigger>
+            <TabsTrigger value="applications">{t.myListings.myApplications}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="listings" className="space-y-4">
             {myListings.length === 0 ? (
               <Card className="border-dashed">
                 <CardContent className="py-12 text-center">
-                  <p className="text-gray-400 mb-4">You haven&apos;t created any listings yet</p>
+                  <p className="text-gray-400 mb-4">{t.myListings.noActiveListings}</p>
                   <Link href="/listings/create">
-                    <Button variant="valorant">Create Your First Listing</Button>
+                    <Button variant="valorant">{t.listings.createTeamListing}</Button>
                   </Link>
                 </CardContent>
               </Card>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {myListings.slice(0, 6).map((listing) => (
+                {myListings.map((listing) => (
                   <ListingCard key={listing.id} listing={listing} />
                 ))}
               </div>
@@ -113,9 +113,9 @@ export default function MyListingsPage() {
             {myApplications.length === 0 ? (
               <Card className="border-dashed">
                 <CardContent className="py-12 text-center">
-                  <p className="text-gray-400 mb-4">You haven&apos;t applied to any listings yet</p>
+                  <p className="text-gray-400 mb-4">{t.myListings.noApplications}</p>
                   <Link href="/listings">
-                    <Button variant="valorant">Browse Listings</Button>
+                    <Button variant="valorant">{t.listings.title}</Button>
                   </Link>
                 </CardContent>
               </Card>

@@ -32,6 +32,46 @@ export async function GET(req: Request) {
     const minRank = searchParams.get("minRank")
     const maxRank = searchParams.get("maxRank")
     const desiredRole = searchParams.get("desiredRole")
+    const my = searchParams.get("my") // Get user's own listings
+
+    // If requesting own listings, require authentication
+    if (my === "true") {
+      const session = await getServerSession(authOptions)
+      if (!session?.user?.id) {
+        return NextResponse.json(
+          { error: "Unauthorized" },
+          { status: 401 }
+        )
+      }
+
+      // Get only user's listings (including all statuses)
+      const listings = await prisma.listing.findMany({
+        where: {
+          ownerUserId: session.user.id,
+        },
+        include: {
+          owner: {
+            include: {
+              playerProfile: {
+                include: {
+                  playerAgents: true,
+                },
+              },
+            },
+          },
+          _count: {
+            select: {
+              applications: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      })
+
+      return NextResponse.json({ listings })
+    }
 
     const where: any = {
       status: ListingStatus.OPEN,

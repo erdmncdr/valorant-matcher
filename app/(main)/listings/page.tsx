@@ -13,10 +13,12 @@ import { Loader2, Filter } from "lucide-react"
 import { GAME_MODES, REGIONS, VALORANT_RANKS, PLAYER_ROLES } from "@/lib/constants"
 import { ListingType } from "@prisma/client"
 import { Navbar } from "@/components/layout/navbar"
+import { useLanguage } from "@/lib/i18n/language-context"
 
 export default function ListingsPage() {
   const { status } = useSession()
   const router = useRouter()
+  const { t } = useLanguage()
   const [listings, setListings] = useState<any[]>([])
   const [profile, setProfile] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -101,8 +103,8 @@ export default function ListingsPage() {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Browse Listings</h1>
-          <p className="text-gray-400">Find your perfect teammate</p>
+          <h1 className="text-4xl font-bold text-white mb-2">{t.listings.title}</h1>
+          <p className="text-gray-400">{t.listings.subtitle}</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -112,7 +114,7 @@ export default function ListingsPage() {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold text-white flex items-center">
                   <Filter className="h-4 w-4 mr-2" />
-                  Filters
+                  {t.listings.filters}
                 </h3>
                 <Button
                   variant="ghost"
@@ -120,22 +122,22 @@ export default function ListingsPage() {
                   onClick={clearFilters}
                   className="text-valorant-cyan hover:text-valorant-cyan/80"
                 >
-                  Clear
+                  {t.listings.clear}
                 </Button>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm text-gray-400 mb-2 block">Game Mode</label>
+                  <label className="text-sm text-gray-400 mb-2 block">{t.listings.gameMode}</label>
                   <Select
                     value={filters.mode || undefined}
                     onValueChange={(value) => setFilters({ ...filters, mode: value })}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="All Modes" />
+                      <SelectValue placeholder={t.listings.allModes} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Modes</SelectItem>
+                      <SelectItem value="all">{t.listings.allModes}</SelectItem>
                       {GAME_MODES.map((mode) => (
                         <SelectItem key={mode.value} value={mode.value}>
                           {mode.label}
@@ -146,16 +148,16 @@ export default function ListingsPage() {
                 </div>
 
                 <div>
-                  <label className="text-sm text-gray-400 mb-2 block">Region</label>
+                  <label className="text-sm text-gray-400 mb-2 block">{t.listings.region}</label>
                   <Select
                     value={filters.region || undefined}
                     onValueChange={(value) => setFilters({ ...filters, region: value })}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="All Regions" />
+                      <SelectValue placeholder={t.listings.allRegions} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Regions</SelectItem>
+                      <SelectItem value="all">{t.listings.allRegions}</SelectItem>
                       {REGIONS.map((region) => (
                         <SelectItem key={region.value} value={region.value}>
                           {region.label}
@@ -166,16 +168,16 @@ export default function ListingsPage() {
                 </div>
 
                 <div>
-                  <label className="text-sm text-gray-400 mb-2 block">Desired Role</label>
+                  <label className="text-sm text-gray-400 mb-2 block">{t.listings.desiredRole}</label>
                   <Select
                     value={filters.desiredRole || undefined}
                     onValueChange={(value) => setFilters({ ...filters, desiredRole: value })}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="All Roles" />
+                      <SelectValue placeholder={t.listings.allRoles} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Roles</SelectItem>
+                      <SelectItem value="all">{t.listings.allRoles}</SelectItem>
                       {PLAYER_ROLES.map((role) => (
                         <SelectItem key={role.value} value={role.value}>
                           {role.label}
@@ -186,16 +188,16 @@ export default function ListingsPage() {
                 </div>
 
                 <div>
-                  <label className="text-sm text-gray-400 mb-2 block">Min Rank</label>
+                  <label className="text-sm text-gray-400 mb-2 block">{t.listings.minRank}</label>
                   <Select
                     value={filters.minRank || undefined}
                     onValueChange={(value) => setFilters({ ...filters, minRank: value })}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Any" />
+                      <SelectValue placeholder={t.listings.any} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">Any</SelectItem>
+                      <SelectItem value="all">{t.listings.any}</SelectItem>
                       {VALORANT_RANKS.map((rank) => (
                         <SelectItem key={rank.value} value={rank.value}>
                           {rank.label}
@@ -206,16 +208,16 @@ export default function ListingsPage() {
                 </div>
 
                 <div>
-                  <label className="text-sm text-gray-400 mb-2 block">Max Rank</label>
+                  <label className="text-sm text-gray-400 mb-2 block">{t.listings.maxRank}</label>
                   <Select
                     value={filters.maxRank || undefined}
                     onValueChange={(value) => setFilters({ ...filters, maxRank: value })}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Any" />
+                      <SelectValue placeholder={t.listings.any} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">Any</SelectItem>
+                      <SelectItem value="all">{t.listings.any}</SelectItem>
                       {VALORANT_RANKS.map((rank) => (
                         <SelectItem key={rank.value} value={rank.value}>
                           {rank.label}
@@ -232,8 +234,8 @@ export default function ListingsPage() {
           <div className="lg:col-span-3">
             <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as ListingType)}>
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="TEAM">Teams Looking for 5th</TabsTrigger>
-                <TabsTrigger value="SOLO">Solo Players</TabsTrigger>
+                <TabsTrigger value="TEAM">{t.listings.teamsLookingFor5th}</TabsTrigger>
+                <TabsTrigger value="SOLO">{t.listings.soloPlayers}</TabsTrigger>
               </TabsList>
 
               <TabsContent value="TEAM" className="mt-6">
@@ -244,10 +246,10 @@ export default function ListingsPage() {
                 ) : listings.length === 0 ? (
                   <Card className="border-dashed">
                     <CardContent className="py-12 text-center">
-                      <p className="text-gray-400">No team listings found</p>
+                      <p className="text-gray-400">{t.listings.noTeamListings}</p>
                       <Link href="/listings/create?type=team">
                         <Button variant="valorant" className="mt-4">
-                          Create Team Listing
+                          {t.listings.createTeamListing}
                         </Button>
                       </Link>
                     </CardContent>
@@ -269,10 +271,10 @@ export default function ListingsPage() {
                 ) : listings.length === 0 ? (
                   <Card className="border-dashed">
                     <CardContent className="py-12 text-center">
-                      <p className="text-gray-400">No solo listings found</p>
+                      <p className="text-gray-400">{t.listings.noSoloListings}</p>
                       <Link href="/listings/create?type=solo">
                         <Button variant="valorant" className="mt-4">
-                          Create Solo Listing
+                          {t.listings.createSoloListing}
                         </Button>
                       </Link>
                     </CardContent>
