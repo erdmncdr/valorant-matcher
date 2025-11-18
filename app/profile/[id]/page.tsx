@@ -144,13 +144,13 @@ export default function UserProfilePage() {
             <Card className="border-valorant-purple/20 bg-card/50 backdrop-blur sticky top-6">
               <CardContent className="pt-6">
                 <div className="text-center">
-                  <div className="relative inline-block">
-                    <Avatar className="h-32 w-32 mb-4">
+                  <div className="relative inline-block mb-4">
+                    <Avatar className="h-32 w-32">
                       <AvatarFallback className="bg-valorant-red text-white text-4xl">
                         {profile?.nickname?.charAt(0) || "U"}
                       </AvatarFallback>
                     </Avatar>
-                    <OnlineStatusIndicator lastSeenAt={user.lastSeenAt} size="lg" className="-bottom-2 -right-2" />
+                    <OnlineStatusIndicator lastSeenAt={user.lastSeenAt} size="lg" className="-bottom-1 -right-1" />
                   </div>
 
                   <div className="space-y-2">
