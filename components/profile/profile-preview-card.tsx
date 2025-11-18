@@ -166,7 +166,7 @@ export function ProfilePreviewCard({ userId, listingId, onViewProfile }: Profile
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {t.common.reportUser || "Report User"}: {user?.playerProfile?.nickname}
+              {t.reports?.title || t.common.reportUser || "Report User"}: {user?.playerProfile?.nickname}
             </DialogTitle>
           </DialogHeader>
           <ReportForm

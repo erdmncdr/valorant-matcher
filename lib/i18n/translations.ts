@@ -245,6 +245,76 @@ export const translations = {
       reportUser: "Kullanıcıyı Bildir",
       submitReport: "Bildirimi Gönder",
       error: "Hata",
+      success: "Başarılı",
+      characters: "karakter",
+    },
+
+    // Reports
+    reports: {
+      title: "Oyuncu Bildir",
+      subtitle: "Topluluk kurallarını ihlal eden kullanıcıları bildirin",
+      category: "Kategori",
+      reason: "Sebep",
+      description: "Açıklama",
+      descriptionPlaceholder: "Lütfen sorunu detaylı olarak açıklayın (en az 10 karakter)...",
+
+      // Categories
+      categoryInGame: "Oyun İçi Davranış",
+      categoryOnPlatform: "Platform Davranışı",
+      categoryInGameDesc: "Oyun sırasında yaşanan sorunlar",
+      categoryOnPlatformDesc: "Bu site/platform içindeki sorunlar",
+
+      // Reasons
+      reasonToxicVoice: "Toksik Sesli Sohbet",
+      reasonVerbalAbuse: "Sözel Taciz",
+      reasonInsults: "Hakaret",
+      reasonRacism: "Irkçılık",
+      reasonSexism: "Cinsiyetçilik",
+      reasonHarassment: "Taciz",
+      reasonGriefing: "Oyunu Sabote Etme",
+      reasonCheatingSuspicion: "Hile Şüphesi",
+      reasonSpam: "Spam",
+      reasonInappropriateContent: "Uygunsuz İçerik",
+      reasonOther: "Diğer",
+
+      // Messages
+      reportPolicy: "Bildirim Politikası",
+      reportPolicyDesc: "Yanlış bildirimler ceza ile sonuçlanabilir. Yalnızca topluluk kurallarının gerçek ihlallerini bildirin.",
+      reportSuccess: "Bildirim başarıyla gönderildi. Ekibimiz inceleyecek.",
+      reportError: "Bildirim gönderilemedi",
+      minCharacters: "Lütfen en az 10 karakter açıklama girin",
+      cannotReportSelf: "Kendinizi bildiremezsiniz",
+
+      // Admin Panel
+      adminTitle: "Bildirim Yönetimi",
+      adminSubtitle: "Kullanıcı bildirimlerini inceleyin ve yönetin",
+      allCategories: "Tüm Kategoriler",
+      allStatuses: "Tüm Durumlar",
+      noReports: "Bildirim bulunamadı",
+      reportAgainst: "Bildirilen kullanıcı",
+      reportedBy: "Bildiren",
+      reviewReport: "Bildirimi İncele",
+      adminNotes: "Yönetici Notları",
+      addReviewNotes: "İnceleme notlarınızı ekleyin...",
+      decision: "Karar",
+      banUser: "Kullanıcıyı banla",
+      banDuration: "Ban Süresi (gün)",
+      banReason: "Ban Sebebi",
+      banReasonPlaceholder: "Ban sebebi...",
+      submitReview: "İncelemeyi Gönder",
+      reviewSuccess: "Bildirim başarıyla incelendi",
+      reviewError: "İnceleme gönderilemedi",
+
+      // Status badges
+      statusOpen: "Açık",
+      statusUnderReview: "İnceleniyor",
+      statusResolved: "Çözüldü",
+      statusDismissed: "Reddedildi",
+
+      // Status options
+      statusUnderReviewOption: "İnceleniyor",
+      statusResolvedOption: "Çözüldü (İşlem Yapıldı)",
+      statusDismissedOption: "Reddedildi (İşlem Yapılmadı)",
     },
   },
 
@@ -494,6 +564,76 @@ export const translations = {
       reportUser: "Report User",
       submitReport: "Submit Report",
       error: "Error",
+      success: "Success",
+      characters: "characters",
+    },
+
+    // Reports
+    reports: {
+      title: "Report Player",
+      subtitle: "Report users who violate community guidelines",
+      category: "Category",
+      reason: "Reason",
+      description: "Description",
+      descriptionPlaceholder: "Please describe the issue in detail (minimum 10 characters)...",
+
+      // Categories
+      categoryInGame: "In-Game Behavior",
+      categoryOnPlatform: "Platform Behavior",
+      categoryInGameDesc: "Issues during actual gameplay",
+      categoryOnPlatformDesc: "Issues on this website/platform",
+
+      // Reasons
+      reasonToxicVoice: "Toxic Voice Chat",
+      reasonVerbalAbuse: "Verbal Abuse",
+      reasonInsults: "Insults",
+      reasonRacism: "Racism",
+      reasonSexism: "Sexism",
+      reasonHarassment: "Harassment",
+      reasonGriefing: "Griefing",
+      reasonCheatingSuspicion: "Cheating Suspicion",
+      reasonSpam: "Spam",
+      reasonInappropriateContent: "Inappropriate Content",
+      reasonOther: "Other",
+
+      // Messages
+      reportPolicy: "Report Policy",
+      reportPolicyDesc: "False reports may result in penalties. Only report genuine violations of our community guidelines.",
+      reportSuccess: "Report submitted successfully. Our team will review it.",
+      reportError: "Failed to submit report",
+      minCharacters: "Please provide at least 10 characters description",
+      cannotReportSelf: "You cannot report yourself",
+
+      // Admin Panel
+      adminTitle: "Report Management",
+      adminSubtitle: "Review and manage user reports",
+      allCategories: "All Categories",
+      allStatuses: "All Statuses",
+      noReports: "No reports found",
+      reportAgainst: "Report against",
+      reportedBy: "Reported by",
+      reviewReport: "Review Report",
+      adminNotes: "Admin Notes",
+      addReviewNotes: "Add your review notes...",
+      decision: "Decision",
+      banUser: "Ban this user",
+      banDuration: "Ban Duration (days)",
+      banReason: "Ban Reason",
+      banReasonPlaceholder: "Reason for ban...",
+      submitReview: "Submit Review",
+      reviewSuccess: "Report reviewed successfully",
+      reviewError: "Failed to submit review",
+
+      // Status badges
+      statusOpen: "Open",
+      statusUnderReview: "Under Review",
+      statusResolved: "Resolved",
+      statusDismissed: "Dismissed",
+
+      // Status options
+      statusUnderReviewOption: "Under Review",
+      statusResolvedOption: "Resolved (Action Taken)",
+      statusDismissedOption: "Dismissed (No Action)",
     },
   },
 }

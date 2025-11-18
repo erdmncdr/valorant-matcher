@@ -16,11 +16,13 @@ import { Navbar } from "@/components/layout/navbar"
 import { Loader2, AlertTriangle, CheckCircle, XCircle, Ban, Eye } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { formatTimeAgo } from "@/lib/utils"
+import { useLanguage } from "@/lib/i18n/language-context"
 
 export default function AdminReportsPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const { toast } = useToast()
+  const { t } = useLanguage()
   const [profile, setProfile] = useState<any>(null)
   const [reports, setReports] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -118,23 +120,23 @@ export default function AdminReportsPage() {
 
       if (response.ok) {
         toast({
-          title: "Success",
-          description: "Report reviewed successfully",
+          title: t.common.success,
+          description: t.reports.reviewSuccess,
         })
         setShowReviewModal(false)
         fetchReports()
       } else {
         const data = await response.json()
         toast({
-          title: "Error",
-          description: data.error || "Failed to review report",
+          title: t.common.error,
+          description: data.error || t.reports.reviewError,
           variant: "destructive",
         })
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to submit review",
+        title: t.common.error,
+        description: t.reports.reviewError,
         variant: "destructive",
       })
     }
@@ -149,13 +151,13 @@ export default function AdminReportsPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "OPEN":
-        return <Badge variant="destructive"><AlertTriangle className="h-3 w-3 mr-1" />Open</Badge>
+        return <Badge variant="destructive"><AlertTriangle className="h-3 w-3 mr-1" />{t.reports.statusOpen}</Badge>
       case "UNDER_REVIEW":
-        return <Badge variant="outline" className="bg-yellow-500/20 text-yellow-500 border-yellow-500"><Eye className="h-3 w-3 mr-1" />Under Review</Badge>
+        return <Badge variant="outline" className="bg-yellow-500/20 text-yellow-500 border-yellow-500"><Eye className="h-3 w-3 mr-1" />{t.reports.statusUnderReview}</Badge>
       case "RESOLVED":
-        return <Badge variant="default" className="bg-green-500/20 text-green-500 border-green-500"><CheckCircle className="h-3 w-3 mr-1" />Resolved</Badge>
+        return <Badge variant="default" className="bg-green-500/20 text-green-500 border-green-500"><CheckCircle className="h-3 w-3 mr-1" />{t.reports.statusResolved}</Badge>
       case "DISMISSED":
-        return <Badge variant="outline" className="bg-gray-500/20 text-gray-400 border-gray-500"><XCircle className="h-3 w-3 mr-1" />Dismissed</Badge>
+        return <Badge variant="outline" className="bg-gray-500/20 text-gray-400 border-gray-500"><XCircle className="h-3 w-3 mr-1" />{t.reports.statusDismissed}</Badge>
       default:
         return <Badge>{status}</Badge>
     }
@@ -164,9 +166,9 @@ export default function AdminReportsPage() {
   const getCategoryBadge = (category: string) => {
     switch (category) {
       case "IN_GAME":
-        return <Badge variant="mode">In-Game</Badge>
+        return <Badge variant="mode">{t.reports.categoryInGame}</Badge>
       case "ON_PLATFORM":
-        return <Badge variant="role">On-Platform</Badge>
+        return <Badge variant="role">{t.reports.categoryOnPlatform}</Badge>
       default:
         return <Badge>{category}</Badge>
     }
@@ -186,8 +188,8 @@ export default function AdminReportsPage() {
 
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">⚡ Admin Reports</h1>
-          <p className="text-gray-400">Review and manage user reports</p>
+          <h1 className="text-4xl font-bold text-white mb-2">⚡ {t.reports.adminTitle}</h1>
+          <p className="text-gray-400">{t.reports.adminSubtitle}</p>
         </div>
 
         {/* Filters */}
@@ -195,15 +197,15 @@ export default function AdminReportsPage() {
           <CardContent className="pt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label className="text-white mb-2">Category</Label>
+                <Label className="text-white mb-2">{t.reports.category}</Label>
                 <Select value={filterCategory} onValueChange={setFilterCategory}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    <SelectItem value="IN_GAME">In-Game</SelectItem>
-                    <SelectItem value="ON_PLATFORM">On-Platform</SelectItem>
+                    <SelectItem value="all">{t.reports.allCategories}</SelectItem>
+                    <SelectItem value="IN_GAME">{t.reports.categoryInGame}</SelectItem>
+                    <SelectItem value="ON_PLATFORM">{t.reports.categoryOnPlatform}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -214,11 +216,11 @@ export default function AdminReportsPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Statuses</SelectItem>
-                    <SelectItem value="OPEN">Open</SelectItem>
-                    <SelectItem value="UNDER_REVIEW">Under Review</SelectItem>
-                    <SelectItem value="RESOLVED">Resolved</SelectItem>
-                    <SelectItem value="DISMISSED">Dismissed</SelectItem>
+                    <SelectItem value="all">{t.reports.allStatuses}</SelectItem>
+                    <SelectItem value="OPEN">{t.reports.statusOpen}</SelectItem>
+                    <SelectItem value="UNDER_REVIEW">{t.reports.statusUnderReview}</SelectItem>
+                    <SelectItem value="RESOLVED">{t.reports.statusResolved}</SelectItem>
+                    <SelectItem value="DISMISSED">{t.reports.statusDismissed}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -230,7 +232,7 @@ export default function AdminReportsPage() {
         {reports.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center">
-              <p className="text-gray-400">No reports found</p>
+              <p className="text-gray-400">{t.reports.noReports}</p>
             </CardContent>
           </Card>
         ) : (
@@ -280,7 +282,7 @@ export default function AdminReportsPage() {
                       className="w-full"
                     >
                       <Eye className="mr-2 h-4 w-4" />
-                      Review Report
+                      {t.reports.reviewReport}
                     </Button>
                   )}
                 </CardContent>
@@ -294,20 +296,20 @@ export default function AdminReportsPage() {
       <Dialog open={showReviewModal} onOpenChange={setShowReviewModal}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Review Report</DialogTitle>
+            <DialogTitle>{t.reports.reviewReport}</DialogTitle>
           </DialogHeader>
 
           {selectedReport && (
             <div className="space-y-4">
               <div>
-                <p className="text-sm text-gray-400">Target User:</p>
+                <p className="text-sm text-gray-400">{t.reports.reportAgainst}:</p>
                 <p className="text-white font-semibold">
                   {selectedReport.target?.playerProfile?.nickname || "Unknown"}
                 </p>
               </div>
 
               <div>
-                <Label className="text-white">Decision</Label>
+                <Label className="text-white">{t.reports.decision}</Label>
                 <Select
                   value={reviewData.status}
                   onValueChange={(value: any) => setReviewData({...reviewData, status: value})}
@@ -316,19 +318,19 @@ export default function AdminReportsPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="UNDER_REVIEW">Under Review</SelectItem>
-                    <SelectItem value="RESOLVED">Resolved (Action Taken)</SelectItem>
-                    <SelectItem value="DISMISSED">Dismissed (No Action)</SelectItem>
+                    <SelectItem value="UNDER_REVIEW">{t.reports.statusUnderReviewOption}</SelectItem>
+                    <SelectItem value="RESOLVED">{t.reports.statusResolvedOption}</SelectItem>
+                    <SelectItem value="DISMISSED">{t.reports.statusDismissedOption}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div>
-                <Label className="text-white">Admin Notes</Label>
+                <Label className="text-white">{t.reports.adminNotes}</Label>
                 <Textarea
                   value={reviewData.reviewNotes}
                   onChange={(e) => setReviewData({...reviewData, reviewNotes: e.target.value})}
-                  placeholder="Add your review notes..."
+                  placeholder={t.reports.addReviewNotes}
                   className="mt-2"
                 />
               </div>
@@ -340,13 +342,13 @@ export default function AdminReportsPage() {
                   onChange={(e) => setReviewData({...reviewData, banUser: e.target.checked})}
                   className="w-4 h-4"
                 />
-                <Label className="text-white">Ban this user</Label>
+                <Label className="text-white">{t.reports.banUser}</Label>
               </div>
 
               {reviewData.banUser && (
                 <>
                   <div>
-                    <Label className="text-white">Ban Duration (days)</Label>
+                    <Label className="text-white">{t.reports.banDuration}</Label>
                     <Input
                       type="number"
                       value={reviewData.banDuration}
@@ -357,11 +359,11 @@ export default function AdminReportsPage() {
                   </div>
 
                   <div>
-                    <Label className="text-white">Ban Reason</Label>
+                    <Label className="text-white">{t.reports.banReason}</Label>
                     <Input
                       value={reviewData.banReason}
                       onChange={(e) => setReviewData({...reviewData, banReason: e.target.value})}
-                      placeholder="Reason for ban..."
+                      placeholder={t.reports.banReasonPlaceholder}
                       className="mt-2"
                     />
                   </div>
@@ -372,10 +374,10 @@ export default function AdminReportsPage() {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowReviewModal(false)}>
-              Cancel
+              {t.common.cancel}
             </Button>
             <Button variant="valorant" onClick={submitReview}>
-              Submit Review
+              {t.reports.submitReview}
             </Button>
           </DialogFooter>
         </DialogContent>

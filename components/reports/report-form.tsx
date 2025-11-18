@@ -32,7 +32,7 @@ export function ReportForm({ targetUserId, listingId, onSuccess, onCancel }: Rep
     if (formData.description.length < 10) {
       toast({
         title: t.common.error || "Error",
-        description: "Please provide at least 10 characters description",
+        description: t.reports.minCharacters || "Please provide at least 10 characters description",
         variant: "destructive",
       })
       return
@@ -56,21 +56,21 @@ export function ReportForm({ targetUserId, listingId, onSuccess, onCancel }: Rep
       if (response.ok) {
         toast({
           title: t.common.success || "Success",
-          description: "Report submitted successfully. Our team will review it.",
+          description: t.reports.reportSuccess || "Report submitted successfully. Our team will review it.",
         })
         onSuccess()
       } else {
         const data = await response.json()
         toast({
           title: t.common.error || "Error",
-          description: data.error || "Failed to submit report",
+          description: data.error || t.reports.reportError || "Failed to submit report",
           variant: "destructive",
         })
       }
     } catch (error) {
       toast({
         title: t.common.error || "Error",
-        description: "Failed to submit report",
+        description: t.reports.reportError || "Failed to submit report",
         variant: "destructive",
       })
     } finally {
@@ -83,15 +83,15 @@ export function ReportForm({ targetUserId, listingId, onSuccess, onCancel }: Rep
       <div className="bg-valorant-red/10 border border-valorant-red/30 rounded-lg p-3 flex items-start gap-2">
         <AlertTriangle className="h-5 w-5 text-valorant-red flex-shrink-0 mt-0.5" />
         <div className="text-sm text-white">
-          <p className="font-semibold mb-1">Report Policy</p>
+          <p className="font-semibold mb-1">{t.reports.reportPolicy}</p>
           <p className="text-gray-300">
-            False reports may result in penalties. Only report genuine violations of our community guidelines.
+            {t.reports.reportPolicyDesc}
           </p>
         </div>
       </div>
 
       <div>
-        <Label className="text-white">Category</Label>
+        <Label className="text-white">{t.reports.category}</Label>
         <Select
           value={formData.category}
           onValueChange={(value: "IN_GAME" | "ON_PLATFORM") =>
@@ -102,19 +102,19 @@ export function ReportForm({ targetUserId, listingId, onSuccess, onCancel }: Rep
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="IN_GAME">In-Game Behavior</SelectItem>
-            <SelectItem value="ON_PLATFORM">Platform Behavior</SelectItem>
+            <SelectItem value="IN_GAME">{t.reports.categoryInGame}</SelectItem>
+            <SelectItem value="ON_PLATFORM">{t.reports.categoryOnPlatform}</SelectItem>
           </SelectContent>
         </Select>
         <p className="text-xs text-gray-400 mt-1">
           {formData.category === "IN_GAME"
-            ? "Issues during actual gameplay"
-            : "Issues on this website/platform"}
+            ? t.reports.categoryInGameDesc
+            : t.reports.categoryOnPlatformDesc}
         </p>
       </div>
 
       <div>
-        <Label className="text-white">Reason</Label>
+        <Label className="text-white">{t.reports.reason}</Label>
         <Select
           value={formData.reason}
           onValueChange={(value) => setFormData({ ...formData, reason: value })}
@@ -123,32 +123,32 @@ export function ReportForm({ targetUserId, listingId, onSuccess, onCancel }: Rep
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="TOXIC_VOICE">Toxic Voice Chat</SelectItem>
-            <SelectItem value="VERBAL_ABUSE">Verbal Abuse</SelectItem>
-            <SelectItem value="INSULTS">Insults</SelectItem>
-            <SelectItem value="RACISM">Racism</SelectItem>
-            <SelectItem value="SEXISM">Sexism</SelectItem>
-            <SelectItem value="HARASSMENT">Harassment</SelectItem>
-            <SelectItem value="GRIEFING">Griefing</SelectItem>
-            <SelectItem value="CHEATING_SUSPICION">Cheating Suspicion</SelectItem>
-            <SelectItem value="SPAM">Spam</SelectItem>
-            <SelectItem value="INAPPROPRIATE_CONTENT">Inappropriate Content</SelectItem>
-            <SelectItem value="OTHER">Other</SelectItem>
+            <SelectItem value="TOXIC_VOICE">{t.reports.reasonToxicVoice}</SelectItem>
+            <SelectItem value="VERBAL_ABUSE">{t.reports.reasonVerbalAbuse}</SelectItem>
+            <SelectItem value="INSULTS">{t.reports.reasonInsults}</SelectItem>
+            <SelectItem value="RACISM">{t.reports.reasonRacism}</SelectItem>
+            <SelectItem value="SEXISM">{t.reports.reasonSexism}</SelectItem>
+            <SelectItem value="HARASSMENT">{t.reports.reasonHarassment}</SelectItem>
+            <SelectItem value="GRIEFING">{t.reports.reasonGriefing}</SelectItem>
+            <SelectItem value="CHEATING_SUSPICION">{t.reports.reasonCheatingSuspicion}</SelectItem>
+            <SelectItem value="SPAM">{t.reports.reasonSpam}</SelectItem>
+            <SelectItem value="INAPPROPRIATE_CONTENT">{t.reports.reasonInappropriateContent}</SelectItem>
+            <SelectItem value="OTHER">{t.reports.reasonOther}</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <div>
-        <Label className="text-white">Description</Label>
+        <Label className="text-white">{t.reports.description}</Label>
         <Textarea
           value={formData.description}
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          placeholder="Please describe the issue in detail (minimum 10 characters)..."
+          placeholder={t.reports.descriptionPlaceholder}
           className="mt-2 min-h-[120px]"
           maxLength={1000}
         />
         <p className="text-xs text-gray-400 mt-1">
-          {formData.description.length}/1000 characters
+          {formData.description.length}/1000 {t.common.characters || "characters"}
         </p>
       </div>
 
