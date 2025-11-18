@@ -59,6 +59,14 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
                   {t.nav.findPlayers}
                 </Button>
               </Link>
+              <Link href="/leaderboard">
+                <Button
+                  variant="ghost"
+                  className={currentPage === 'leaderboard' ? 'text-valorant-red' : 'text-white'}
+                >
+                  {t.nav.leaderboard}
+                </Button>
+              </Link>
               <Link href="/my-listings">
                 <Button
                   variant="ghost"

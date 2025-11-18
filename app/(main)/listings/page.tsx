@@ -14,8 +14,11 @@ import { GAME_MODES, REGIONS, VALORANT_RANKS, PLAYER_ROLES } from "@/lib/constan
 import { ListingType } from "@prisma/client"
 import { Navbar } from "@/components/layout/navbar"
 import { useLanguage } from "@/lib/i18n/language-context"
+import { OnlineUsers } from "@/components/online-users"
+import { usePresence } from "@/hooks/use-presence"
 
 export default function ListingsPage() {
+  usePresence()
   const { status } = useSession()
   const router = useRouter()
   const { t } = useLanguage()
@@ -110,9 +113,9 @@ export default function ListingsPage() {
           <p className="text-gray-400">{t.listings.subtitle}</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           {/* Filters Sidebar */}
-          <Card className="border-valorant-purple/20 h-fit">
+          <Card className="border-valorant-purple/20 h-fit lg:col-span-1">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold text-white flex items-center">
@@ -250,7 +253,7 @@ export default function ListingsPage() {
           </Card>
 
           {/* Listings */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-3 lg:order-2">
             <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as ListingType)}>
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="TEAM">{t.listings.teamsLookingFor5th}</TabsTrigger>
@@ -307,6 +310,11 @@ export default function ListingsPage() {
                 )}
               </TabsContent>
             </Tabs>
+          </div>
+
+          {/* Online Users Sidebar */}
+          <div className="lg:col-span-1 lg:order-3">
+            <OnlineUsers />
           </div>
         </div>
       </div>

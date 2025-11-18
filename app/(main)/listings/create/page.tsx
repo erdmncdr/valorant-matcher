@@ -25,8 +25,10 @@ import {
 import { ValorantRank, PlayerRole, Seriousness, GameMode, ListingType } from "@prisma/client"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { Navbar } from "@/components/layout/navbar"
+import { usePresence } from "@/hooks/use-presence"
 
 export default function CreateListingPage() {
+  usePresence()
   const { status } = useSession()
   const router = useRouter()
   const searchParams = useSearchParams()

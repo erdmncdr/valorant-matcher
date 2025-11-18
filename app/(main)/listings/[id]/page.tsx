@@ -19,8 +19,10 @@ import { formatExpiresIn, formatTimeAgo } from "@/lib/utils"
 import { ProfilePreviewCard } from "@/components/profile/profile-preview-card"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { Navbar } from "@/components/layout/navbar"
+import { usePresence } from "@/hooks/use-presence"
 
 export default function ListingDetailPage() {
+  usePresence()
   const { data: session, status } = useSession()
   const router = useRouter()
   const params = useParams()

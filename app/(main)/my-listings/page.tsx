@@ -16,8 +16,11 @@ import { useLanguage } from "@/lib/i18n/language-context"
 import { getRankBadgeClass } from "@/lib/constants"
 import { formatTimeAgo, formatExpiresIn } from "@/lib/utils"
 import { useToast } from "@/hooks/use-toast"
+import { OnlineUsers } from "@/components/online-users"
+import { usePresence } from "@/hooks/use-presence"
 
 export default function MyListingsPage() {
+  usePresence()
   const { status } = useSession()
   const router = useRouter()
   const { t } = useLanguage()
@@ -119,10 +122,12 @@ export default function MyListingsPage() {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">{t.myListings.title}</h1>
-          <p className="text-gray-400">{t.myListings.subtitle}</p>
-        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <div className="lg:col-span-3">
+            <div className="mb-8">
+              <h1 className="text-4xl font-bold text-white mb-2">{t.myListings.title}</h1>
+              <p className="text-gray-400">{t.myListings.subtitle}</p>
+            </div>
 
         <Tabs defaultValue="listings" className="space-y-6">
           <TabsList className="grid w-full max-w-md grid-cols-2">
@@ -315,6 +320,13 @@ export default function MyListingsPage() {
             )}
           </TabsContent>
         </Tabs>
+          </div>
+
+          {/* Online Users Sidebar */}
+          <div className="lg:col-span-1">
+            <OnlineUsers />
+          </div>
+        </div>
       </div>
     </div>
   )

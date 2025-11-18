@@ -17,8 +17,11 @@ import { Loader2, AlertTriangle, CheckCircle, XCircle, Ban, Eye } from "lucide-r
 import { useToast } from "@/hooks/use-toast"
 import { formatTimeAgo } from "@/lib/utils"
 import { useLanguage } from "@/lib/i18n/language-context"
+import { OnlineUsers } from "@/components/online-users"
+import { usePresence } from "@/hooks/use-presence"
 
 export default function AdminReportsPage() {
+  usePresence()
   const { data: session, status } = useSession()
   const router = useRouter()
   const { toast } = useToast()

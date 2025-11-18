@@ -25,8 +25,10 @@ import { getRankBadgeClass, getRoleColor } from "@/lib/constants"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { useToast } from "@/hooks/use-toast"
 import { Navbar } from "@/components/layout/navbar"
+import { usePresence } from "@/hooks/use-presence"
 
 export default function UserProfilePage() {
+  usePresence()
   const { data: session, status } = useSession()
   const router = useRouter()
   const params = useParams()

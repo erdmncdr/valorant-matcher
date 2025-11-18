@@ -8,8 +8,10 @@ import { Button } from "@/components/ui/button"
 import { ProfileForm } from "@/components/profile/profile-form"
 import { Loader2 } from "lucide-react"
 import { Navbar } from "@/components/layout/navbar"
+import { usePresence } from "@/hooks/use-presence"
 
 export default function EditProfilePage() {
+  usePresence()
   const { status } = useSession()
   const router = useRouter()
   const [profile, setProfile] = useState<any>(null)

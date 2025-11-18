@@ -12,6 +12,7 @@ export const translations = {
       sortByActivity: "Son Görülme",
       sortByReputation: "İtibar Puanı",
       noOnlineUsers: "Şu anda kimse online değil",
+      leaderboard: "İtibar Sıralaması",
     },
 
     // Home Page
@@ -322,6 +323,15 @@ export const translations = {
       statusUnderReviewOption: "İnceleniyor",
       statusResolvedOption: "Çözüldü (İşlem Yapıldı)",
       statusDismissedOption: "Reddedildi (İşlem Yapılmadı)",
+    },
+
+    // Leaderboard
+    leaderboard: {
+      title: "İtibar Sıralaması",
+      subtitle: "En yüksek itibar puanlı oyuncular",
+      topPlayers: "En İyi Oyuncular",
+      noPlayers: "Henüz sıralamada oyuncu yok",
+      reputation: "İtibar",
     },
   },
 
