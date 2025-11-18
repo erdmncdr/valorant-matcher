@@ -27,8 +27,15 @@ export async function GET(
       where: { listingId: params.id },
       include: {
         sender: {
-          include: {
-            playerProfile: true,
+          select: {
+            id: true,
+            isAdmin: true,
+            playerProfile: {
+              select: {
+                nickname: true,
+                tagline: true,
+              },
+            },
           },
         },
       },
@@ -96,8 +103,15 @@ export async function POST(
       },
       include: {
         sender: {
-          include: {
-            playerProfile: true,
+          select: {
+            id: true,
+            isAdmin: true,
+            playerProfile: {
+              select: {
+                nickname: true,
+                tagline: true,
+              },
+            },
           },
         },
       },

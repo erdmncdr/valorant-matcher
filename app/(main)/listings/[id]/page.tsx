@@ -389,32 +389,55 @@ export default function ListingDetailPage() {
                         {t.listings.noMessages || "No messages yet. Start the conversation!"}
                       </p>
                     ) : (
-                      messages.map((message) => (
-                        <div key={message.id} className="flex items-start gap-3">
-                          <Avatar
-                            className="h-8 w-8 cursor-pointer hover:ring-2 hover:ring-valorant-purple transition-all"
-                            onClick={() => openProfileModal(message.senderId)}
+                      messages.map((message) => {
+                        const isAdmin = message.sender.isAdmin
+                        return (
+                          <div
+                            key={message.id}
+                            className={`flex items-start gap-3 p-3 rounded-lg transition-all ${
+                              isAdmin ? 'bg-gradient-to-r from-valorant-red/20 via-valorant-purple/20 to-valorant-cyan/20 border-l-4 border-valorant-red shadow-lg' : ''
+                            }`}
                           >
-                            <AvatarFallback className="bg-valorant-purple text-white text-xs">
-                              {message.sender.playerProfile?.nickname?.charAt(0) || "U"}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1">
-                            <div className="flex items-baseline gap-2">
-                              <button
-                                onClick={() => openProfileModal(message.senderId)}
-                                className="text-sm font-medium text-white hover:text-valorant-purple hover:underline transition-colors"
-                              >
-                                {message.sender.playerProfile?.nickname || "Unknown"}
-                              </button>
-                              <span className="text-xs text-gray-400">
-                                {formatTimeAgo(new Date(message.createdAt))}
-                              </span>
+                            <Avatar
+                              className={`h-8 w-8 cursor-pointer transition-all ${
+                                isAdmin
+                                  ? 'ring-2 ring-valorant-red hover:ring-valorant-purple animate-pulse'
+                                  : 'hover:ring-2 hover:ring-valorant-purple'
+                              }`}
+                              onClick={() => openProfileModal(message.senderId)}
+                            >
+                              <AvatarFallback className={isAdmin ? "bg-gradient-to-br from-valorant-red to-valorant-purple text-white text-xs font-bold" : "bg-valorant-purple text-white text-xs"}>
+                                {message.sender.playerProfile?.nickname?.charAt(0) || "U"}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1">
+                              <div className="flex items-baseline gap-2 flex-wrap">
+                                <button
+                                  onClick={() => openProfileModal(message.senderId)}
+                                  className={`text-sm font-medium transition-colors ${
+                                    isAdmin
+                                      ? 'text-valorant-red hover:text-valorant-purple font-bold'
+                                      : 'text-white hover:text-valorant-purple'
+                                  } hover:underline`}
+                                >
+                                  {message.sender.playerProfile?.nickname || "Unknown"}
+                                </button>
+                                {isAdmin && (
+                                  <Badge className="bg-gradient-to-r from-valorant-red to-valorant-purple text-white text-xs font-bold border-0 shadow-lg animate-pulse">
+                                    ⚡ ADMIN
+                                  </Badge>
+                                )}
+                                <span className="text-xs text-gray-400">
+                                  {formatTimeAgo(new Date(message.createdAt))}
+                                </span>
+                              </div>
+                              <p className={`text-sm ${isAdmin ? 'text-white font-medium' : 'text-gray-300'}`}>
+                                {message.content}
+                              </p>
                             </div>
-                            <p className="text-sm text-gray-300">{message.content}</p>
                           </div>
-                        </div>
-                      ))
+                        )
+                      })
                     )}
                     <div ref={messagesEndRef} />
                   </div>
