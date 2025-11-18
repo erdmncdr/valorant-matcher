@@ -7,6 +7,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ProfileForm } from "@/components/profile/profile-form"
 import { Loader2 } from "lucide-react"
+import { Navbar } from "@/components/layout/navbar"
 
 export default function EditProfilePage() {
   const { status } = useSession()
@@ -57,22 +58,7 @@ export default function EditProfilePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-black">
-      {/* Navigation */}
-      <nav className="border-b border-white/10 bg-valorant-dark/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/dashboard" className="flex items-center space-x-2">
-              <div className="h-8 w-8 rounded bg-valorant-red flex items-center justify-center">
-                <span className="text-white font-bold text-xl">N1</span>
-              </div>
-              <span className="text-white font-bold text-xl">NeedOne</span>
-            </Link>
-            <Link href="/dashboard">
-              <Button variant="ghost" className="text-white">Cancel</Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar profile={profile} currentPage="dashboard" />
 
       <div className="container max-w-3xl mx-auto px-4 py-8">
         <div className="mb-8">

@@ -24,6 +24,7 @@ import {
 import { getRankBadgeClass, getRoleColor } from "@/lib/constants"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { useToast } from "@/hooks/use-toast"
+import { Navbar } from "@/components/layout/navbar"
 
 export default function UserProfilePage() {
   const { data: session, status } = useSession()
@@ -34,6 +35,7 @@ export default function UserProfilePage() {
 
   const [user, setUser] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [myProfile, setMyProfile] = useState<any>(null)
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -42,9 +44,22 @@ export default function UserProfilePage() {
     }
 
     if (status === "authenticated") {
+      fetchMyProfile()
       fetchUserProfile()
     }
   }, [status, router])
+
+  const fetchMyProfile = async () => {
+    try {
+      const response = await fetch("/api/profile")
+      const data = await response.json()
+      if (data.profile) {
+        setMyProfile(data.profile)
+      }
+    } catch (error) {
+      console.error("Failed to fetch my profile:", error)
+    }
+  }
 
   const fetchUserProfile = async () => {
     try {
@@ -94,32 +109,7 @@ export default function UserProfilePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-black">
-      {/* Navigation */}
-      <nav className="border-b border-white/10 bg-valorant-dark/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/dashboard" className="flex items-center space-x-2">
-              <div className="h-8 w-8 rounded bg-valorant-red flex items-center justify-center">
-                <span className="text-white font-bold text-xl">N1</span>
-              </div>
-              <span className="text-white font-bold text-xl">{t.nav.logo}</span>
-            </Link>
-            <div className="flex items-center space-x-4">
-              <Link href="/listings">
-                <Button variant="ghost" className="text-white">{t.nav.findPlayers || "Find Players"}</Button>
-              </Link>
-              <Link href="/dashboard">
-                <Button variant="ghost" className="text-white">{t.nav.dashboard || "Dashboard"}</Button>
-              </Link>
-              {isOwnProfile && (
-                <Link href="/profile/edit">
-                  <Button variant="valorant">{t.nav.editProfile || "Edit Profile"}</Button>
-                </Link>
-              )}
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navbar profile={myProfile} currentPage="dashboard" />
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">

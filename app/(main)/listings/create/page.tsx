@@ -24,6 +24,7 @@ import {
 } from "@/lib/constants"
 import { ValorantRank, PlayerRole, Seriousness, GameMode, ListingType } from "@prisma/client"
 import { useLanguage } from "@/lib/i18n/language-context"
+import { Navbar } from "@/components/layout/navbar"
 
 export default function CreateListingPage() {
   const { status } = useSession()
@@ -32,6 +33,7 @@ export default function CreateListingPage() {
   const { toast } = useToast()
   const { t } = useLanguage()
   const [isLoading, setIsLoading] = useState(false)
+  const [profile, setProfile] = useState<any>(null)
 
   const typeParam = searchParams.get("type")
   const [listingType, setListingType] = useState<ListingType>(
@@ -56,8 +58,25 @@ export default function CreateListingPage() {
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/login")
+      return
+    }
+
+    if (status === "authenticated") {
+      fetchProfile()
     }
   }, [status, router])
+
+  const fetchProfile = async () => {
+    try {
+      const response = await fetch("/api/profile")
+      const data = await response.json()
+      if (data.profile) {
+        setProfile(data.profile)
+      }
+    } catch (error) {
+      console.error("Failed to fetch profile:", error)
+    }
+  }
 
   const handleLanguageToggle = (lang: string) => {
     setFormData(prev => ({
@@ -156,27 +175,7 @@ export default function CreateListingPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-black">
-      {/* Navigation */}
-      <nav className="border-b border-white/10 bg-valorant-dark/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/dashboard" className="flex items-center space-x-2">
-              <div className="h-8 w-8 rounded bg-valorant-red flex items-center justify-center">
-                <span className="text-white font-bold text-xl">N1</span>
-              </div>
-              <span className="text-white font-bold text-xl">NeedOne</span>
-            </Link>
-            <div className="flex items-center space-x-4">
-              <Link href="/listings">
-                <Button variant="ghost" className="text-white">{t.listings.browseListing || "Browse Listings"}</Button>
-              </Link>
-              <Link href="/dashboard">
-                <Button variant="ghost" className="text-white">{t.nav.dashboard || "Dashboard"}</Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navbar profile={profile} currentPage="listings" />
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">

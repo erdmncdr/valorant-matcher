@@ -18,6 +18,7 @@ import { getRankBadgeClass, getRoleColor } from "@/lib/constants"
 import { formatExpiresIn, formatTimeAgo } from "@/lib/utils"
 import { ProfilePreviewCard } from "@/components/profile/profile-preview-card"
 import { useLanguage } from "@/lib/i18n/language-context"
+import { Navbar } from "@/components/layout/navbar"
 
 export default function ListingDetailPage() {
   const { data: session, status } = useSession()
@@ -34,6 +35,7 @@ export default function ListingDetailPage() {
   const [isSendingMessage, setIsSendingMessage] = useState(false)
   const [applyMessage, setApplyMessage] = useState("")
   const [isApplying, setIsApplying] = useState(false)
+  const [myProfile, setMyProfile] = useState<any>(null)
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -42,10 +44,23 @@ export default function ListingDetailPage() {
     }
 
     if (status === "authenticated") {
+      fetchProfile()
       fetchListing()
       fetchMessages()
     }
   }, [status, router])
+
+  const fetchProfile = async () => {
+    try {
+      const response = await fetch("/api/profile")
+      const data = await response.json()
+      if (data.profile) {
+        setMyProfile(data.profile)
+      }
+    } catch (error) {
+      console.error("Failed to fetch profile:", error)
+    }
+  }
 
   const fetchListing = async () => {
     try {
@@ -198,27 +213,7 @@ export default function ListingDetailPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-black">
-      {/* Navigation */}
-      <nav className="border-b border-white/10 bg-valorant-dark/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/dashboard" className="flex items-center space-x-2">
-              <div className="h-8 w-8 rounded bg-valorant-red flex items-center justify-center">
-                <span className="text-white font-bold text-xl">N1</span>
-              </div>
-              <span className="text-white font-bold text-xl">NeedOne</span>
-            </Link>
-            <div className="flex items-center space-x-4">
-              <Link href="/listings">
-                <Button variant="ghost" className="text-white">{t.listings.browseListing || "Browse Listings"}</Button>
-              </Link>
-              <Link href="/dashboard">
-                <Button variant="ghost" className="text-white">{t.nav.dashboard || "Dashboard"}</Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navbar profile={myProfile} currentPage="listings" />
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
