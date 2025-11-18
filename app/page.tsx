@@ -39,14 +39,15 @@ export default function HomePage() {
               </div>
               <span className="text-white font-bold text-xl">{t.nav.logo}</span>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
               <Button
-                variant="ghost"
-                className="text-white"
+                variant="outline"
+                size="sm"
                 onClick={() => setLanguage(language === 'tr' ? 'en' : 'tr')}
+                className="border-valorant-purple/50 hover:border-valorant-purple hover:bg-valorant-purple/10 text-white hover:text-white flex items-center gap-1.5 px-3"
               >
-                <Languages className="mr-2 h-4 w-4" />
-                {language === 'tr' ? 'EN' : 'TR'}
+                <Languages className="h-4 w-4" />
+                <span className="font-semibold text-base">{language === 'tr' ? '🇹🇷 TR' : '🇬🇧 EN'}</span>
               </Button>
               <Link href="/login">
                 <Button variant="ghost" className="text-white">{t.auth.signIn}</Button>

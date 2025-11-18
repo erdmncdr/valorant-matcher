@@ -54,7 +54,18 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
               </Link>
             </div>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            {/* Language Switcher - More Visible */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setLanguage(language === 'tr' ? 'en' : 'tr')}
+              className="border-valorant-purple/50 hover:border-valorant-purple hover:bg-valorant-purple/10 text-white hover:text-white flex items-center gap-1.5 px-3"
+            >
+              <Languages className="h-4 w-4" />
+              <span className="font-semibold text-base">{language === 'tr' ? '🇹🇷 TR' : '🇬🇧 EN'}</span>
+            </Button>
+
             {profile && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -79,14 +90,6 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
                       {t.nav.editProfile}
                     </DropdownMenuItem>
                   </Link>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    className="cursor-pointer"
-                    onClick={() => setLanguage(language === 'tr' ? 'en' : 'tr')}
-                  >
-                    <Languages className="mr-2 h-4 w-4" />
-                    {language === 'tr' ? 'English' : 'Türkçe'}
-                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     className="cursor-pointer text-red-500 focus:text-red-500"
