@@ -8,7 +8,8 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Loader2, ThumbsUp, ThumbsDown, Star, User } from "lucide-react"
+import { Loader2, ThumbsUp, ThumbsDown, Star, User, ExternalLink } from "lucide-react"
+import Link from "next/link"
 import { getRankBadgeClass } from "@/lib/constants"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { RatingForm } from "./rating-form"
@@ -225,28 +226,39 @@ export function UserProfileModal({ userId, isOpen, onClose, listingId }: UserPro
 
               <Separator />
 
-              {/* Rate User Button */}
-              {session?.user?.id !== userId && listingId && (
-                <div>
-                  {!showRatingForm ? (
-                    <Button
-                      onClick={() => setShowRatingForm(true)}
-                      variant="valorant"
-                      className="w-full"
-                    >
-                      <Star className="mr-2 h-4 w-4" />
-                      {t.common.ratePlayer || "Oyuncuyu Değerlendir"}
-                    </Button>
-                  ) : (
-                    <RatingForm
-                      targetUserId={userId}
-                      listingId={listingId}
-                      onSuccess={handleRatingSuccess}
-                      onCancel={() => setShowRatingForm(false)}
-                    />
-                  )}
-                </div>
-              )}
+              {/* Action Buttons */}
+              <div className="space-y-3">
+                {/* View Full Profile Button */}
+                <Link href={`/profile/${userId}`} onClick={onClose}>
+                  <Button variant="outline" className="w-full">
+                    <ExternalLink className="mr-2 h-4 w-4" />
+                    {t.common.viewProfile || "Profili Görüntüle"}
+                  </Button>
+                </Link>
+
+                {/* Rate User Button */}
+                {session?.user?.id !== userId && listingId && (
+                  <div>
+                    {!showRatingForm ? (
+                      <Button
+                        onClick={() => setShowRatingForm(true)}
+                        variant="valorant"
+                        className="w-full"
+                      >
+                        <Star className="mr-2 h-4 w-4" />
+                        {t.common.ratePlayer || "Oyuncuyu Değerlendir"}
+                      </Button>
+                    ) : (
+                      <RatingForm
+                        targetUserId={userId}
+                        listingId={listingId}
+                        onSuccess={handleRatingSuccess}
+                        onCancel={() => setShowRatingForm(false)}
+                      />
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </>
         ) : (
