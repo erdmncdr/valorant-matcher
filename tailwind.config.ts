@@ -51,13 +51,13 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Valorant-inspired colors
+        // Valorant-inspired colors (theme-aware)
         valorant: {
-          red: "#FF4655",
-          cyan: "#00F5FF",
-          purple: "#9D4DFF",
-          dark: "#0F1923",
-          darker: "#0A0E12",
+          red: "hsl(var(--valorant-red))",
+          cyan: "hsl(var(--valorant-cyan))",
+          purple: "hsl(var(--valorant-purple))",
+          dark: "hsl(var(--valorant-dark))",
+          darker: "hsl(var(--valorant-darker))",
         },
       },
       borderRadius: {
