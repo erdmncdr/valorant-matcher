@@ -1,3 +1,6 @@
+"use client"
+
+import { useState } from "react"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -5,6 +8,7 @@ import { Clock, MapPin, Users, Mic, MicOff } from "lucide-react"
 import { getRankBadgeClass, getRoleColor } from "@/lib/constants"
 import { formatExpiresIn } from "@/lib/utils"
 import { ListingWithOwner } from "@/types"
+import { UserProfileModal } from "@/components/profile/user-profile-modal"
 
 interface ListingCardProps {
   listing: ListingWithOwner
@@ -12,6 +16,7 @@ interface ListingCardProps {
 
 export function ListingCard({ listing }: ListingCardProps) {
   const profile = listing.owner.playerProfile
+  const [showProfileModal, setShowProfileModal] = useState(false)
 
   return (
     <Link href={`/listings/${listing.id}`}>
@@ -21,7 +26,16 @@ export function ListingCard({ listing }: ListingCardProps) {
             <div className="flex-1">
               <CardTitle className="text-lg text-white mb-1">{listing.title}</CardTitle>
               <div className="flex items-center gap-2 text-sm text-gray-400">
-                <span>{profile?.nickname || "Unknown"}</span>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    setShowProfileModal(true)
+                  }}
+                  className="hover:text-valorant-purple hover:underline transition-colors"
+                >
+                  {profile?.nickname || "Unknown"}
+                </button>
                 <span>•</span>
                 <Badge className={`${getRankBadgeClass(profile?.rankCurrent || "IRON")} rank-badge text-xs`}>
                   {profile?.rankCurrent}
@@ -91,6 +105,12 @@ export function ListingCard({ listing }: ListingCardProps) {
           )}
         </CardContent>
       </Card>
+      <UserProfileModal
+        userId={listing.ownerUserId}
+        listingId={listing.id}
+        isOpen={showProfileModal}
+        onClose={() => setShowProfileModal(false)}
+      />
     </Link>
   )
 }
