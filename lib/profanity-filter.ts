@@ -9,81 +9,51 @@
 const TURKISH_BAD_WORDS = [
   // Common Turkish profanity
   "amk", "amq", "aq", "mk",
-  "orospu", "orsp", "orsbcocu",
-  "piç", "pic", "pç",
-  "göt", "got", "götveren",
+  "orospu", "orsp",
+  "pic", "pç",
+  "got", "göt",
   "sik", "siktir", "siktr", "sktr", "sktir",
-  "yarrak", "yrrak", "yarak",
-  "am", "amcık", "amcik",
-  "pezevenk", "pezevank", "pzvnk",
-  "kahpe", "kahp",
-  "sürtük", "surtuk", "srtk",
-  "dangalak", "dalyarak", "dangalak",
-  "gerizekalı", "gerizekalı", "gerzek",
-  "salak", "aptal", "mal",
-  // Variations and letter substitutions
-  "4mk", "4mq", "s1k", "s1kt1r",
-  "0rospu", "p1c", "g0t",
+  "yarrak", "yarak",
+  "amcik", "amcık",
+  "pezevenk",
 ]
 
 // English profanity list
 const ENGLISH_BAD_WORDS = [
   // Common English profanity
-  "fuck", "fck", "fuk", "f*ck", "f**k",
-  "shit", "sh1t", "sht",
-  "bitch", "b1tch", "btch",
-  "ass", "asshole", "a$$",
-  "bastard", "b4st4rd",
-  "damn", "dmn",
-  "cunt", "c*nt",
-  "dick", "d1ck",
-  "pussy", "psy",
-  "whore", "wh0re",
-  "slut", "sl*t",
-  "faggot", "fag", "f4g",
-  "nigger", "nigga", "n1gg4",
-  "retard", "r3t4rd",
-  // Variations
-  "motherfucker", "mofo", "mf",
-  "wtf", "stfu",
+  "fuck", "fck", "fuk",
+  "shit", "sht",
+  "bitch", "btch",
+  "asshole",
+  "bastard",
+  "cunt",
+  "dick",
+  "whore",
 ]
 
 // Combine all bad words
 const ALL_BAD_WORDS = [...TURKISH_BAD_WORDS, ...ENGLISH_BAD_WORDS]
 
 /**
- * Creates a regex pattern from a word to match variations
- * (e.g., with spaces between letters, uppercase/lowercase, etc.)
+ * Creates a simple regex pattern from a word
  */
-function createFlexiblePattern(word: string): RegExp {
-  // Replace each letter with a pattern that allows spaces and special chars
-  const pattern = word
-    .split('')
-    .map(char => {
-      // Allow letter substitutions (a->4, e->3, i->1, o->0, s->$, etc.)
-      if (char.toLowerCase() === 'a') return '[a4@]'
-      if (char.toLowerCase() === 'e') return '[e3]'
-      if (char.toLowerCase() === 'i') return '[i1!|]'
-      if (char.toLowerCase() === 'o') return '[o0]'
-      if (char.toLowerCase() === 's') return '[s$5]'
-      if (char.toLowerCase() === 't') return '[t7]'
-      return char
-    })
-    .join('[\\s\\-_\\.]*') // Allow spaces, dashes, underscores, dots between chars
-
-  return new RegExp(pattern, 'gi')
+function createSimplePattern(word: string): RegExp {
+  // Escape special regex characters
+  const escapedWord = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  return new RegExp(`\\b${escapedWord}\\b`, 'gi')
 }
 
 /**
  * Checks if a text contains profanity
  */
 export function containsProfanity(text: string): boolean {
+  if (!text || typeof text !== 'string') return false
+
   const lowerText = text.toLowerCase()
 
-  // Check for exact matches and variations
+  // Check for exact matches
   for (const word of ALL_BAD_WORDS) {
-    const pattern = createFlexiblePattern(word)
-    if (pattern.test(lowerText)) {
+    if (lowerText.includes(word.toLowerCase())) {
       return true
     }
   }
@@ -95,13 +65,14 @@ export function containsProfanity(text: string): boolean {
  * Censors profanity in text by replacing it with asterisks
  */
 export function censorProfanity(text: string): string {
+  if (!text || typeof text !== 'string') return text
+
   let censoredText = text
 
   for (const word of ALL_BAD_WORDS) {
-    const pattern = createFlexiblePattern(word)
+    const pattern = createSimplePattern(word)
     censoredText = censoredText.replace(pattern, (match) => {
-      // Replace with asterisks of same length
-      return '*'.repeat(Math.max(match.length, 3))
+      return '*'.repeat(match.length)
     })
   }
 
@@ -112,12 +83,13 @@ export function censorProfanity(text: string): string {
  * Gets a list of profane words found in text
  */
 export function findProfanity(text: string): string[] {
+  if (!text || typeof text !== 'string') return []
+
   const found: string[] = []
   const lowerText = text.toLowerCase()
 
   for (const word of ALL_BAD_WORDS) {
-    const pattern = createFlexiblePattern(word)
-    if (pattern.test(lowerText)) {
+    if (lowerText.includes(word.toLowerCase())) {
       found.push(word)
     }
   }
