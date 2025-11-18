@@ -202,7 +202,7 @@ export function UserProfileModal({ userId, isOpen, onClose, listingId }: UserPro
                             )}
                             <div className="flex-1">
                               <p className="text-sm text-gray-400">
-                                {rating.rater?.nickname}#{rating.rater?.tagline}
+                                {rating.rater ? `${rating.rater.nickname}#${rating.rater.tagline}` : (t.common.userNotFound || "Unknown User")}
                               </p>
                               <div className="flex flex-wrap gap-1 mt-1">
                                 {rating.tags.map((tag: string, idx: number) => (

@@ -95,7 +95,10 @@ export async function GET(
           tags: rating.tags,
           comment: rating.comment,
           createdAt: rating.createdAt,
-          rater: rating.rater.playerProfile,
+          rater: rating.rater.playerProfile ? {
+            nickname: rating.rater.playerProfile.nickname,
+            tagline: rating.rater.playerProfile.tagline,
+          } : null,
         })),
       },
     })

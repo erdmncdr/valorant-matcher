@@ -19,7 +19,7 @@ import { UserProfileModal } from "@/components/profile/user-profile-modal"
 import { useLanguage } from "@/lib/i18n/language-context"
 
 export default function ListingDetailPage() {
-  const { status } = useSession()
+  const { data: session, status } = useSession()
   const router = useRouter()
   const params = useParams()
   const { toast } = useToast()
@@ -198,9 +198,9 @@ export default function ListingDetailPage() {
     return null
   }
 
-  const isOwner = listing.owner.id === (status === "authenticated" ? listing.owner.id : null)
+  const isOwner = session?.user?.id === listing.ownerUserId
   const profile = listing.owner.playerProfile
-  const hasApplied = listing.applications?.some((app: any) => app.applicantUserId === listing.owner.id)
+  const hasApplied = listing.applications?.some((app: any) => app.applicantUserId === session?.user?.id)
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-black">
