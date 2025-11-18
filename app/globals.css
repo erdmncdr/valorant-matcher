@@ -149,3 +149,90 @@
 .animate-slide-in {
   animation: slideInRight 0.3s ease-out;
 }
+
+/* Shooting star / Meteor glow effect for messages */
+@keyframes meteor-glow {
+  0% {
+    background-position: 200% 50%;
+  }
+  100% {
+    background-position: -200% 50%;
+  }
+}
+
+.message-glow::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    transparent 25%,
+    rgba(0, 245, 255, 0.4) 45%,
+    rgba(0, 245, 255, 0.8) 50%,
+    rgba(0, 245, 255, 0.4) 55%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 200% 100%;
+  border-radius: 0.5rem;
+  z-index: -1;
+  animation: meteor-glow 3s linear infinite;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.message-glow:hover::before {
+  opacity: 1;
+}
+
+/* Continuous subtle glow */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(0, 245, 255, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+  }
+}
+
+.message-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Admin message special glow effect */
+@keyframes admin-meteor-glow {
+  0% {
+    background-position: 200% 50%;
+  }
+  100% {
+    background-position: -200% 50%;
+  }
+}
+
+.admin-message-glow::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    transparent 20%,
+    rgba(255, 70, 85, 0.3) 40%,
+    rgba(157, 77, 255, 0.6) 50%,
+    rgba(255, 70, 85, 0.3) 60%,
+    transparent 80%,
+    transparent
+  );
+  background-size: 200% 100%;
+  border-radius: 0.5rem;
+  z-index: -1;
+  animation: admin-meteor-glow 2.5s linear infinite;
+  pointer-events: none;
+}

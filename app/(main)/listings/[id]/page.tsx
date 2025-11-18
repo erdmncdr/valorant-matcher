@@ -384,8 +384,10 @@ export default function ListingDetailPage() {
                         return (
                           <div
                             key={message.id}
-                            className={`flex items-start gap-3 p-3 rounded-lg transition-all ${
-                              isAdmin ? 'bg-gradient-to-r from-valorant-red/20 via-valorant-purple/20 to-valorant-cyan/20 border-l-4 border-valorant-red shadow-lg' : ''
+                            className={`flex items-start gap-3 p-3 rounded-lg transition-all relative overflow-hidden ${
+                              isAdmin
+                                ? 'bg-gradient-to-r from-valorant-red/20 via-valorant-purple/20 to-valorant-cyan/20 border-l-4 border-valorant-red shadow-lg admin-message-glow'
+                                : 'bg-valorant-dark/50 border border-valorant-cyan/30 hover:border-valorant-cyan/50 shadow-md hover:shadow-valorant-cyan/20 message-glow'
                             }`}
                           >
                             <Popover>
