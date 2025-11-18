@@ -12,11 +12,13 @@ import { ListingCard } from "@/components/listings/listing-card"
 import { Loader2, Filter } from "lucide-react"
 import { GAME_MODES, REGIONS, VALORANT_RANKS, PLAYER_ROLES } from "@/lib/constants"
 import { ListingType } from "@prisma/client"
+import { Navbar } from "@/components/layout/navbar"
 
 export default function ListingsPage() {
   const { status } = useSession()
   const router = useRouter()
   const [listings, setListings] = useState<any[]>([])
+  const [profile, setProfile] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<ListingType>("TEAM")
 
@@ -35,9 +37,22 @@ export default function ListingsPage() {
     }
 
     if (status === "authenticated") {
+      fetchProfile()
       fetchListings()
     }
   }, [status, activeTab, filters])
+
+  const fetchProfile = async () => {
+    try {
+      const response = await fetch("/api/profile")
+      const data = await response.json()
+      if (data.profile) {
+        setProfile(data.profile)
+      }
+    } catch (error) {
+      console.error("Failed to fetch profile:", error)
+    }
+  }
 
   const fetchListings = async () => {
     setIsLoading(true)
@@ -81,27 +96,7 @@ export default function ListingsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-black">
-      {/* Navigation */}
-      <nav className="border-b border-white/10 bg-valorant-dark/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/dashboard" className="flex items-center space-x-2">
-              <div className="h-8 w-8 rounded bg-valorant-red flex items-center justify-center">
-                <span className="text-white font-bold text-xl">N1</span>
-              </div>
-              <span className="text-white font-bold text-xl">NeedOne</span>
-            </Link>
-            <div className="flex items-center space-x-4">
-              <Link href="/listings/create">
-                <Button variant="valorant">Create Listing</Button>
-              </Link>
-              <Link href="/dashboard">
-                <Button variant="ghost" className="text-white">Dashboard</Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navbar profile={profile} currentPage="listings" />
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
