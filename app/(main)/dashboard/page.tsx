@@ -53,8 +53,8 @@ export default function DashboardPage() {
 
   if (status === "loading" || isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-black flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-valorant-red" />
+      <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }
@@ -64,7 +64,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-black">
+    <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-background">
       <Navbar profile={profile} currentPage="dashboard" />
 
       {/* Main Content */}
@@ -73,23 +73,23 @@ export default function DashboardPage() {
           {/* Main Content - Left Side */}
           <div className="lg:col-span-3">
             <div className="mb-8">
-              <h1 className="text-4xl font-bold text-white mb-2">
+              <h1 className="text-4xl font-bold text-foreground mb-2">
                 {t.dashboard.welcome.replace('{nickname}', profile.nickname)}
               </h1>
-              <p className="text-gray-400">{t.dashboard.subtitle}</p>
+              <p className="text-muted-foreground">{t.dashboard.subtitle}</p>
             </div>
 
             {/* Profile Card */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <Card className="lg:col-span-2 border-valorant-red/20">
+          <Card className="lg:col-span-2 border-primary/20">
             <CardHeader>
-              <CardTitle className="text-white">{t.dashboard.yourProfile}</CardTitle>
+              <CardTitle>{t.dashboard.yourProfile}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-400">{t.dashboard.currentRank}</p>
+                    <p className="text-sm text-muted-foreground">{t.dashboard.currentRank}</p>
                     <div className="mt-1">
                       <Badge className={`${getRankBadgeClass(profile.rankCurrent)} rank-badge`}>
                         {profile.rankCurrent}
@@ -97,7 +97,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400">{t.dashboard.peakRank}</p>
+                    <p className="text-sm text-muted-foreground">{t.dashboard.peakRank}</p>
                     <div className="mt-1">
                       <Badge className={`${getRankBadgeClass(profile.rankPeak)} rank-badge`}>
                         {profile.rankPeak}
@@ -105,7 +105,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400">{t.dashboard.mainRole}</p>
+                    <p className="text-sm text-muted-foreground">{t.dashboard.mainRole}</p>
                     <div className="mt-1">
                       <Badge variant="role">
                         {profile.mainRole}
@@ -115,7 +115,7 @@ export default function DashboardPage() {
                 </div>
 
                 <div>
-                  <p className="text-sm text-gray-400 mb-2">{t.dashboard.agents}</p>
+                  <p className="text-sm text-muted-foreground mb-2">{t.dashboard.agents}</p>
                   <div className="flex flex-wrap gap-2">
                     {profile.playerAgents.map((agent: any) => (
                       <Badge key={agent.id} variant="secondary">
@@ -128,19 +128,19 @@ export default function DashboardPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-400">{t.dashboard.region}</p>
-                    <p className="text-white">{profile.region}</p>
+                    <p className="text-sm text-muted-foreground">{t.dashboard.region}</p>
+                    <p className="text-foreground">{profile.region}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400">{t.dashboard.languages}</p>
-                    <p className="text-white">{profile.languages.join(", ")}</p>
+                    <p className="text-sm text-muted-foreground">{t.dashboard.languages}</p>
+                    <p className="text-foreground">{profile.languages.join(", ")}</p>
                   </div>
                 </div>
 
                 {profile.bio && (
                   <div>
-                    <p className="text-sm text-gray-400 mb-1">{t.dashboard.bio}</p>
-                    <p className="text-white text-sm">{profile.bio}</p>
+                    <p className="text-sm text-muted-foreground mb-1">{t.dashboard.bio}</p>
+                    <p className="text-foreground text-sm">{profile.bio}</p>
                   </div>
                 )}
               </div>
@@ -148,25 +148,25 @@ export default function DashboardPage() {
           </Card>
 
           <div className="space-y-4">
-            <Card className="border-valorant-cyan/20">
+            <Card className="border-secondary/20">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg text-white">{t.dashboard.quickActions}</CardTitle>
+                <CardTitle className="text-lg">{t.dashboard.quickActions}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <Link href="/listings/create?type=team" className="block">
-                  <Button variant="outline" className="w-full justify-start border-valorant-red/30 hover:border-valorant-red">
+                  <Button variant="outline" className="w-full justify-start border-primary/30 hover:border-primary">
                     <Users className="mr-2 h-4 w-4" />
                     {t.dashboard.createTeamListing}
                   </Button>
                 </Link>
                 <Link href="/listings/create?type=solo" className="block">
-                  <Button variant="outline" className="w-full justify-start border-valorant-cyan/30 hover:border-valorant-cyan">
+                  <Button variant="outline" className="w-full justify-start border-secondary/30 hover:border-secondary">
                     <UserCircle className="mr-2 h-4 w-4" />
                     {t.dashboard.createSoloListing}
                   </Button>
                 </Link>
                 <Link href="/listings" className="block">
-                  <Button variant="outline" className="w-full justify-start border-valorant-purple/30 hover:border-valorant-purple">
+                  <Button variant="outline" className="w-full justify-start border-accent/30 hover:border-accent">
                     <MessageCircle className="mr-2 h-4 w-4" />
                     {t.dashboard.browseListing}
                   </Button>
@@ -176,21 +176,21 @@ export default function DashboardPage() {
 
             <Card className="border-yellow-500/20">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg text-white flex items-center">
+                <CardTitle className="text-lg flex items-center">
                   <Star className="mr-2 h-5 w-5 text-yellow-500" />
                   {t.dashboard.reputation}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-gray-400">{t.dashboard.reputationDesc}</p>
+                <p className="text-sm text-muted-foreground">{t.dashboard.reputationDesc}</p>
                 <div className="mt-3 flex items-center space-x-4">
                   <div className="text-center">
                     <p className="text-2xl font-bold text-green-500">0</p>
-                    <p className="text-xs text-gray-400">{t.dashboard.positive}</p>
+                    <p className="text-xs text-muted-foreground">{t.dashboard.positive}</p>
                   </div>
                   <div className="text-center">
                     <p className="text-2xl font-bold text-red-500">0</p>
-                    <p className="text-xs text-gray-400">{t.dashboard.negative}</p>
+                    <p className="text-xs text-muted-foreground">{t.dashboard.negative}</p>
                   </div>
                 </div>
               </CardContent>
@@ -199,23 +199,23 @@ export default function DashboardPage() {
         </div>
 
             {/* Getting Started */}
-            <Card className="border-valorant-purple/20">
+            <Card className="border-accent/20">
               <CardHeader>
-                <CardTitle className="text-white">{t.dashboard.gettingStarted}</CardTitle>
+                <CardTitle>{t.dashboard.gettingStarted}</CardTitle>
                 <CardDescription>{t.dashboard.gettingStartedDesc}</CardDescription>
               </CardHeader>
               <CardContent>
-                <ol className="space-y-3 text-gray-300">
+                <ol className="space-y-3 text-foreground">
                   <li className="flex items-start">
-                    <span className="font-bold text-valorant-red mr-3">1.</span>
+                    <span className="font-bold text-primary mr-3">1.</span>
                     <span><strong>{t.dashboard.step1}</strong> {t.dashboard.step1Desc}</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="font-bold text-valorant-cyan mr-3">2.</span>
+                    <span className="font-bold text-secondary mr-3">2.</span>
                     <span><strong>{t.dashboard.step2}</strong> {t.dashboard.step2Desc}</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="font-bold text-valorant-purple mr-3">3.</span>
+                    <span className="font-bold text-accent mr-3">3.</span>
                     <span><strong>{t.dashboard.step3}</strong> {t.dashboard.step3Desc}</span>
                   </li>
                   <li className="flex items-start">
