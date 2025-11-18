@@ -150,7 +150,7 @@ export default function UserProfilePage() {
                         {profile?.nickname?.charAt(0) || "U"}
                       </AvatarFallback>
                     </Avatar>
-                    <OnlineStatusIndicator lastSeenAt={user.lastSeenAt} size="lg" className="-bottom-1 -right-1" />
+                    <OnlineStatusIndicator lastSeenAt={user.lastSeenAt} size="lg" className="bottom-1 right-1" />
                   </div>
 
                   <div className="space-y-2">
