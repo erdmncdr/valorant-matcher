@@ -21,6 +21,7 @@ async function main() {
         create: {
           nickname: 'AdminPlayer',
           tagline: '#0001',
+          avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=valorant1&backgroundColor=ff4655',
           region: 'TR',
           rankCurrent: 'IMMORTAL',
           rankPeak: 'RADIANT',
@@ -53,6 +54,7 @@ async function main() {
         create: {
           nickname: 'TeamCaptain',
           tagline: '#1337',
+          avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cypher&backgroundColor=bd9a68',
           region: 'EU',
           rankCurrent: 'DIAMOND',
           rankPeak: 'ASCENDANT',
@@ -85,6 +87,7 @@ async function main() {
         create: {
           nickname: 'FragHunter',
           tagline: '#9999',
+          avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=reyna&backgroundColor=9d4dbb',
           region: 'TR',
           rankCurrent: 'PLATINUM',
           rankPeak: 'DIAMOND',
@@ -117,6 +120,7 @@ async function main() {
         create: {
           nickname: 'SmokeKing',
           tagline: '#4200',
+          avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=omen&backgroundColor=4650db',
           region: 'EU',
           rankCurrent: 'GOLD',
           rankPeak: 'PLATINUM',
@@ -149,6 +153,7 @@ async function main() {
         create: {
           nickname: 'InfoGatherer',
           tagline: '#1111',
+          avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=sova&backgroundColor=4a8bc2',
           region: 'TR',
           rankCurrent: 'ASCENDANT',
           rankPeak: 'IMMORTAL',
