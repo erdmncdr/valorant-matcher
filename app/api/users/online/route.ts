@@ -23,9 +23,6 @@ export async function GET(req: Request) {
         lastSeenAt: {
           gte: fiveMinutesAgo,
         },
-        id: {
-          not: session.user.id, // Exclude current user
-        },
         isBanned: false,
       },
       select: {
@@ -42,10 +39,7 @@ export async function GET(req: Request) {
           },
         },
       },
-      orderBy:
-        sortBy === "reputation"
-          ? { playerProfile: { reputationScore: "desc" } }
-          : { lastSeenAt: "desc" },
+      orderBy: { lastSeenAt: "desc" },
       take: 50, // Limit to 50 online users
     })
 

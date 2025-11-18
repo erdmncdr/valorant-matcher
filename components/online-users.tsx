@@ -6,8 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Users, TrendingUp, Clock, Star } from "lucide-react"
+import { Users, Clock } from "lucide-react"
 import { getRankBadgeClass } from "@/lib/constants"
 import { formatTimeAgo } from "@/lib/utils"
 import { useLanguage } from "@/lib/i18n/language-context"
@@ -27,13 +26,12 @@ interface OnlineUser {
 
 export function OnlineUsers() {
   const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([])
-  const [sortBy, setSortBy] = useState<"lastSeen" | "reputation">("lastSeen")
   const [isLoading, setIsLoading] = useState(true)
   const { t } = useLanguage()
 
   const fetchOnlineUsers = async () => {
     try {
-      const response = await fetch(`/api/users/online?sortBy=${sortBy}`)
+      const response = await fetch(`/api/users/online`)
       const data = await response.json()
       if (response.ok) {
         setOnlineUsers(data.onlineUsers || [])
@@ -52,7 +50,7 @@ export function OnlineUsers() {
     const interval = setInterval(fetchOnlineUsers, 30 * 1000)
 
     return () => clearInterval(interval)
-  }, [sortBy])
+  }, [])
 
   const getOnlineStatus = (lastSeenAt: string) => {
     const lastSeen = new Date(lastSeenAt)
@@ -67,7 +65,7 @@ export function OnlineUsers() {
   return (
     <Card className="border-valorant-purple/20 sticky top-20 h-fit max-h-[calc(100vh-6rem)] flex flex-col">
       <CardHeader className="pb-3">
-        <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center justify-between">
           <CardTitle className="text-white flex items-center gap-2 text-lg">
             <div className="relative">
               <Users className="h-5 w-5" />
@@ -79,26 +77,6 @@ export function OnlineUsers() {
             {onlineUsers.length}
           </Badge>
         </div>
-
-        <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
-          <SelectTrigger className="h-8 text-xs">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="lastSeen">
-              <div className="flex items-center gap-2">
-                <Clock className="h-3 w-3" />
-                <span>{t.nav.sortByActivity || "Son Görülme"}</span>
-              </div>
-            </SelectItem>
-            <SelectItem value="reputation">
-              <div className="flex items-center gap-2">
-                <TrendingUp className="h-3 w-3" />
-                <span>{t.nav.sortByReputation || "İtibar Puanı"}</span>
-              </div>
-            </SelectItem>
-          </SelectContent>
-        </Select>
       </CardHeader>
 
       <CardContent className="flex-1 overflow-y-auto custom-scrollbar space-y-2 pt-0">
@@ -166,13 +144,6 @@ export function OnlineUsers() {
                         >
                           {profile.rankCurrent}
                         </Badge>
-
-                        {sortBy === "reputation" && (
-                          <div className="flex items-center gap-0.5 text-[10px] text-yellow-500">
-                            <Star className="h-2.5 w-2.5 fill-yellow-500" />
-                            <span className="font-semibold">{profile.reputationScore}</span>
-                          </div>
-                        )}
                       </div>
 
                       <p className="text-[10px] text-gray-500 mt-0.5">
