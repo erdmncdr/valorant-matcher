@@ -63,10 +63,10 @@ export function OnlineUsers() {
   }
 
   return (
-    <Card className="border-valorant-purple/20 sticky top-20 h-fit max-h-[calc(100vh-6rem)] flex flex-col">
+    <Card className="border-accent/20 sticky top-20 h-fit max-h-[calc(100vh-6rem)] flex flex-col">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-white flex items-center gap-2 text-lg">
+          <CardTitle className="flex items-center gap-2 text-lg">
             <div className="relative">
               <Users className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 h-2 w-2 bg-green-500 rounded-full animate-pulse" />
@@ -81,11 +81,11 @@ export function OnlineUsers() {
 
       <CardContent className="flex-1 overflow-y-auto custom-scrollbar space-y-2 pt-0">
         {isLoading ? (
-          <div className="text-center text-gray-400 text-sm py-4">
+          <div className="text-center text-muted-foreground text-sm py-4">
             {t.common.loading || "Loading..."}
           </div>
         ) : onlineUsers.length === 0 ? (
-          <div className="text-center text-gray-400 text-sm py-4">
+          <div className="text-center text-muted-foreground text-sm py-4">
             {t.nav.noOnlineUsers || "Şu anda kimse online değil"}
           </div>
         ) : (
@@ -106,29 +106,29 @@ export function OnlineUsers() {
                 <div className={`p-3 rounded-lg transition-all cursor-pointer group ${
                   isOnline
                     ? "bg-green-500/10 border-2 border-green-500/30 hover:border-green-500/50 hover:bg-green-500/15 shadow-lg shadow-green-500/5"
-                    : "bg-valorant-dark/30 border border-white/5 hover:border-valorant-purple/30 hover:bg-valorant-dark/50"
+                    : "bg-muted/50 border border-border hover:border-accent/30 hover:bg-muted"
                 }`}>
                   <div className="flex items-start gap-2">
                     <div className="relative">
                       <Avatar className={`h-9 w-9 transition-all ${
                         isOnline
                           ? "ring-2 ring-green-500/50 group-hover:ring-green-500/70"
-                          : "ring-1 ring-white/10 group-hover:ring-valorant-purple/50"
+                          : "ring-1 ring-border group-hover:ring-accent/50"
                       }`}>
                         <AvatarFallback
                           className={
                             user.isAdmin
-                              ? "bg-gradient-to-br from-valorant-red to-valorant-purple text-white text-xs font-bold"
+                              ? "bg-gradient-to-br from-primary to-accent text-white text-xs font-bold"
                               : isOnline
                               ? "bg-green-600 text-white text-xs font-semibold"
-                              : "bg-valorant-purple text-white text-xs"
+                              : "bg-accent text-accent-foreground text-xs"
                           }
                         >
                           {profile.nickname.charAt(0)}
                         </AvatarFallback>
                       </Avatar>
                       <span
-                        className={`absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 ${status.color} rounded-full border-2 border-valorant-dark ${isOnline ? 'animate-pulse' : ''}`}
+                        className={`absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 ${status.color} rounded-full border-2 border-card ${isOnline ? 'animate-pulse' : ''}`}
                       />
                     </div>
 
@@ -136,19 +136,19 @@ export function OnlineUsers() {
                       <div className="flex items-center gap-1">
                         <p className={`text-xs font-medium truncate transition-colors ${
                           isOnline
-                            ? "text-white font-semibold group-hover:text-green-400"
-                            : "text-white group-hover:text-valorant-purple"
+                            ? "text-foreground font-semibold group-hover:text-green-400"
+                            : "text-foreground group-hover:text-accent"
                         }`}>
                           {profile.nickname}
                         </p>
                         {user.isAdmin && (
-                          <Badge className="h-4 px-1 text-[10px] bg-gradient-to-r from-valorant-red to-valorant-purple border-0">
+                          <Badge className="h-4 px-1 text-[10px] bg-gradient-to-r from-primary to-accent border-0">
                             ⚡
                           </Badge>
                         )}
                       </div>
 
-                      <p className="text-[10px] text-gray-400 truncate">
+                      <p className="text-[10px] text-muted-foreground truncate">
                         {profile.tagline}
                       </p>
 
@@ -163,7 +163,7 @@ export function OnlineUsers() {
                       </div>
 
                       <p className={`text-[10px] mt-0.5 ${
-                        isOnline ? "text-green-400 font-medium" : "text-gray-500"
+                        isOnline ? "text-green-400 font-medium" : "text-muted-foreground"
                       }`}>
                         {status.text}
                       </p>
