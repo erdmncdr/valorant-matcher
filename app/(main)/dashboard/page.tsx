@@ -10,10 +10,12 @@ import { Badge } from "@/components/ui/badge"
 import { Loader2, UserCircle, Users, MessageCircle, Star } from "lucide-react"
 import { getRankBadgeClass } from "@/lib/constants"
 import { Navbar } from "@/components/layout/navbar"
+import { useLanguage } from "@/lib/i18n/language-context"
 
 export default function DashboardPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const { t } = useLanguage()
   const [profile, setProfile] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -66,22 +68,22 @@ export default function DashboardPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">
-            Welcome back, {profile.nickname}!
+            {t.dashboard.welcome.replace('{nickname}', profile.nickname)}
           </h1>
-          <p className="text-gray-400">Ready to find your perfect 5th teammate?</p>
+          <p className="text-gray-400">{t.dashboard.subtitle}</p>
         </div>
 
         {/* Profile Card */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           <Card className="lg:col-span-2 border-valorant-red/20">
             <CardHeader>
-              <CardTitle className="text-white">Your Profile</CardTitle>
+              <CardTitle className="text-white">{t.dashboard.yourProfile}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-400">Current Rank</p>
+                    <p className="text-sm text-gray-400">{t.dashboard.currentRank}</p>
                     <div className="mt-1">
                       <Badge className={`${getRankBadgeClass(profile.rankCurrent)} rank-badge`}>
                         {profile.rankCurrent}
@@ -89,7 +91,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400">Peak Rank</p>
+                    <p className="text-sm text-gray-400">{t.dashboard.peakRank}</p>
                     <div className="mt-1">
                       <Badge className={`${getRankBadgeClass(profile.rankPeak)} rank-badge`}>
                         {profile.rankPeak}
@@ -97,7 +99,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400">Main Role</p>
+                    <p className="text-sm text-gray-400">{t.dashboard.mainRole}</p>
                     <div className="mt-1">
                       <Badge variant="role">
                         {profile.mainRole}
@@ -107,7 +109,7 @@ export default function DashboardPage() {
                 </div>
 
                 <div>
-                  <p className="text-sm text-gray-400 mb-2">Agents</p>
+                  <p className="text-sm text-gray-400 mb-2">{t.dashboard.agents}</p>
                   <div className="flex flex-wrap gap-2">
                     {profile.playerAgents.map((agent: any) => (
                       <Badge key={agent.id} variant="secondary">
@@ -120,18 +122,18 @@ export default function DashboardPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-400">Region</p>
+                    <p className="text-sm text-gray-400">{t.dashboard.region}</p>
                     <p className="text-white">{profile.region}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400">Languages</p>
+                    <p className="text-sm text-gray-400">{t.dashboard.languages}</p>
                     <p className="text-white">{profile.languages.join(", ")}</p>
                   </div>
                 </div>
 
                 {profile.bio && (
                   <div>
-                    <p className="text-sm text-gray-400 mb-1">Bio</p>
+                    <p className="text-sm text-gray-400 mb-1">{t.dashboard.bio}</p>
                     <p className="text-white text-sm">{profile.bio}</p>
                   </div>
                 )}
@@ -142,25 +144,25 @@ export default function DashboardPage() {
           <div className="space-y-4">
             <Card className="border-valorant-cyan/20">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg text-white">Quick Actions</CardTitle>
+                <CardTitle className="text-lg text-white">{t.dashboard.quickActions}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <Link href="/listings/create?type=team" className="block">
                   <Button variant="outline" className="w-full justify-start border-valorant-red/30 hover:border-valorant-red">
                     <Users className="mr-2 h-4 w-4" />
-                    Create Team Listing
+                    {t.dashboard.createTeamListing}
                   </Button>
                 </Link>
                 <Link href="/listings/create?type=solo" className="block">
                   <Button variant="outline" className="w-full justify-start border-valorant-cyan/30 hover:border-valorant-cyan">
                     <UserCircle className="mr-2 h-4 w-4" />
-                    Create Solo Listing
+                    {t.dashboard.createSoloListing}
                   </Button>
                 </Link>
                 <Link href="/listings" className="block">
                   <Button variant="outline" className="w-full justify-start border-valorant-purple/30 hover:border-valorant-purple">
                     <MessageCircle className="mr-2 h-4 w-4" />
-                    Browse Listings
+                    {t.dashboard.browseListing}
                   </Button>
                 </Link>
               </CardContent>
@@ -170,19 +172,19 @@ export default function DashboardPage() {
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg text-white flex items-center">
                   <Star className="mr-2 h-5 w-5 text-yellow-500" />
-                  Reputation
+                  {t.dashboard.reputation}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-gray-400">Build your reputation by playing with others and getting rated!</p>
+                <p className="text-sm text-gray-400">{t.dashboard.reputationDesc}</p>
                 <div className="mt-3 flex items-center space-x-4">
                   <div className="text-center">
                     <p className="text-2xl font-bold text-green-500">0</p>
-                    <p className="text-xs text-gray-400">Positive</p>
+                    <p className="text-xs text-gray-400">{t.dashboard.positive}</p>
                   </div>
                   <div className="text-center">
                     <p className="text-2xl font-bold text-red-500">0</p>
-                    <p className="text-xs text-gray-400">Negative</p>
+                    <p className="text-xs text-gray-400">{t.dashboard.negative}</p>
                   </div>
                 </div>
               </CardContent>
@@ -193,26 +195,26 @@ export default function DashboardPage() {
         {/* Getting Started */}
         <Card className="border-valorant-purple/20">
           <CardHeader>
-            <CardTitle className="text-white">Getting Started</CardTitle>
-            <CardDescription>How to use NeedOne</CardDescription>
+            <CardTitle className="text-white">{t.dashboard.gettingStarted}</CardTitle>
+            <CardDescription>{t.dashboard.gettingStartedDesc}</CardDescription>
           </CardHeader>
           <CardContent>
             <ol className="space-y-3 text-gray-300">
               <li className="flex items-start">
                 <span className="font-bold text-valorant-red mr-3">1.</span>
-                <span><strong>Find a Team:</strong> Browse team listings to find stacks looking for a 5th player</span>
+                <span><strong>{t.dashboard.step1}</strong> {t.dashboard.step1Desc}</span>
               </li>
               <li className="flex items-start">
                 <span className="font-bold text-valorant-cyan mr-3">2.</span>
-                <span><strong>Create a Listing:</strong> Post as a team (4-stack) or solo player</span>
+                <span><strong>{t.dashboard.step2}</strong> {t.dashboard.step2Desc}</span>
               </li>
               <li className="flex items-start">
                 <span className="font-bold text-valorant-purple mr-3">3.</span>
-                <span><strong>Connect:</strong> Use the built-in chat to communicate</span>
+                <span><strong>{t.dashboard.step3}</strong> {t.dashboard.step3Desc}</span>
               </li>
               <li className="flex items-start">
                 <span className="font-bold text-yellow-500 mr-3">4.</span>
-                <span><strong>Play & Rate:</strong> After playing, rate your teammates to build trust</span>
+                <span><strong>{t.dashboard.step4}</strong> {t.dashboard.step4Desc}</span>
               </li>
             </ol>
           </CardContent>

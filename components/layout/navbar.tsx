@@ -10,7 +10,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { LogOut, User, LayoutDashboard, ChevronDown } from "lucide-react"
+import { LogOut, User, LayoutDashboard, ChevronDown, Languages } from "lucide-react"
+import { useLanguage } from "@/lib/i18n/language-context"
 
 interface NavbarProps {
   profile?: {
@@ -21,6 +22,8 @@ interface NavbarProps {
 }
 
 export function Navbar({ profile, currentPage }: NavbarProps) {
+  const { t, language, setLanguage } = useLanguage()
+
   return (
     <nav className="border-b border-white/10 bg-valorant-dark/50 backdrop-blur-sm">
       <div className="container mx-auto px-4 py-4">
@@ -30,7 +33,7 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
               <div className="h-8 w-8 rounded bg-valorant-red flex items-center justify-center">
                 <span className="text-white font-bold text-xl">N1</span>
               </div>
-              <span className="text-white font-bold text-xl">NeedOne</span>
+              <span className="text-white font-bold text-xl">{t.nav.logo}</span>
             </Link>
             <div className="hidden md:flex items-center space-x-4">
               <Link href="/listings">
@@ -38,7 +41,7 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
                   variant="ghost"
                   className={currentPage === 'listings' ? 'text-valorant-red' : 'text-white'}
                 >
-                  Find Players
+                  {t.nav.findPlayers}
                 </Button>
               </Link>
               <Link href="/my-listings">
@@ -46,7 +49,7 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
                   variant="ghost"
                   className={currentPage === 'my-listings' ? 'text-valorant-red' : 'text-white'}
                 >
-                  My Listings
+                  {t.nav.myListings}
                 </Button>
               </Link>
             </div>
@@ -67,22 +70,30 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
                   <Link href="/dashboard">
                     <DropdownMenuItem className="cursor-pointer">
                       <LayoutDashboard className="mr-2 h-4 w-4" />
-                      Dashboard
+                      {t.nav.dashboard}
                     </DropdownMenuItem>
                   </Link>
                   <Link href="/profile/edit">
                     <DropdownMenuItem className="cursor-pointer">
                       <User className="mr-2 h-4 w-4" />
-                      Edit Profile
+                      {t.nav.editProfile}
                     </DropdownMenuItem>
                   </Link>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => setLanguage(language === 'tr' ? 'en' : 'tr')}
+                  >
+                    <Languages className="mr-2 h-4 w-4" />
+                    {language === 'tr' ? 'English' : 'Türkçe'}
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     className="cursor-pointer text-red-500 focus:text-red-500"
                     onClick={() => signOut({ callbackUrl: "/" })}
                   >
                     <LogOut className="mr-2 h-4 w-4" />
-                    Sign Out
+                    {t.nav.signOut}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

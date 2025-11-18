@@ -6,10 +6,12 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Shield, Users, Star, MessageCircle, Loader2 } from "lucide-react"
+import { Shield, Users, Star, MessageCircle, Loader2, Languages } from "lucide-react"
+import { useLanguage } from "@/lib/i18n/language-context"
 
 export default function HomePage() {
   const { data: session, status } = useSession()
+  const { t, language, setLanguage } = useLanguage()
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -35,14 +37,22 @@ export default function HomePage() {
               <div className="h-8 w-8 rounded bg-valorant-red flex items-center justify-center">
                 <span className="text-white font-bold text-xl">N1</span>
               </div>
-              <span className="text-white font-bold text-xl">NeedOne</span>
+              <span className="text-white font-bold text-xl">{t.nav.logo}</span>
             </div>
             <div className="flex items-center space-x-4">
+              <Button
+                variant="ghost"
+                className="text-white"
+                onClick={() => setLanguage(language === 'tr' ? 'en' : 'tr')}
+              >
+                <Languages className="mr-2 h-4 w-4" />
+                {language === 'tr' ? 'EN' : 'TR'}
+              </Button>
               <Link href="/login">
-                <Button variant="ghost" className="text-white">Login</Button>
+                <Button variant="ghost" className="text-white">{t.auth.signIn}</Button>
               </Link>
               <Link href="/register">
-                <Button variant="valorant">Get Started</Button>
+                <Button variant="valorant">{t.auth.signUp}</Button>
               </Link>
             </div>
           </div>
@@ -53,24 +63,22 @@ export default function HomePage() {
       <div className="container mx-auto px-4 py-20">
         <div className="text-center max-w-4xl mx-auto">
           <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-            Find Your Perfect
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-valorant-red via-valorant-purple to-valorant-cyan">
-              5th Teammate
+              {t.home.title}
             </span>
           </h1>
           <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-            No more toxic randoms. Match with compatible players based on rank, role, and reputation.
-            Built for the Valorant community.
+            {t.home.subtitle}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/register">
               <Button size="lg" variant="valorant" className="text-lg px-8 glow-red">
-                Find a 5th Now
+                {t.home.findNow}
               </Button>
             </Link>
             <Link href="/listings">
               <Button size="lg" variant="outline" className="text-lg px-8 border-valorant-cyan text-valorant-cyan hover:bg-valorant-cyan/10">
-                Browse Players
+                {t.home.browsePlayers}
               </Button>
             </Link>
           </div>
