@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { LogOut, User, LayoutDashboard, ChevronDown, Languages } from "lucide-react"
+import { LogOut, User, LayoutDashboard, ChevronDown, Languages, Shield } from "lucide-react"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 
@@ -20,6 +20,7 @@ interface NavbarProps {
   profile?: {
     nickname: string
     tagline: string
+    isAdmin?: boolean
   }
   currentPage?: string
 }
@@ -117,6 +118,14 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
                       {t.nav.dashboard}
                     </DropdownMenuItem>
                   </Link>
+                  {profile.isAdmin && (
+                    <Link href="/admin/reports">
+                      <DropdownMenuItem className="cursor-pointer">
+                        <Shield className="mr-2 h-4 w-4" />
+                        Admin Panel
+                      </DropdownMenuItem>
+                    </Link>
+                  )}
                   <Link href="/profile/edit">
                     <DropdownMenuItem className="cursor-pointer">
                       <User className="mr-2 h-4 w-4" />
