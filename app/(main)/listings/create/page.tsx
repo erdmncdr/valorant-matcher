@@ -373,14 +373,14 @@ export default function CreateListingPage() {
                     {listingType === "TEAM" ? "Role Needed" : "Your Role"}
                   </Label>
                   <Select
-                    value={formData.desiredRole}
-                    onValueChange={(value) => setFormData({ ...formData, desiredRole: value as PlayerRole })}
+                    value={formData.desiredRole || undefined}
+                    onValueChange={(value) => setFormData({ ...formData, desiredRole: value === "any" ? "" : value as PlayerRole })}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select role (optional)" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Any Role</SelectItem>
+                      <SelectItem value="any">Any Role</SelectItem>
                       {PLAYER_ROLES.map((role) => (
                         <SelectItem key={role.value} value={role.value}>
                           {role.label}

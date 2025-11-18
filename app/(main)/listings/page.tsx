@@ -44,11 +44,11 @@ export default function ListingsPage() {
     try {
       const params = new URLSearchParams({
         listingType: activeTab,
-        ...(filters.mode && { mode: filters.mode }),
-        ...(filters.region && { region: filters.region }),
-        ...(filters.minRank && { minRank: filters.minRank }),
-        ...(filters.maxRank && { maxRank: filters.maxRank }),
-        ...(filters.desiredRole && { desiredRole: filters.desiredRole }),
+        ...(filters.mode && filters.mode !== "all" && { mode: filters.mode }),
+        ...(filters.region && filters.region !== "all" && { region: filters.region }),
+        ...(filters.minRank && filters.minRank !== "all" && { minRank: filters.minRank }),
+        ...(filters.maxRank && filters.maxRank !== "all" && { maxRank: filters.maxRank }),
+        ...(filters.desiredRole && filters.desiredRole !== "all" && { desiredRole: filters.desiredRole }),
       })
 
       const response = await fetch(`/api/listings?${params}`)
@@ -133,14 +133,14 @@ export default function ListingsPage() {
                 <div>
                   <label className="text-sm text-gray-400 mb-2 block">Game Mode</label>
                   <Select
-                    value={filters.mode}
+                    value={filters.mode || undefined}
                     onValueChange={(value) => setFilters({ ...filters, mode: value })}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="All Modes" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Modes</SelectItem>
+                      <SelectItem value="all">All Modes</SelectItem>
                       {GAME_MODES.map((mode) => (
                         <SelectItem key={mode.value} value={mode.value}>
                           {mode.label}
@@ -153,14 +153,14 @@ export default function ListingsPage() {
                 <div>
                   <label className="text-sm text-gray-400 mb-2 block">Region</label>
                   <Select
-                    value={filters.region}
+                    value={filters.region || undefined}
                     onValueChange={(value) => setFilters({ ...filters, region: value })}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="All Regions" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Regions</SelectItem>
+                      <SelectItem value="all">All Regions</SelectItem>
                       {REGIONS.map((region) => (
                         <SelectItem key={region.value} value={region.value}>
                           {region.label}
@@ -173,14 +173,14 @@ export default function ListingsPage() {
                 <div>
                   <label className="text-sm text-gray-400 mb-2 block">Desired Role</label>
                   <Select
-                    value={filters.desiredRole}
+                    value={filters.desiredRole || undefined}
                     onValueChange={(value) => setFilters({ ...filters, desiredRole: value })}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="All Roles" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Roles</SelectItem>
+                      <SelectItem value="all">All Roles</SelectItem>
                       {PLAYER_ROLES.map((role) => (
                         <SelectItem key={role.value} value={role.value}>
                           {role.label}
@@ -193,14 +193,14 @@ export default function ListingsPage() {
                 <div>
                   <label className="text-sm text-gray-400 mb-2 block">Min Rank</label>
                   <Select
-                    value={filters.minRank}
+                    value={filters.minRank || undefined}
                     onValueChange={(value) => setFilters({ ...filters, minRank: value })}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Any" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Any</SelectItem>
+                      <SelectItem value="all">Any</SelectItem>
                       {VALORANT_RANKS.map((rank) => (
                         <SelectItem key={rank.value} value={rank.value}>
                           {rank.label}
@@ -213,14 +213,14 @@ export default function ListingsPage() {
                 <div>
                   <label className="text-sm text-gray-400 mb-2 block">Max Rank</label>
                   <Select
-                    value={filters.maxRank}
+                    value={filters.maxRank || undefined}
                     onValueChange={(value) => setFilters({ ...filters, maxRank: value })}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Any" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Any</SelectItem>
+                      <SelectItem value="all">Any</SelectItem>
                       {VALORANT_RANKS.map((rank) => (
                         <SelectItem key={rank.value} value={rank.value}>
                           {rank.label}
