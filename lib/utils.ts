@@ -5,8 +5,9 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatTimeAgo(date: Date): string {
-  const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000)
+export function formatTimeAgo(date: Date | string): string {
+  const dateObj = typeof date === 'string' ? new Date(date) : date
+  const seconds = Math.floor((new Date().getTime() - dateObj.getTime()) / 1000)
 
   if (seconds < 60) return 'just now'
 
@@ -26,8 +27,9 @@ export function formatTimeAgo(date: Date): string {
   return `${years}y ago`
 }
 
-export function formatExpiresIn(expiresAt: Date): string {
-  const seconds = Math.floor((expiresAt.getTime() - new Date().getTime()) / 1000)
+export function formatExpiresIn(expiresAt: Date | string): string {
+  const dateObj = typeof expiresAt === 'string' ? new Date(expiresAt) : expiresAt
+  const seconds = Math.floor((dateObj.getTime() - new Date().getTime()) / 1000)
 
   if (seconds <= 0) return 'Expired'
 
@@ -38,6 +40,7 @@ export function formatExpiresIn(expiresAt: Date): string {
   return `${hours}h ${minutes % 60}m left`
 }
 
-export function isListingExpired(expiresAt: Date): boolean {
-  return new Date() > expiresAt
+export function isListingExpired(expiresAt: Date | string): boolean {
+  const dateObj = typeof expiresAt === 'string' ? new Date(expiresAt) : expiresAt
+  return new Date() > dateObj
 }
