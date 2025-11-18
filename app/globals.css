@@ -4,34 +4,34 @@
 
 @layer base {
   :root {
-    /* Valorant-inspired light theme - Soft & smooth */
-    --background: 220 15% 96%; /* Soft grayish-blue background */
-    --foreground: 220 20% 25%; /* Softer dark gray text */
-    --card: 220 10% 98%; /* Very soft white cards */
-    --card-foreground: 220 20% 25%;
-    --popover: 220 10% 98%;
-    --popover-foreground: 220 20% 25%;
-    --primary: 351 85% 58%; /* Softer Valorant Red */
+    /* Valorant-inspired light theme - Colorful & readable */
+    --background: 220 25% 88%; /* Light blue-gray, not white */
+    --foreground: 220 30% 15%; /* Dark text for readability */
+    --card: 220 20% 94%; /* Lighter cards that stand out */
+    --card-foreground: 220 30% 15%;
+    --popover: 220 20% 95%;
+    --popover-foreground: 220 30% 15%;
+    --primary: 351 90% 55%; /* Vibrant but soft red */
     --primary-foreground: 0 0% 100%;
-    --secondary: 180 75% 55%; /* Softer, lighter cyan */
-    --secondary-foreground: 220 20% 15%;
-    --muted: 220 15% 92%;
-    --muted-foreground: 220 15% 45%;
-    --accent: 267 80% 65%; /* Softer Valorant Purple */
+    --secondary: 180 85% 50%; /* Bright cyan */
+    --secondary-foreground: 220 30% 10%;
+    --muted: 220 20% 85%;
+    --muted-foreground: 220 25% 35%;
+    --accent: 267 90% 62%; /* Vibrant purple */
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 75% 58%;
+    --destructive: 0 80% 55%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 15% 80%;
-    --input: 220 15% 88%;
-    --ring: 351 85% 58%;
+    --border: 220 20% 75%;
+    --input: 220 20% 90%;
+    --ring: 351 90% 55%;
     --radius: 0.5rem;
 
-    /* Valorant brand colors for light theme - softer tones */
-    --valorant-red: 351 85% 58%;
-    --valorant-cyan: 180 75% 55%;
-    --valorant-purple: 267 80% 65%;
-    --valorant-dark: 220 15% 88%;
-    --valorant-darker: 220 15% 92%;
+    /* Valorant brand colors for light theme - vibrant but pleasant */
+    --valorant-red: 351 90% 55%;
+    --valorant-cyan: 180 85% 50%;
+    --valorant-purple: 267 90% 62%;
+    --valorant-dark: 220 20% 80%;
+    --valorant-darker: 220 20% 85%;
   }
 
   .dark {
