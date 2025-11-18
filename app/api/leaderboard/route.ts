@@ -17,9 +17,6 @@ export async function GET(req: Request) {
 
     const topPlayers = await prisma.playerProfile.findMany({
       where: {
-        reputationScore: {
-          gt: 0, // Only show players with reputation
-        },
         user: {
           isBanned: false,
         },

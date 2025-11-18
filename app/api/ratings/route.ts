@@ -50,16 +50,30 @@ export async function POST(req: Request) {
       )
     }
 
-    const rating = await prisma.playerRating.create({
-      data: {
-        raterUserId: session.user.id,
-        targetUserId: data.targetUserId,
-        listingId: data.listingId,
-        score: data.score,
-        tags: data.tags,
-        comment: data.comment,
-      },
-    })
+    // Create rating and update reputation score in a transaction
+    const [rating, _] = await prisma.$transaction([
+      prisma.playerRating.create({
+        data: {
+          raterUserId: session.user.id,
+          targetUserId: data.targetUserId,
+          listingId: data.listingId,
+          score: data.score,
+          tags: data.tags,
+          comment: data.comment,
+        },
+      }),
+      // Update the target user's reputation score
+      prisma.playerProfile.update({
+        where: {
+          userId: data.targetUserId,
+        },
+        data: {
+          reputationScore: {
+            increment: data.score, // +1 or -1
+          },
+        },
+      }),
+    ])
 
     return NextResponse.json({ rating }, { status: 201 })
   } catch (error: any) {

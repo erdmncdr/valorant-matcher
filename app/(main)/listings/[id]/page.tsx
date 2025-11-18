@@ -38,6 +38,7 @@ export default function ListingDetailPage() {
   const [applyMessage, setApplyMessage] = useState("")
   const [isApplying, setIsApplying] = useState(false)
   const [myProfile, setMyProfile] = useState<any>(null)
+  const [processingApplicationId, setProcessingApplicationId] = useState<string | null>(null)
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -186,6 +187,41 @@ export default function ListingDetailPage() {
         title: t.common.error || "Error",
         description: error.message,
       })
+    }
+  }
+
+  const handleApplicationAction = async (applicationId: string, action: "accept" | "decline") => {
+    setProcessingApplicationId(applicationId)
+    try {
+      const response = await fetch(`/api/applications/${applicationId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to process application")
+      }
+
+      toast({
+        title: t.common.success || "Success",
+        description: action === "accept"
+          ? "Application accepted successfully"
+          : "Application declined successfully",
+      })
+
+      // Refresh listing to show updated application status
+      fetchListing()
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: t.common.error || "Error",
+        description: error.message,
+      })
+    } finally {
+      setProcessingApplicationId(null)
     }
   }
 
@@ -539,16 +575,63 @@ export default function ListingDetailPage() {
                                 ? "destructive"
                                 : "outline"
                             }
+                            className={
+                              application.status === "accepted"
+                                ? "bg-green-500/20 text-green-500 border-green-500"
+                                : application.status === "declined"
+                                ? "bg-red-500/20 text-red-500 border-red-500"
+                                : ""
+                            }
                           >
-                            {application.status}
+                            {application.status === "accepted" && <Check className="h-3 w-3 mr-1" />}
+                            {application.status === "declined" && <X className="h-3 w-3 mr-1" />}
+                            {application.status === "accepted" ? "Accepted" :
+                             application.status === "declined" ? "Declined" :
+                             "Pending"}
                           </Badge>
                         </div>
                         {application.message && (
                           <p className="text-xs text-gray-300 mb-2">{application.message}</p>
                         )}
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-gray-400 mb-2">
                           {t.listings.applied || "Applied"} {formatTimeAgo(new Date(application.createdAt))}
                         </p>
+                        {application.status === "pending" && (
+                          <div className="flex gap-2 mt-2">
+                            <Button
+                              size="sm"
+                              variant="default"
+                              className="flex-1 bg-green-600 hover:bg-green-700"
+                              onClick={() => handleApplicationAction(application.id, "accept")}
+                              disabled={processingApplicationId === application.id}
+                            >
+                              {processingApplicationId === application.id ? (
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                              ) : (
+                                <>
+                                  <Check className="h-3 w-3 mr-1" />
+                                  Accept
+                                </>
+                              )}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              className="flex-1"
+                              onClick={() => handleApplicationAction(application.id, "decline")}
+                              disabled={processingApplicationId === application.id}
+                            >
+                              {processingApplicationId === application.id ? (
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                              ) : (
+                                <>
+                                  <X className="h-3 w-3 mr-1" />
+                                  Decline
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>

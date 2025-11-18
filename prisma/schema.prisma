@@ -145,6 +145,7 @@ model PlayerProfile {
   seriousness     Seriousness   @default(NORMAL)
   typicalPlaytime String? // e.g. "Weekdays evening"
   bio             String?
+  reputationScore Int           @default(0) // Calculated from ratings
 
   // Relations
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
