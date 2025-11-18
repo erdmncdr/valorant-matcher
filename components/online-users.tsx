@@ -161,12 +161,6 @@ export function OnlineUsers() {
                           {profile.rankCurrent}
                         </Badge>
                       </div>
-
-                      <p className={`text-[10px] mt-0.5 ${
-                        isOnline ? "text-green-400 font-medium" : "text-muted-foreground"
-                      }`}>
-                        {status.text}
-                      </p>
                     </div>
                   </div>
                 </div>
