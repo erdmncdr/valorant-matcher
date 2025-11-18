@@ -73,9 +73,9 @@ export default function RegisterPage() {
           title: "Sign in failed",
           description: "Please try logging in manually",
         })
-        router.push("/login")
+        window.location.href = "/login"
       } else {
-        router.push("/profile/complete")
+        window.location.href = "/profile/complete"
       }
     } catch (error: any) {
       toast({

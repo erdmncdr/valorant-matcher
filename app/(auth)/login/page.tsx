@@ -40,7 +40,8 @@ export default function LoginPage() {
           title: "Welcome back!",
           description: "Redirecting to dashboard...",
         })
-        router.push("/dashboard")
+        // Use window.location for full page reload to ensure session is properly loaded
+        window.location.href = "/dashboard"
       }
     } catch (error) {
       toast({
