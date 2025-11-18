@@ -30,6 +30,7 @@ export default function ListingsPage() {
     minRank: "",
     maxRank: "",
     desiredRole: "",
+    sortBy: "createdAt",
   })
 
   useEffect(() => {
@@ -61,6 +62,7 @@ export default function ListingsPage() {
     try {
       const params = new URLSearchParams({
         listingType: activeTab,
+        sortBy: filters.sortBy,
         ...(filters.mode && filters.mode !== "all" && { mode: filters.mode }),
         ...(filters.region && filters.region !== "all" && { region: filters.region }),
         ...(filters.minRank && filters.minRank !== "all" && { minRank: filters.minRank }),
@@ -84,6 +86,7 @@ export default function ListingsPage() {
       region: "",
       minRank: "",
       maxRank: "",
+      sortBy: "createdAt",
       desiredRole: "",
     })
   }
@@ -127,6 +130,22 @@ export default function ListingsPage() {
               </div>
 
               <div className="space-y-4">
+                <div>
+                  <label className="text-sm text-gray-400 mb-2 block">{t.listings.sortBy || "Sıralama"}</label>
+                  <Select
+                    value={filters.sortBy}
+                    onValueChange={(value) => setFilters({ ...filters, sortBy: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="createdAt">{t.listings.sortByNewest || "En Yeni"}</SelectItem>
+                      <SelectItem value="reputation">{t.listings.sortByReputation || "En Yüksek İtibar"}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <div>
                   <label className="text-sm text-gray-400 mb-2 block">{t.listings.gameMode}</label>
                   <Select

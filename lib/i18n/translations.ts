@@ -8,6 +8,10 @@ export const translations = {
       dashboard: "Kontrol Paneli",
       editProfile: "Profili Düzenle",
       signOut: "Çıkış Yap",
+      onlineUsers: "Online Oyuncular",
+      sortByActivity: "Son Görülme",
+      sortByReputation: "İtibar Puanı",
+      noOnlineUsers: "Şu anda kimse online değil",
     },
 
     // Home Page
@@ -119,6 +123,9 @@ export const translations = {
       applicationSentDesc: "İlan sahibi başvurunu görecek",
       listingClosed: "İlan kapatıldı",
       listingClosedDesc: "İlanın kapatıldı",
+      sortBy: "Sıralama",
+      sortByNewest: "En Yeni",
+      sortByReputation: "En Yüksek İtibar",
     },
 
     // My Listings

@@ -11,8 +11,11 @@ import { Loader2, UserCircle, Users, MessageCircle, Star } from "lucide-react"
 import { getRankBadgeClass } from "@/lib/constants"
 import { Navbar } from "@/components/layout/navbar"
 import { useLanguage } from "@/lib/i18n/language-context"
+import { OnlineUsers } from "@/components/online-users"
+import { usePresence } from "@/hooks/use-presence"
 
 export default function DashboardPage() {
+  usePresence() // Maintain online presence
   const { data: session, status } = useSession()
   const router = useRouter()
   const { t } = useLanguage()
@@ -66,15 +69,18 @@ export default function DashboardPage() {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">
-            {t.dashboard.welcome.replace('{nickname}', profile.nickname)}
-          </h1>
-          <p className="text-gray-400">{t.dashboard.subtitle}</p>
-        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Main Content - Left Side */}
+          <div className="lg:col-span-3">
+            <div className="mb-8">
+              <h1 className="text-4xl font-bold text-white mb-2">
+                {t.dashboard.welcome.replace('{nickname}', profile.nickname)}
+              </h1>
+              <p className="text-gray-400">{t.dashboard.subtitle}</p>
+            </div>
 
-        {/* Profile Card */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            {/* Profile Card */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           <Card className="lg:col-span-2 border-valorant-red/20">
             <CardHeader>
               <CardTitle className="text-white">{t.dashboard.yourProfile}</CardTitle>
@@ -192,33 +198,40 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Getting Started */}
-        <Card className="border-valorant-purple/20">
-          <CardHeader>
-            <CardTitle className="text-white">{t.dashboard.gettingStarted}</CardTitle>
-            <CardDescription>{t.dashboard.gettingStartedDesc}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ol className="space-y-3 text-gray-300">
-              <li className="flex items-start">
-                <span className="font-bold text-valorant-red mr-3">1.</span>
-                <span><strong>{t.dashboard.step1}</strong> {t.dashboard.step1Desc}</span>
-              </li>
-              <li className="flex items-start">
-                <span className="font-bold text-valorant-cyan mr-3">2.</span>
-                <span><strong>{t.dashboard.step2}</strong> {t.dashboard.step2Desc}</span>
-              </li>
-              <li className="flex items-start">
-                <span className="font-bold text-valorant-purple mr-3">3.</span>
-                <span><strong>{t.dashboard.step3}</strong> {t.dashboard.step3Desc}</span>
-              </li>
-              <li className="flex items-start">
-                <span className="font-bold text-yellow-500 mr-3">4.</span>
-                <span><strong>{t.dashboard.step4}</strong> {t.dashboard.step4Desc}</span>
-              </li>
-            </ol>
-          </CardContent>
-        </Card>
+            {/* Getting Started */}
+            <Card className="border-valorant-purple/20">
+              <CardHeader>
+                <CardTitle className="text-white">{t.dashboard.gettingStarted}</CardTitle>
+                <CardDescription>{t.dashboard.gettingStartedDesc}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ol className="space-y-3 text-gray-300">
+                  <li className="flex items-start">
+                    <span className="font-bold text-valorant-red mr-3">1.</span>
+                    <span><strong>{t.dashboard.step1}</strong> {t.dashboard.step1Desc}</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="font-bold text-valorant-cyan mr-3">2.</span>
+                    <span><strong>{t.dashboard.step2}</strong> {t.dashboard.step2Desc}</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="font-bold text-valorant-purple mr-3">3.</span>
+                    <span><strong>{t.dashboard.step3}</strong> {t.dashboard.step3Desc}</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="font-bold text-yellow-500 mr-3">4.</span>
+                    <span><strong>{t.dashboard.step4}</strong> {t.dashboard.step4Desc}</span>
+                  </li>
+                </ol>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Online Users Sidebar - Right Side */}
+          <div className="lg:col-span-1">
+            <OnlineUsers />
+          </div>
+        </div>
       </div>
     </div>
   )

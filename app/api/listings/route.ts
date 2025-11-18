@@ -32,6 +32,7 @@ export async function GET(req: Request) {
     const minRank = searchParams.get("minRank")
     const maxRank = searchParams.get("maxRank")
     const desiredRole = searchParams.get("desiredRole")
+    const sortBy = searchParams.get("sortBy") || "createdAt" // "createdAt" or "reputation"
     const my = searchParams.get("my") // Get user's own listings
 
     // If requesting own listings, require authentication
@@ -126,9 +127,10 @@ export async function GET(req: Request) {
           },
         },
       },
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy:
+        sortBy === "reputation"
+          ? { owner: { playerProfile: { reputationScore: "desc" } } }
+          : { createdAt: "desc" },
       take: 50,
     })
 

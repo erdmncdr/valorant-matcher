@@ -4,13 +4,16 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 
 // GET online users (users active in last 5 minutes)
-export async function GET() {
+export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions)
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
+
+    const { searchParams } = new URL(req.url)
+    const sortBy = searchParams.get("sortBy") || "lastSeen" // "lastSeen" or "reputation"
 
     // Consider users online if they were active in the last 5 minutes
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000)
@@ -35,12 +38,14 @@ export async function GET() {
             tagline: true,
             rankCurrent: true,
             mainRole: true,
+            reputationScore: true,
           },
         },
       },
-      orderBy: {
-        lastSeenAt: "desc",
-      },
+      orderBy:
+        sortBy === "reputation"
+          ? { playerProfile: { reputationScore: "desc" } }
+          : { lastSeenAt: "desc" },
       take: 50, // Limit to 50 online users
     })
 
