@@ -1,13 +1,13 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
+import { useSession, signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Loader2, UserCircle, Users, MessageCircle, Star } from "lucide-react"
+import { Loader2, UserCircle, Users, MessageCircle, Star, LogOut } from "lucide-react"
 import { getRankBadgeClass } from "@/lib/constants"
 
 export default function DashboardPage() {
@@ -83,11 +83,20 @@ export default function DashboardPage() {
               <Link href="/profile/edit">
                 <Button variant="outline">Edit Profile</Button>
               </Link>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-3">
                 <div className="text-right">
                   <p className="text-sm font-medium text-white">{profile.nickname}</p>
                   <p className="text-xs text-gray-400">{profile.tagline}</p>
                 </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  className="text-gray-400 hover:text-white hover:bg-red-500/10"
+                  title="Sign Out"
+                >
+                  <LogOut className="h-5 w-5" />
+                </Button>
               </div>
             </div>
           </div>
