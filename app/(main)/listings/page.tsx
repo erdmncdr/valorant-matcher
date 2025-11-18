@@ -81,7 +81,7 @@ export default function ListingsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-black">
-      {/* Navigation */}
+      {/* Simple Navigation for Listings Page */}
       <nav className="border-b border-white/10 bg-valorant-dark/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">

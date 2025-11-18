@@ -19,7 +19,9 @@ import {
   REGIONS,
   LANGUAGES,
   VALORANT_AGENTS,
+  PRESET_AVATARS,
 } from "@/lib/constants"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ValorantRank, PlayerRole, Seriousness } from "@prisma/client"
 
 interface ProfileFormProps {
@@ -35,6 +37,7 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
   const [formData, setFormData] = useState({
     nickname: initialData?.nickname || "",
     tagline: initialData?.tagline || "",
+    avatarUrl: initialData?.avatarUrl || PRESET_AVATARS[0].url,
     region: initialData?.region || "",
     rankCurrent: initialData?.rankCurrent || "",
     rankPeak: initialData?.rankPeak || "",
@@ -45,6 +48,8 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
     typicalPlaytime: initialData?.typicalPlaytime || "",
     bio: initialData?.bio || "",
   })
+
+  const [showCustomUrl, setShowCustomUrl] = useState(false)
 
   const [selectedAgents, setSelectedAgents] = useState<Array<{ agentName: string; priority: string }>>(
     initialData?.playerAgents || []
@@ -151,6 +156,65 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
           <CardDescription>Your in-game identity</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          {/* Avatar Selection */}
+          <div className="space-y-3">
+            <Label>Profile Avatar</Label>
+            <div className="flex items-center gap-4">
+              <Avatar className="h-20 w-20 border-2 border-valorant-red/50">
+                <AvatarImage src={formData.avatarUrl} alt="Profile Avatar" />
+                <AvatarFallback className="bg-valorant-red text-white text-2xl">
+                  {formData.nickname ? formData.nickname.substring(0, 2).toUpperCase() : "??"}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1">
+                <p className="text-sm text-gray-400 mb-2">Choose a preset avatar or enter custom URL</p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowCustomUrl(!showCustomUrl)}
+                >
+                  {showCustomUrl ? "Choose Preset" : "Custom URL"}
+                </Button>
+              </div>
+            </div>
+
+            {showCustomUrl ? (
+              <div className="space-y-2">
+                <Label htmlFor="customAvatar">Custom Avatar URL</Label>
+                <Input
+                  id="customAvatar"
+                  value={formData.avatarUrl}
+                  onChange={(e) => setFormData({ ...formData, avatarUrl: e.target.value })}
+                  placeholder="https://example.com/avatar.png"
+                />
+              </div>
+            ) : (
+              <div>
+                <Label className="text-sm text-gray-400 mb-2 block">Select Avatar</Label>
+                <div className="grid grid-cols-5 sm:grid-cols-7 md:grid-cols-10 gap-2">
+                  {PRESET_AVATARS.map((avatar) => (
+                    <button
+                      key={avatar.id}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, avatarUrl: avatar.url })}
+                      className={`relative rounded-lg overflow-hidden border-2 transition-all hover:scale-110 ${
+                        formData.avatarUrl === avatar.url
+                          ? "border-valorant-red ring-2 ring-valorant-red/50"
+                          : "border-gray-700 hover:border-valorant-cyan"
+                      }`}
+                    >
+                      <Avatar className="h-12 w-12">
+                        <AvatarImage src={avatar.url} alt={`Avatar ${avatar.id}`} />
+                        <AvatarFallback>{avatar.id}</AvatarFallback>
+                      </Avatar>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="nickname">In-Game Name *</Label>
