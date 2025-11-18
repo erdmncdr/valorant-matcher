@@ -6,22 +6,22 @@
   :root {
     /* Valorant-inspired light theme - Colorful & readable */
     --background: 220 25% 88%; /* Light blue-gray, not white */
-    --foreground: 220 30% 15%; /* Dark text for readability */
+    --foreground: 220 40% 8%; /* Very dark text - highly readable */
     --card: 220 20% 94%; /* Lighter cards that stand out */
-    --card-foreground: 220 30% 15%;
+    --card-foreground: 220 40% 8%;
     --popover: 220 20% 95%;
-    --popover-foreground: 220 30% 15%;
+    --popover-foreground: 220 40% 8%;
     --primary: 351 90% 55%; /* Vibrant but soft red */
     --primary-foreground: 0 0% 100%;
     --secondary: 180 85% 50%; /* Bright cyan */
-    --secondary-foreground: 220 30% 10%;
+    --secondary-foreground: 220 40% 5%;
     --muted: 220 20% 85%;
-    --muted-foreground: 220 25% 35%;
+    --muted-foreground: 220 30% 20%; /* Much darker for readability */
     --accent: 267 90% 62%; /* Vibrant purple */
     --accent-foreground: 0 0% 100%;
     --destructive: 0 80% 55%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 20% 75%;
+    --border: 220 20% 70%;
     --input: 220 20% 90%;
     --ring: 351 90% 55%;
     --radius: 0.5rem;
