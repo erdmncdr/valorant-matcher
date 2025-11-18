@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { LogOut, User, LayoutDashboard, ChevronDown, Languages } from "lucide-react"
 import { useLanguage } from "@/lib/i18n/language-context"
+import { ThemeToggle } from "@/components/ui/theme-toggle"
 
 interface NavbarProps {
   profile?: {
@@ -88,6 +89,9 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
               <Languages className="h-4 w-4" />
               <span className="font-semibold text-base">{language === 'tr' ? '🇹🇷 TR' : '🇬🇧 EN'}</span>
             </Button>
+
+            {/* Theme Toggle */}
+            <ThemeToggle />
 
             {profile && (
               <DropdownMenu>
