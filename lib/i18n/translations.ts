@@ -241,6 +241,7 @@ export const translations = {
       submitting: "Gönderiliyor...",
       submit: "Gönder",
       viewProfile: "Profili Görüntüle",
+      viewListing: "İlanı Görüntüle",
     },
   },
 
@@ -486,6 +487,7 @@ export const translations = {
       submitting: "Submitting...",
       submit: "Submit",
       viewProfile: "View Profile",
+      viewListing: "View Listing",
     },
   },
 }

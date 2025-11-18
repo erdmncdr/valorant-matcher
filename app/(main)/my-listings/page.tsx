@@ -251,7 +251,7 @@ export default function MyListingsPage() {
                         {/* View Listing Button */}
                         <Link href={`/listings/${listing?.id}`}>
                           <Button variant="outline" className="w-full">
-                            {t.common.viewProfile || "View Listing"}
+                            {t.common.viewListing || "View Listing"}
                           </Button>
                         </Link>
                       </CardContent>
