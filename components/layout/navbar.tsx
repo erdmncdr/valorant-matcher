@@ -3,7 +3,14 @@
 import { signOut } from "next-auth/react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { LogOut } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { LogOut, User, LayoutDashboard, ChevronDown } from "lucide-react"
 
 interface NavbarProps {
   profile?: {
@@ -19,7 +26,7 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-6">
-            <Link href="/dashboard" className="flex items-center space-x-2">
+            <Link href="/listings" className="flex items-center space-x-2">
               <div className="h-8 w-8 rounded bg-valorant-red flex items-center justify-center">
                 <span className="text-white font-bold text-xl">N1</span>
               </div>
@@ -46,26 +53,39 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
           </div>
           <div className="flex items-center space-x-4">
             {profile && (
-              <>
-                <Link href="/profile/edit">
-                  <Button variant="outline">Edit Profile</Button>
-                </Link>
-                <div className="flex items-center space-x-3">
-                  <div className="text-right hidden sm:block">
-                    <p className="text-sm font-medium text-white">{profile.nickname}</p>
-                    <p className="text-xs text-gray-400">{profile.tagline}</p>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => signOut({ callbackUrl: "/" })}
-                    className="text-gray-400 hover:text-white hover:bg-red-500/10"
-                    title="Sign Out"
-                  >
-                    <LogOut className="h-5 w-5" />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="flex items-center space-x-2">
+                    <div className="text-right hidden sm:block">
+                      <p className="text-sm font-medium text-white">{profile.nickname}</p>
+                      <p className="text-xs text-gray-400">{profile.tagline}</p>
+                    </div>
+                    <ChevronDown className="h-4 w-4 text-gray-400" />
                   </Button>
-                </div>
-              </>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <Link href="/dashboard">
+                    <DropdownMenuItem className="cursor-pointer">
+                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                      Dashboard
+                    </DropdownMenuItem>
+                  </Link>
+                  <Link href="/profile/edit">
+                    <DropdownMenuItem className="cursor-pointer">
+                      <User className="mr-2 h-4 w-4" />
+                      Edit Profile
+                    </DropdownMenuItem>
+                  </Link>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="cursor-pointer text-red-500 focus:text-red-500"
+                    onClick={() => signOut({ callbackUrl: "/" })}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
           </div>
         </div>

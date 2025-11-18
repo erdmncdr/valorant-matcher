@@ -9,10 +9,12 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ListingCard } from "@/components/listings/listing-card"
 import { Loader2 } from "lucide-react"
+import { Navbar } from "@/components/layout/navbar"
 
 export default function MyListingsPage() {
   const { status } = useSession()
   const router = useRouter()
+  const [profile, setProfile] = useState<any>(null)
   const [myListings, setMyListings] = useState<any[]>([])
   const [myApplications, setMyApplications] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -24,9 +26,22 @@ export default function MyListingsPage() {
     }
 
     if (status === "authenticated") {
+      fetchProfile()
       fetchMyData()
     }
   }, [status, router])
+
+  const fetchProfile = async () => {
+    try {
+      const response = await fetch("/api/profile")
+      const data = await response.json()
+      if (data.profile) {
+        setProfile(data.profile)
+      }
+    } catch (error) {
+      console.error("Failed to fetch profile:", error)
+    }
+  }
 
   const fetchMyData = async () => {
     setIsLoading(true)
@@ -60,30 +75,7 @@ export default function MyListingsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-black">
-      {/* Navigation */}
-      <nav className="border-b border-white/10 bg-valorant-dark/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/dashboard" className="flex items-center space-x-2">
-              <div className="h-8 w-8 rounded bg-valorant-red flex items-center justify-center">
-                <span className="text-white font-bold text-xl">N1</span>
-              </div>
-              <span className="text-white font-bold text-xl">NeedOne</span>
-            </Link>
-            <div className="flex items-center space-x-4">
-              <Link href="/listings/create">
-                <Button variant="valorant">Create Listing</Button>
-              </Link>
-              <Link href="/listings">
-                <Button variant="ghost" className="text-white">Browse Listings</Button>
-              </Link>
-              <Link href="/dashboard">
-                <Button variant="ghost" className="text-white">Dashboard</Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navbar profile={profile} currentPage="my-listings" />
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
