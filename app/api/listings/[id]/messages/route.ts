@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
+import { censorProfanity, containsProfanity } from "@/lib/profanity-filter"
 
 const sendMessageSchema = z.object({
   content: z.string().min(1).max(1000),
@@ -95,11 +96,14 @@ export async function POST(
     const body = await req.json()
     const { content } = sendMessageSchema.parse(body)
 
+    // Auto-censor profanity in messages
+    const censoredContent = censorProfanity(content)
+
     const message = await prisma.listingMessage.create({
       data: {
         listingId: params.id,
         senderUserId: session.user.id,
-        content,
+        content: censoredContent,
       },
       include: {
         sender: {

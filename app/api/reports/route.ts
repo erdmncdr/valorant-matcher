@@ -3,11 +3,12 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
-import { ReportReason } from "@prisma/client"
+import { ReportReason, ReportCategory } from "@prisma/client"
 
 const createReportSchema = z.object({
   targetUserId: z.string(),
   listingId: z.string().optional(),
+  category: z.nativeEnum(ReportCategory),
   reason: z.nativeEnum(ReportReason),
   description: z.string().min(10).max(1000),
 })
@@ -39,6 +40,7 @@ export async function POST(req: Request) {
         reporterUserId: session.user.id,
         targetUserId: data.targetUserId,
         listingId: data.listingId,
+        category: data.category,
         reason: data.reason,
         description: data.description,
       },
@@ -62,7 +64,7 @@ export async function POST(req: Request) {
 }
 
 // GET reports (admin only)
-export async function GET() {
+export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions)
 
@@ -84,7 +86,27 @@ export async function GET() {
       )
     }
 
+    const { searchParams } = new URL(req.url)
+    const status = searchParams.get("status")
+    const category = searchParams.get("category")
+    const targetUserId = searchParams.get("targetUserId")
+
+    const where: any = {}
+
+    if (status) {
+      where.status = status
+    }
+
+    if (category) {
+      where.category = category
+    }
+
+    if (targetUserId) {
+      where.targetUserId = targetUserId
+    }
+
     const reports = await prisma.report.findMany({
+      where,
       include: {
         reporter: {
           include: {

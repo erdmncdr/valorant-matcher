@@ -280,6 +280,11 @@ model PlayerRating {
 // SAFETY & MODERATION
 // ============================================
 
+enum ReportCategory {
+  IN_GAME      // Issues during gameplay
+  ON_PLATFORM  // Issues on the platform/website
+}
+
 enum ReportReason {
   TOXIC_VOICE
   VERBAL_ABUSE
@@ -290,29 +295,37 @@ enum ReportReason {
   GRIEFING
   CHEATING_SUSPICION
   SPAM
+  INAPPROPRIATE_CONTENT
   OTHER
 }
 
 enum ReportStatus {
   OPEN
   UNDER_REVIEW
-  CLOSED
+  RESOLVED
+  DISMISSED
 }
 
 model Report {
-  id             String       @id @default(cuid())
+  id             String         @id @default(cuid())
   reporterUserId String
   targetUserId   String
   listingId      String?
+  category       ReportCategory
   reason         ReportReason
   description    String
-  status         ReportStatus @default(OPEN)
-  createdAt      DateTime     @default(now())
+  status         ReportStatus   @default(OPEN)
+  createdAt      DateTime       @default(now())
+  reviewedAt     DateTime?
+  reviewedBy     String?        // Admin user ID who reviewed
+  reviewNotes    String?        // Admin notes
 
   // Relations
   reporter User @relation("ReporterUser", fields: [reporterUserId], references: [id], onDelete: Cascade)
   target   User @relation("TargetUser", fields: [targetUserId], references: [id], onDelete: Cascade)
 
+  @@index([status, createdAt])
+  @@index([targetUserId, status])
   @@map("reports")
 }
 

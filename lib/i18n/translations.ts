@@ -242,6 +242,9 @@ export const translations = {
       submit: "Gönder",
       viewProfile: "Profili Görüntüle",
       viewListing: "İlanı Görüntüle",
+      reportUser: "Kullanıcıyı Bildir",
+      submitReport: "Bildirimi Gönder",
+      error: "Hata",
     },
   },
 
@@ -488,6 +491,9 @@ export const translations = {
       submit: "Submit",
       viewProfile: "View Profile",
       viewListing: "View Listing",
+      reportUser: "Report User",
+      submitReport: "Submit Report",
+      error: "Error",
     },
   },
 }

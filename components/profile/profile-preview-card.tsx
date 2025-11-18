@@ -1,24 +1,30 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { Loader2, ThumbsUp, ThumbsDown, ExternalLink, Shield } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Loader2, ThumbsUp, ThumbsDown, ExternalLink, Shield, Flag } from "lucide-react"
 import { getRankBadgeClass } from "@/lib/constants"
 import { useLanguage } from "@/lib/i18n/language-context"
+import { ReportForm } from "@/components/reports/report-form"
 
 interface ProfilePreviewCardProps {
   userId: string
+  listingId?: string
   onViewProfile?: () => void
 }
 
-export function ProfilePreviewCard({ userId, onViewProfile }: ProfilePreviewCardProps) {
+export function ProfilePreviewCard({ userId, listingId, onViewProfile }: ProfilePreviewCardProps) {
+  const { data: session } = useSession()
   const { t } = useLanguage()
   const [user, setUser] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [showReportDialog, setShowReportDialog] = useState(false)
 
   useEffect(() => {
     if (userId) {
@@ -132,13 +138,45 @@ export function ProfilePreviewCard({ userId, onViewProfile }: ProfilePreviewCard
 
       <Separator className="bg-white/10" />
 
-      {/* View Profile Button */}
-      <Link href={`/profile/${userId}`} onClick={onViewProfile}>
-        <Button variant="outline" className="w-full" size="sm">
-          <ExternalLink className="mr-2 h-4 w-4" />
-          {t.common.viewProfile || "View Profile"}
-        </Button>
-      </Link>
+      {/* Action Buttons */}
+      <div className="space-y-2">
+        <Link href={`/profile/${userId}`} onClick={onViewProfile}>
+          <Button variant="outline" className="w-full" size="sm">
+            <ExternalLink className="mr-2 h-4 w-4" />
+            {t.common.viewProfile || "View Profile"}
+          </Button>
+        </Link>
+
+        {/* Report Button - only show if not viewing own profile */}
+        {session?.user?.id && session.user.id !== userId && (
+          <Button
+            variant="outline"
+            className="w-full border-red-500/30 text-red-500 hover:bg-red-500/10 hover:text-red-500"
+            size="sm"
+            onClick={() => setShowReportDialog(true)}
+          >
+            <Flag className="mr-2 h-4 w-4" />
+            {t.common.reportUser || "Report User"}
+          </Button>
+        )}
+      </div>
+
+      {/* Report Dialog */}
+      <Dialog open={showReportDialog} onOpenChange={setShowReportDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {t.common.reportUser || "Report User"}: {user?.playerProfile?.nickname}
+            </DialogTitle>
+          </DialogHeader>
+          <ReportForm
+            targetUserId={userId}
+            listingId={listingId}
+            onSuccess={() => setShowReportDialog(false)}
+            onCancel={() => setShowReportDialog(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

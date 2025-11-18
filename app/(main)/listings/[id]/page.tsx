@@ -335,7 +335,7 @@ export default function ListingDetailPage() {
                       </div>
                     </PopoverTrigger>
                     <PopoverContent className="w-80" align="start">
-                      <ProfilePreviewCard userId={listing.ownerUserId} />
+                      <ProfilePreviewCard userId={listing.ownerUserId} listingId={params.id as string} />
                     </PopoverContent>
                   </Popover>
                 </div>
@@ -408,7 +408,7 @@ export default function ListingDetailPage() {
                                 </Avatar>
                               </PopoverTrigger>
                               <PopoverContent className="w-80" align="start">
-                                <ProfilePreviewCard userId={message.sender.id} />
+                                <ProfilePreviewCard userId={message.sender.id} listingId={params.id as string} />
                               </PopoverContent>
                             </Popover>
                             <div className="flex-1">
@@ -426,7 +426,7 @@ export default function ListingDetailPage() {
                                     </button>
                                   </PopoverTrigger>
                                   <PopoverContent className="w-80" align="start">
-                                    <ProfilePreviewCard userId={message.sender.id} />
+                                    <ProfilePreviewCard userId={message.sender.id} listingId={params.id as string} />
                                   </PopoverContent>
                                 </Popover>
                                 {isAdmin && (
@@ -511,7 +511,7 @@ export default function ListingDetailPage() {
                                 </Avatar>
                               </PopoverTrigger>
                               <PopoverContent className="w-80" align="start">
-                                <ProfilePreviewCard userId={application.applicantUserId} />
+                                <ProfilePreviewCard userId={application.applicantUserId} listingId={params.id as string} />
                               </PopoverContent>
                             </Popover>
                             <div>
@@ -522,7 +522,7 @@ export default function ListingDetailPage() {
                                   </button>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-80" align="start">
-                                  <ProfilePreviewCard userId={application.applicantUserId} />
+                                  <ProfilePreviewCard userId={application.applicantUserId} listingId={params.id as string} />
                                 </PopoverContent>
                               </Popover>
                               <div>
