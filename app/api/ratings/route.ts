@@ -34,20 +34,18 @@ export async function POST(req: Request) {
       )
     }
 
-    // Check if already rated
-    const existing = await prisma.playerRating.findUnique({
+    // Check if already rated this player EVER (across all listings)
+    // This prevents rating abuse - one user can only rate another user once, total
+    const existingRating = await prisma.playerRating.findFirst({
       where: {
-        raterUserId_targetUserId_listingId: {
-          raterUserId: session.user.id,
-          targetUserId: data.targetUserId,
-          listingId: data.listingId,
-        },
+        raterUserId: session.user.id,
+        targetUserId: data.targetUserId,
       },
     })
 
-    if (existing) {
+    if (existingRating) {
       return NextResponse.json(
-        { error: "You have already rated this player for this listing" },
+        { error: "You have already rated this player" },
         { status: 400 }
       )
     }
