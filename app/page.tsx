@@ -10,24 +10,19 @@ import { Shield, Users, Star, MessageCircle, Loader2 } from "lucide-react"
 
 export default function HomePage() {
   const { data: session, status } = useSession()
-  const router = useRouter()
 
   useEffect(() => {
     if (status === "authenticated") {
-      router.push("/dashboard")
+      window.location.href = "/dashboard"
     }
-  }, [status, router])
+  }, [status])
 
-  if (status === "loading") {
+  if (status === "loading" || status === "authenticated") {
     return (
       <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-black flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-valorant-red" />
       </div>
     )
-  }
-
-  if (status === "authenticated") {
-    return null
   }
 
   return (
