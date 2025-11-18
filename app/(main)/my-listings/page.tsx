@@ -203,9 +203,9 @@ export default function MyListingsPage() {
                                 {application.status === "accepted" && <CheckCircle className="h-3 w-3 mr-1" />}
                                 {application.status === "declined" && <XCircle className="h-3 w-3 mr-1" />}
                                 {application.status === "pending" && <Clock className="h-3 w-3 mr-1" />}
-                                {application.status === "accepted" ? t.common.success || "Accepted" :
-                                 application.status === "declined" ? "Declined" :
-                                 "Pending"}
+                                {application.status === "accepted" ? t.common.accepted || "Accepted" :
+                                 application.status === "declined" ? t.common.declined || "Declined" :
+                                 t.common.pending || "Pending"}
                               </Badge>
                               {(isExpired || isClosed) && (
                                 <Badge variant="outline" className="text-gray-400 border-gray-400">

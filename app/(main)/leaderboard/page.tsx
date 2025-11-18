@@ -202,7 +202,7 @@ export default function LeaderboardPage() {
                                 </Badge>
                                 {isOnline(player.user.lastSeenAt) && (
                                   <Badge className="bg-green-500/20 text-green-500 text-xs border-green-500/30">
-                                    Online
+                                    {t.common.online || "Online"}
                                   </Badge>
                                 )}
                               </div>

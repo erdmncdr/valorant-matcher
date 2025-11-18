@@ -208,8 +208,8 @@ export default function ListingDetailPage() {
       toast({
         title: t.common.success || "Success",
         description: action === "accept"
-          ? "Application accepted successfully"
-          : "Application declined successfully",
+          ? t.common.applicationAccepted || "Application accepted successfully"
+          : t.common.applicationDeclined || "Application declined successfully",
       })
 
       // Refresh listing to show updated application status
@@ -585,9 +585,9 @@ export default function ListingDetailPage() {
                           >
                             {application.status === "accepted" && <Check className="h-3 w-3 mr-1" />}
                             {application.status === "declined" && <X className="h-3 w-3 mr-1" />}
-                            {application.status === "accepted" ? "Accepted" :
-                             application.status === "declined" ? "Declined" :
-                             "Pending"}
+                            {application.status === "accepted" ? t.common.accepted || "Accepted" :
+                             application.status === "declined" ? t.common.declined || "Declined" :
+                             t.common.pending || "Pending"}
                           </Badge>
                         </div>
                         {application.message && (
@@ -610,7 +610,7 @@ export default function ListingDetailPage() {
                               ) : (
                                 <>
                                   <Check className="h-3 w-3 mr-1" />
-                                  Accept
+                                  {t.common.accept || "Accept"}
                                 </>
                               )}
                             </Button>
@@ -626,7 +626,7 @@ export default function ListingDetailPage() {
                               ) : (
                                 <>
                                   <X className="h-3 w-3 mr-1" />
-                                  Decline
+                                  {t.common.decline || "Decline"}
                                 </>
                               )}
                             </Button>

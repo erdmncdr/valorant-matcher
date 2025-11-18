@@ -255,6 +255,14 @@ export const translations = {
       error: "Hata",
       success: "Başarılı",
       characters: "karakter",
+      accept: "Kabul Et",
+      decline: "Reddet",
+      accepted: "Kabul Edildi",
+      declined: "Reddedildi",
+      pending: "Beklemede",
+      online: "Online",
+      applicationAccepted: "Başvuru başarıyla kabul edildi",
+      applicationDeclined: "Başvuru başarıyla reddedildi",
     },
 
     // Reports
@@ -344,6 +352,11 @@ export const translations = {
       dashboard: "Dashboard",
       editProfile: "Edit Profile",
       signOut: "Sign Out",
+      onlineUsers: "Online Players",
+      sortByActivity: "Last Seen",
+      sortByReputation: "Reputation Score",
+      noOnlineUsers: "No one is online right now",
+      leaderboard: "Leaderboard",
     },
 
     // Home Page
@@ -455,6 +468,9 @@ export const translations = {
       applicationSentDesc: "The listing owner will see your application",
       listingClosed: "Listing closed",
       listingClosedDesc: "Your listing has been closed",
+      sortBy: "Sort By",
+      sortByNewest: "Newest",
+      sortByReputation: "Highest Reputation",
     },
 
     // My Listings
@@ -583,6 +599,14 @@ export const translations = {
       error: "Error",
       success: "Success",
       characters: "characters",
+      accept: "Accept",
+      decline: "Decline",
+      accepted: "Accepted",
+      declined: "Declined",
+      pending: "Pending",
+      online: "Online",
+      applicationAccepted: "Application accepted successfully",
+      applicationDeclined: "Application declined successfully",
     },
 
     // Reports
@@ -651,6 +675,15 @@ export const translations = {
       statusUnderReviewOption: "Under Review",
       statusResolvedOption: "Resolved (Action Taken)",
       statusDismissedOption: "Dismissed (No Action)",
+    },
+
+    // Leaderboard
+    leaderboard: {
+      title: "Leaderboard",
+      subtitle: "Top players by reputation score",
+      topPlayers: "Top Players",
+      noPlayers: "No players in the leaderboard yet",
+      reputation: "Reputation",
     },
   },
 }
