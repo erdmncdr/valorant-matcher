@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import {
   Loader2,
   ThumbsUp,
@@ -19,13 +20,17 @@ import {
   Shield,
   Mic,
   Calendar,
-  ArrowLeft
+  ArrowLeft,
+  Flag
 } from "lucide-react"
 import { getRankBadgeClass, getRoleColor } from "@/lib/constants"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { useToast } from "@/hooks/use-toast"
 import { Navbar } from "@/components/layout/navbar"
 import { usePresence } from "@/hooks/use-presence"
+import { OnlineStatusIndicator } from "@/components/ui/online-status-indicator"
+import { ReportForm } from "@/components/reports/report-form"
+import { RatingForm } from "@/components/profile/rating-form"
 
 export default function UserProfilePage() {
   usePresence()
@@ -38,6 +43,8 @@ export default function UserProfilePage() {
   const [user, setUser] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [myProfile, setMyProfile] = useState<any>(null)
+  const [showReportDialog, setShowReportDialog] = useState(false)
+  const [showRatingDialog, setShowRatingDialog] = useState(false)
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -85,6 +92,15 @@ export default function UserProfilePage() {
     }
   }
 
+  const handleRatingSuccess = () => {
+    setShowRatingDialog(false)
+    fetchUserProfile() // Refresh to show updated reputation
+    toast({
+      title: t.common.success || "Success",
+      description: t.common.ratingSubmitted || "Rating submitted successfully",
+    })
+  }
+
   if (status === "loading" || isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-black flex items-center justify-center">
@@ -128,11 +144,14 @@ export default function UserProfilePage() {
             <Card className="border-valorant-purple/20 bg-card/50 backdrop-blur sticky top-6">
               <CardContent className="pt-6">
                 <div className="text-center">
-                  <Avatar className="h-32 w-32 mx-auto mb-4">
-                    <AvatarFallback className="bg-valorant-red text-white text-4xl">
-                      {profile?.nickname?.charAt(0) || "U"}
-                    </AvatarFallback>
-                  </Avatar>
+                  <div className="relative inline-block">
+                    <Avatar className="h-32 w-32 mb-4">
+                      <AvatarFallback className="bg-valorant-red text-white text-4xl">
+                        {profile?.nickname?.charAt(0) || "U"}
+                      </AvatarFallback>
+                    </Avatar>
+                    <OnlineStatusIndicator lastSeenAt={user.lastSeenAt} size="lg" className="-bottom-2 -right-2" />
+                  </div>
 
                   <div className="space-y-2">
                     <h1 className="text-2xl font-bold text-white">
@@ -225,6 +244,28 @@ export default function UserProfilePage() {
 
           {/* Right Column - Details */}
           <div className="lg:col-span-2 space-y-6">
+            {/* Action Buttons - only show if not viewing own profile */}
+            {!isOwnProfile && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <Button
+                  variant="default"
+                  className="w-full bg-yellow-600 hover:bg-yellow-700 border-yellow-500"
+                  onClick={() => setShowRatingDialog(true)}
+                >
+                  <Star className="mr-2 h-4 w-4" />
+                  {t.common.ratePlayer || "Rate Player"}
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full border-red-500/30 text-red-500 hover:bg-red-500/10 hover:text-red-500"
+                  onClick={() => setShowReportDialog(true)}
+                >
+                  <Flag className="mr-2 h-4 w-4" />
+                  {t.common.reportUser || "Report User"}
+                </Button>
+              </div>
+            )}
+
             {/* Reputation Card */}
             <Card className="border-valorant-cyan/20">
               <CardHeader>
@@ -359,6 +400,45 @@ export default function UserProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Rating Dialog */}
+      <Dialog open={showRatingDialog} onOpenChange={setShowRatingDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {t.common.ratePlayer || "Rate Player"}: {profile?.nickname}
+            </DialogTitle>
+          </DialogHeader>
+          <RatingForm
+            targetUserId={user.id}
+            listingId="" // Can be empty if not from a listing
+            onSuccess={handleRatingSuccess}
+            onCancel={() => setShowRatingDialog(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Report Dialog */}
+      <Dialog open={showReportDialog} onOpenChange={setShowReportDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {t.reports?.title || t.common.reportUser || "Report User"}: {profile?.nickname}
+            </DialogTitle>
+          </DialogHeader>
+          <ReportForm
+            targetUserId={user.id}
+            onSuccess={() => {
+              setShowReportDialog(false)
+              toast({
+                title: t.common.success || "Success",
+                description: t.reports?.submitSuccess || "Report submitted successfully",
+              })
+            }}
+            onCancel={() => setShowReportDialog(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

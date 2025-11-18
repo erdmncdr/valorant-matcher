@@ -49,6 +49,8 @@ export type UserWithProfile = User & {
 export type ListingWithOwner = Listing & {
   owner: User & {
     playerProfile: PlayerProfile | null
+    lastSeenAt?: Date | string | null
+    isAdmin?: boolean
   }
   applications?: ListingApplication[]
   _count?: {

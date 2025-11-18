@@ -82,6 +82,8 @@ export async function GET(
         id: user.id,
         email: user.email,
         createdAt: user.createdAt,
+        isAdmin: user.isAdmin,
+        lastSeenAt: user.lastSeenAt,
         playerProfile: user.playerProfile,
         reputation: {
           positive: positiveRatings,

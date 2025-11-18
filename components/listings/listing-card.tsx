@@ -4,11 +4,13 @@ import { useState } from "react"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Clock, MapPin, Users, Mic, MicOff } from "lucide-react"
 import { getRankBadgeClass, getRoleColor } from "@/lib/constants"
 import { formatExpiresIn } from "@/lib/utils"
 import { ListingWithOwner } from "@/types"
 import { UserProfileModal } from "@/components/profile/user-profile-modal"
+import { OnlineStatusIndicator } from "@/components/ui/online-status-indicator"
 
 interface ListingCardProps {
   listing: ListingWithOwner
@@ -26,6 +28,14 @@ export function ListingCard({ listing }: ListingCardProps) {
             <div className="flex-1">
               <CardTitle className="text-lg text-white mb-1">{listing.title}</CardTitle>
               <div className="flex items-center gap-2 text-sm text-gray-400">
+                <div className="relative">
+                  <Avatar className="h-6 w-6 ring-1 ring-white/10">
+                    <AvatarFallback className="bg-valorant-purple text-white text-xs">
+                      {profile?.nickname?.charAt(0) || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <OnlineStatusIndicator lastSeenAt={listing.owner.lastSeenAt} size="sm" />
+                </div>
                 <button
                   onClick={(e) => {
                     e.preventDefault()

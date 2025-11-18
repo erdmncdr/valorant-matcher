@@ -13,6 +13,7 @@ import { getRankBadgeClass } from "@/lib/constants"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { ReportForm } from "@/components/reports/report-form"
 import { RatingForm } from "@/components/profile/rating-form"
+import { OnlineStatusIndicator } from "@/components/ui/online-status-indicator"
 
 interface ProfilePreviewCardProps {
   userId: string
@@ -76,11 +77,14 @@ export function ProfilePreviewCard({ userId, listingId, onViewProfile }: Profile
     <div className="space-y-3">
       {/* Header */}
       <div className="flex items-start gap-3">
-        <Avatar className="h-12 w-12 ring-2 ring-valorant-purple/50">
-          <AvatarFallback className="bg-valorant-red text-white text-lg font-bold">
-            {profile.nickname?.charAt(0) || "U"}
-          </AvatarFallback>
-        </Avatar>
+        <div className="relative">
+          <Avatar className="h-12 w-12 ring-2 ring-valorant-purple/50">
+            <AvatarFallback className="bg-valorant-red text-white text-lg font-bold">
+              {profile.nickname?.charAt(0) || "U"}
+            </AvatarFallback>
+          </Avatar>
+          <OnlineStatusIndicator lastSeenAt={user.lastSeenAt} size="md" />
+        </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <h3 className="text-white font-semibold truncate">

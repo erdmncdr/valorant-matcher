@@ -95,20 +95,32 @@ export function OnlineUsers() {
 
             if (!profile) return null
 
+            const isOnline = status.color === "bg-green-500"
+
             return (
               <Link
                 key={user.id}
                 href={`/profile/${user.id}`}
                 className="block"
               >
-                <div className="p-2 rounded-lg bg-valorant-dark/30 border border-white/5 hover:border-valorant-purple/30 hover:bg-valorant-dark/50 transition-all cursor-pointer group">
+                <div className={`p-3 rounded-lg transition-all cursor-pointer group ${
+                  isOnline
+                    ? "bg-green-500/10 border-2 border-green-500/30 hover:border-green-500/50 hover:bg-green-500/15 shadow-lg shadow-green-500/5"
+                    : "bg-valorant-dark/30 border border-white/5 hover:border-valorant-purple/30 hover:bg-valorant-dark/50"
+                }`}>
                   <div className="flex items-start gap-2">
                     <div className="relative">
-                      <Avatar className="h-8 w-8 ring-1 ring-white/10 group-hover:ring-valorant-purple/50 transition-all">
+                      <Avatar className={`h-9 w-9 transition-all ${
+                        isOnline
+                          ? "ring-2 ring-green-500/50 group-hover:ring-green-500/70"
+                          : "ring-1 ring-white/10 group-hover:ring-valorant-purple/50"
+                      }`}>
                         <AvatarFallback
                           className={
                             user.isAdmin
                               ? "bg-gradient-to-br from-valorant-red to-valorant-purple text-white text-xs font-bold"
+                              : isOnline
+                              ? "bg-green-600 text-white text-xs font-semibold"
                               : "bg-valorant-purple text-white text-xs"
                           }
                         >
@@ -116,13 +128,17 @@ export function OnlineUsers() {
                         </AvatarFallback>
                       </Avatar>
                       <span
-                        className={`absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 ${status.color} rounded-full border-2 border-valorant-dark`}
+                        className={`absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 ${status.color} rounded-full border-2 border-valorant-dark ${isOnline ? 'animate-pulse' : ''}`}
                       />
                     </div>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1">
-                        <p className="text-xs font-medium text-white truncate group-hover:text-valorant-purple transition-colors">
+                        <p className={`text-xs font-medium truncate transition-colors ${
+                          isOnline
+                            ? "text-white font-semibold group-hover:text-green-400"
+                            : "text-white group-hover:text-valorant-purple"
+                        }`}>
                           {profile.nickname}
                         </p>
                         {user.isAdmin && (
@@ -146,7 +162,9 @@ export function OnlineUsers() {
                         </Badge>
                       </div>
 
-                      <p className="text-[10px] text-gray-500 mt-0.5">
+                      <p className={`text-[10px] mt-0.5 ${
+                        isOnline ? "text-green-400 font-medium" : "text-gray-500"
+                      }`}>
                         {status.text}
                       </p>
                     </div>
