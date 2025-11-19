@@ -78,6 +78,14 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
                   {t.nav.myListings}
                 </Button>
               </Link>
+              <Link href="/aim-trainer">
+                <Button
+                  variant="ghost"
+                  className={currentPage === 'aim-trainer' ? 'text-primary' : 'text-foreground'}
+                >
+                  🎯 Aim Trainer
+                </Button>
+              </Link>
             </div>
           </div>
           <div className="flex items-center space-x-2">

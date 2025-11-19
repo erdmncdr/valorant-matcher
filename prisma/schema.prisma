@@ -43,6 +43,7 @@ model User {
   privateMessagesSent   PrivateMessage[]         @relation("SenderUser")
   privateMessagesReceived PrivateMessage[]       @relation("ReceiverUser")
   notifications         Notification[]
+  aimTrainerScores      AimTrainerScore[]
 
   @@map("users")
 }
@@ -393,4 +394,27 @@ model Notification {
 
   @@index([userId, isRead, createdAt])
   @@map("notifications")
+}
+
+// ============================================
+// MINI GAMES
+// ============================================
+
+model AimTrainerScore {
+  id           String   @id @default(cuid())
+  userId       String
+  score        Int      // Points earned
+  accuracy     Float    // Percentage (0-100)
+  timeElapsed  Int      // Seconds
+  targetsHit   Int
+  targetsMissed Int
+  rewardClaimed Boolean  @default(false) // Daily reward claimed
+  createdAt    DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([score])
+  @@map("aim_trainer_scores")
 }

@@ -13,7 +13,8 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Navbar } from "@/components/layout/navbar"
-import { Loader2, AlertTriangle, CheckCircle, XCircle, Ban, Eye } from "lucide-react"
+import { Loader2, AlertTriangle, CheckCircle, XCircle, Ban, Eye, Trash2, User } from "lucide-react"
+import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
 import { formatTimeAgo } from "@/lib/utils"
 import { useLanguage } from "@/lib/i18n/language-context"
@@ -138,6 +139,37 @@ export default function AdminReportsPage() {
       toast({
         title: t.common.error,
         description: t.reports.reviewError,
+        variant: "destructive",
+      })
+    }
+  }
+
+  const handleDeleteReport = async (reportId: string) => {
+    if (!confirm("Bu reportu silmek istediğinizden emin misiniz?")) return
+
+    try {
+      const response = await fetch(`/api/reports/${reportId}`, {
+        method: "DELETE",
+      })
+
+      if (response.ok) {
+        toast({
+          title: "Başarılı",
+          description: "Report başarıyla silindi",
+        })
+        fetchReports()
+      } else {
+        const data = await response.json()
+        toast({
+          title: "Hata",
+          description: data.error || "Report silinemedi",
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      toast({
+        title: "Hata",
+        description: "Report silinemedi",
         variant: "destructive",
       })
     }
@@ -276,16 +308,35 @@ export default function AdminReportsPage() {
                     </div>
                   )}
 
-                  {report.status === "OPEN" && (
+                  <div className="flex gap-2">
+                    {report.status === "OPEN" && (
+                      <Button
+                        onClick={() => handleReviewReport(report)}
+                        variant="valorant"
+                        className="flex-1"
+                      >
+                        <Eye className="mr-2 h-4 w-4" />
+                        {t.reports.reviewReport}
+                      </Button>
+                    )}
+                    <Link href={`/admin/users/${report.target?.id}`}>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        title="Kullanıcı Aktivitesi"
+                      >
+                        <User className="h-4 w-4" />
+                      </Button>
+                    </Link>
                     <Button
-                      onClick={() => handleReviewReport(report)}
-                      variant="valorant"
-                      className="w-full"
+                      onClick={() => handleDeleteReport(report.id)}
+                      variant="destructive"
+                      size="icon"
+                      title="Reportu Sil"
                     >
-                      <Eye className="mr-2 h-4 w-4" />
-                      {t.reports.reviewReport}
+                      <Trash2 className="h-4 w-4" />
                     </Button>
-                  )}
+                  </div>
                 </CardContent>
               </Card>
             ))}
