@@ -26,6 +26,10 @@ model User {
   banReason     String?
   isAdmin       Boolean   @default(false)
 
+  // Discord Linking
+  discordLinkingCode       String?   @unique
+  discordLinkingCodeExpiry DateTime?
+
   // Relations
   socialAccounts        SocialAccount[]
   playerProfile         PlayerProfile?

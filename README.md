@@ -14,11 +14,12 @@ A full-stack web application for Valorant players to find compatible 5th teammat
 ## 🎮 What's New
 
 **Latest Updates:**
+- 🤖 **Discord Bot**: Find teammates directly from Discord with !needone commands
+- 🏆 **Achievement System**: 25 achievements across 5 categories with reputation rewards
+- 🔔 **Notification System**: Real-time notifications with auto-refresh
+- ⏱️ **Rate Limiting**: Protection against abuse across all endpoints
 - 🎯 **Aim Trainer Mini-Game**: Practice your aim, earn reputation points daily
 - 🌓 **Theme System**: Seamless dark/light mode switching
-- 👥 **Enhanced Admin Panel**: Complete user management and moderation tools
-- 🏆 **Daily Leaderboards**: Compete with the community on aim trainer scores
-- 🎉 **Celebration Animations**: Confetti effects for achievements and rewards
 
 ---
 
@@ -35,6 +36,10 @@ A full-stack web application for Valorant players to find compatible 5th teammat
 - ✅ **Admin Panel**: Moderation tools for user management and banning
 - ✅ **Aim Trainer**: Interactive mini-game with daily rewards and leaderboards
 - ✅ **Theme System**: Light and dark mode support
+- ✅ **Discord Bot**: Search listings, view stats, and link accounts via Discord
+- ✅ **Achievement System**: 25 achievements with progress tracking and rewards
+- ✅ **Notification System**: In-app and Discord notifications
+- ✅ **Rate Limiting**: Protection against spam and abuse
 
 ## Tech Stack
 
@@ -43,7 +48,9 @@ A full-stack web application for Valorant players to find compatible 5th teammat
 - **Database**: PostgreSQL with Prisma ORM
 - **Authentication**: NextAuth.js
 - **Real-time**: WebSockets (ws library)
-- **UI Components**: shadcn/ui (Radix UI)
+- **Discord**: discord.js for Discord bot integration
+- **Rate Limiting**: @upstash/ratelimit with Redis
+- **UI Components**: shadcn/ui (Radix UI), recharts for analytics
 - **Animations**: canvas-confetti for celebration effects
 - **Theming**: next-themes for dark/light mode
 
@@ -226,10 +233,17 @@ valorant-matcher/
 
 ## Available Scripts
 
+### Web Application
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
 - `npm start` - Start production server
 - `npm run lint` - Run ESLint
+
+### Discord Bot
+- `npm run bot` - Start Discord bot
+- `npm run bot:dev` - Start Discord bot with hot reload
+
+### Database
 - `npm run db:generate` - Generate Prisma Client
 - `npm run db:push` - Push schema to database
 - `npm run db:migrate` - Create and apply migrations
@@ -355,6 +369,117 @@ Admin features:
 - **Statistics**: View user counts and activity metrics
 
 Access the admin panel at: `/admin` (requires admin privileges)
+
+## 🤖 Discord Bot
+
+NeedOne includes a fully-featured Discord bot that allows users to search for teammates, view stats, and manage their accounts directly from Discord.
+
+### Features
+
+- **!needone link** - Link your Discord account to NeedOne
+- **!needone lfg** - Search for active listings
+- **!needone stats** - View player statistics
+- **!needone help** - Show all available commands
+- **Discord Notifications** - Receive DMs for applications, messages, and ratings
+
+### Setup
+
+1. **Create a Discord Bot**:
+   - Go to [Discord Developer Portal](https://discord.com/developers/applications)
+   - Create a new application
+   - Go to "Bot" section and create a bot
+   - Copy the bot token
+   - Enable "Message Content Intent" under Privileged Gateway Intents
+
+2. **Add Bot Token to Environment**:
+   ```bash
+   # Add to your .env file
+   DISCORD_BOT_TOKEN="your-bot-token-here"
+   ```
+
+3. **Database Migration**:
+   ```bash
+   # Run migration to add Discord linking fields
+   npm run db:migrate
+   ```
+
+4. **Start the Bot**:
+   ```bash
+   # Run alongside your web app
+   npm run bot
+
+   # Or for development with hot reload
+   npm run bot:dev
+   ```
+
+5. **Invite Bot to Your Server**:
+   - Go to Discord Developer Portal > Your App > OAuth2 > URL Generator
+   - Select scopes: `bot`, `applications.commands`
+   - Select permissions: `Send Messages`, `Embed Links`, `Read Message History`
+   - Copy the generated URL and open it to invite the bot
+
+### Usage
+
+#### Linking Your Account
+
+1. Visit https://needone.gg/settings
+2. Find the "Discord Linking" section
+3. Generate a linking code
+4. In Discord, use: `!needone link YOUR_CODE`
+5. Your account is now linked!
+
+#### Searching for Teammates
+
+```
+!needone lfg                    # Show all active listings
+!needone lfg Diamond            # Filter by rank
+!needone lfg Duelist            # Filter by role
+!needone lfg Diamond Duelist    # Filter by both
+```
+
+#### Viewing Stats
+
+```
+!needone stats           # View your own stats
+!needone stats @user     # View another user's stats
+```
+
+### Discord Notifications
+
+Once your account is linked, you'll automatically receive Discord DMs for:
+- 📩 New applications on your listings
+- ✅ Application accepted
+- ❌ Application declined
+- 💬 New messages
+- ⭐ Ratings received
+
+**Note**: Make sure your Discord DMs are open to receive notifications.
+
+### Bot Commands Reference
+
+| Command | Description | Example |
+|---------|-------------|---------|
+| `!needone help` | Show all commands | `!needone help` |
+| `!needone link <code>` | Link your Discord account | `!needone link ABC123` |
+| `!needone lfg [rank] [role]` | Search for listings | `!needone lfg Diamond Duelist` |
+| `!needone stats [@user]` | View player stats | `!needone stats` |
+
+### Troubleshooting
+
+**Bot not responding?**
+- Make sure the bot is running (`npm run bot`)
+- Check that `DISCORD_BOT_TOKEN` is set in `.env`
+- Verify the bot has permission to read messages in the channel
+
+**Can't link account?**
+- Linking codes expire after 15 minutes
+- Generate a new code if yours expired
+- Make sure you're using the exact code (case-sensitive)
+
+**Not receiving DMs?**
+- Check your Discord privacy settings
+- Make sure you allow DMs from server members
+- Verify your account is linked correctly
 
 ## Contributing
 
