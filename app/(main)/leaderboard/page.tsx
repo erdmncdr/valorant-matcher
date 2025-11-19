@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Loader2, Trophy, Star, Medal, Crown } from "lucide-react"
 import { getRankBadgeClass } from "@/lib/constants"
+import { ValorantRank } from "@/lib/types"
 import { Navbar } from "@/components/layout/navbar"
 import { OnlineUsers } from "@/components/online-users"
 import { usePresence } from "@/hooks/use-presence"
@@ -192,7 +193,7 @@ export default function LeaderboardPage() {
                               <div className="flex items-center gap-2 flex-wrap">
                                 <Badge
                                   className={`${getRankBadgeClass(
-                                    player.rankCurrent
+                                    player.rankCurrent as ValorantRank
                                   )} rank-badge text-xs`}
                                 >
                                   {player.rankCurrent}

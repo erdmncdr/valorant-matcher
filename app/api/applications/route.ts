@@ -56,7 +56,7 @@ export async function GET(req: Request) {
 
     // Filter out applications for expired or closed listings
     const activeApplications = applications.filter(
-      (app) => app.listing.status === "OPEN" || app.status !== "pending"
+      (app: any) => app.listing.status === "OPEN" || app.status !== "pending"
     )
 
     return NextResponse.json({

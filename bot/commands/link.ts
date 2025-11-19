@@ -1,9 +1,10 @@
-import { Message, EmbedBuilder, PrismaClient } from 'discord.js'
+import { Message, EmbedBuilder } from 'discord.js'
+import { prisma } from '../../lib/prisma'
 
 export async function handleLinkCommand(
   message: Message,
   args: string[],
-  prisma: PrismaClient
+  prisma: any
 ) {
   // Get the linking code from arguments
   const linkingCode = args[0]

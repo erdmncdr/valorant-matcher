@@ -22,7 +22,7 @@ import {
   LANGUAGES,
   EXPIRY_OPTIONS,
 } from "@/lib/constants"
-import { ValorantRank, PlayerRole, Seriousness, GameMode, ListingType } from "@prisma/client"
+import { ValorantRank, PlayerRole, Seriousness, GameMode, ListingType } from "@/lib/types"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { Navbar } from "@/components/layout/navbar"
 import { usePresence } from "@/hooks/use-presence"
@@ -39,7 +39,7 @@ export default function CreateListingPage() {
 
   const typeParam = searchParams.get("type")
   const [listingType, setListingType] = useState<ListingType>(
-    typeParam === "solo" ? "SOLO" : "TEAM"
+    typeParam === "solo" ? ListingType.SOLO : ListingType.TEAM
   )
 
   const [formData, setFormData] = useState({
@@ -137,7 +137,7 @@ export default function CreateListingPage() {
           voiceRequired: formData.voiceRequired,
           minRank: formData.minRank,
           maxRank: formData.maxRank,
-          stackSize: listingType === "TEAM" ? formData.stackSize : undefined,
+          stackSize: listingType === ListingType.TEAM ? formData.stackSize : undefined,
           desiredRole: formData.desiredRole || undefined,
           description: formData.description || undefined,
           expiryMinutes: formData.expiryMinutes,
@@ -197,9 +197,9 @@ export default function CreateListingPage() {
               <div className="grid grid-cols-2 gap-4">
                 <button
                   type="button"
-                  onClick={() => setListingType("TEAM")}
+                  onClick={() => setListingType(ListingType.TEAM)}
                   className={`p-4 rounded-lg border-2 transition-all ${
-                    listingType === "TEAM"
+                    listingType === ListingType.TEAM
                       ? "border-valorant-red bg-valorant-red/10"
                       : "border-white/10 hover:border-white/20"
                   }`}
@@ -209,9 +209,9 @@ export default function CreateListingPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setListingType("SOLO")}
+                  onClick={() => setListingType(ListingType.SOLO)}
                   className={`p-4 rounded-lg border-2 transition-all ${
-                    listingType === "SOLO"
+                    listingType === ListingType.SOLO
                       ? "border-valorant-cyan bg-valorant-cyan/10"
                       : "border-white/10 hover:border-white/20"
                   }`}
@@ -237,7 +237,7 @@ export default function CreateListingPage() {
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     placeholder={
-                      listingType === "TEAM"
+                      listingType === ListingType.TEAM
                         ? t.createListing.titlePlaceholderTeam || "e.g., Diamond 4-stack LF1 Controller"
                         : t.createListing.titlePlaceholderSolo || "e.g., Platinum Duelist LFT Ranked"
                     }
@@ -373,7 +373,7 @@ export default function CreateListingPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="desiredRole">
-                    {listingType === "TEAM" ? (t.createListing.roleNeeded || "Role Needed") : (t.createListing.yourRole || "Your Role")}
+                    {listingType === ListingType.TEAM ? (t.createListing.roleNeeded || "Role Needed") : (t.createListing.yourRole || "Your Role")}
                   </Label>
                   <Select
                     value={formData.desiredRole || undefined}

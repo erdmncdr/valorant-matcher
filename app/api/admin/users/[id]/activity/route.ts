@@ -171,7 +171,7 @@ export async function GET(
     // Combine all activities into a timeline
     const timeline: any[] = []
 
-    listings.forEach((listing) => {
+    listings.forEach((listing: any) => {
       timeline.push({
         type: "listing_created",
         timestamp: listing.createdAt,
@@ -179,7 +179,7 @@ export async function GET(
       })
     })
 
-    applications.forEach((app) => {
+    applications.forEach((app: any) => {
       timeline.push({
         type: "application_submitted",
         timestamp: app.createdAt,
@@ -187,7 +187,7 @@ export async function GET(
       })
     })
 
-    messages.forEach((msg) => {
+    messages.forEach((msg: any) => {
       timeline.push({
         type: "message_sent",
         timestamp: msg.createdAt,
@@ -195,7 +195,7 @@ export async function GET(
       })
     })
 
-    ratingsGiven.forEach((rating) => {
+    ratingsGiven.forEach((rating: any) => {
       timeline.push({
         type: "rating_given",
         timestamp: rating.createdAt,
@@ -203,7 +203,7 @@ export async function GET(
       })
     })
 
-    ratingsReceived.forEach((rating) => {
+    ratingsReceived.forEach((rating: any) => {
       timeline.push({
         type: "rating_received",
         timestamp: rating.createdAt,
@@ -211,7 +211,7 @@ export async function GET(
       })
     })
 
-    reportsSubmitted.forEach((report) => {
+    reportsSubmitted.forEach((report: any) => {
       timeline.push({
         type: "report_submitted",
         timestamp: report.createdAt,
@@ -219,7 +219,7 @@ export async function GET(
       })
     })
 
-    reportsReceived.forEach((report) => {
+    reportsReceived.forEach((report: any) => {
       timeline.push({
         type: "report_received",
         timestamp: report.createdAt,
@@ -227,7 +227,7 @@ export async function GET(
       })
     })
 
-    privateMessages.forEach((pm) => {
+    privateMessages.forEach((pm: any) => {
       timeline.push({
         type: "private_message_sent",
         timestamp: pm.createdAt,
@@ -237,7 +237,7 @@ export async function GET(
 
     // Sort timeline by timestamp (newest first)
     timeline.sort(
-      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      (a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
     )
 
     // Limit to requested amount

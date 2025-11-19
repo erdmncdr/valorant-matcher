@@ -20,7 +20,7 @@ import {
   LANGUAGES,
   VALORANT_AGENTS,
 } from "@/lib/constants"
-import { ValorantRank, PlayerRole, Seriousness } from "@prisma/client"
+import { ValorantRank, PlayerRole, Seriousness } from "@/lib/types"
 
 interface ProfileFormProps {
   initialData?: any

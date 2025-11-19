@@ -112,7 +112,7 @@ export async function trackAchievement(
  * Check and unlock time-based achievements (veteran, legend)
  * @param userId - The user ID
  */
-export async function checkTimeBased Achievements(userId: string) {
+export async function checkTimeBasedAchievements(userId: string) {
   try {
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -188,7 +188,7 @@ export async function getUserAchievementStats(userId: string) {
       },
     })
 
-    const categoryStats = achievementsByCategory.reduce((acc, ua) => {
+    const categoryStats = achievementsByCategory.reduce((acc: any, ua: any) => {
       const category = ua.achievement.category
       acc[category] = (acc[category] || 0) + 1
       return acc

@@ -1,4 +1,4 @@
-import { ValorantRank, PlayerRole, Seriousness, GameMode } from "@prisma/client"
+import { ValorantRank, PlayerRole, Seriousness, GameMode } from "./types"
 
 export const VALORANT_RANKS = [
   { value: ValorantRank.IRON, label: "Iron" },

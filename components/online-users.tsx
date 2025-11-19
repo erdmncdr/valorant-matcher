@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Users, Clock } from "lucide-react"
 import { getRankBadgeClass } from "@/lib/constants"
+import { ValorantRank } from "@/lib/types"
 import { formatTimeAgo } from "@/lib/utils"
 import { useLanguage } from "@/lib/i18n/language-context"
 
@@ -155,7 +156,7 @@ export function OnlineUsers() {
                       <div className="flex items-center gap-1 mt-1">
                         <Badge
                           className={`${getRankBadgeClass(
-                            profile.rankCurrent
+                            profile.rankCurrent as ValorantRank
                           )} rank-badge text-[9px] px-1 py-0 h-4`}
                         >
                           {profile.rankCurrent}

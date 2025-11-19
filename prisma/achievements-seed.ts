@@ -1,4 +1,5 @@
-import { PrismaClient, AchievementCategory } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
+import { AchievementCategory } from '../lib/types'
 
 const prisma = new PrismaClient()
 
