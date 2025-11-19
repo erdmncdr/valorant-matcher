@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 import { ValorantRank, PlayerRole, Seriousness, GameMode, ListingType, ListingStatus } from "@prisma/client"
+import { listingRateLimiter } from "@/lib/rate-limit"
 
 const createListingSchema = z.object({
   listingType: z.nativeEnum(ListingType),
@@ -153,6 +154,20 @@ export async function POST(req: Request) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
+      )
+    }
+
+    // Rate limiting: 5 listings per hour
+    const { success, reset } = await listingRateLimiter.limit(session.user.id)
+    if (!success) {
+      const resetDate = new Date(reset)
+      const minutesLeft = Math.ceil((reset - Date.now()) / 60000)
+      return NextResponse.json(
+        {
+          error: `Çok fazla listing oluşturdunuz. ${minutesLeft} dakika sonra tekrar deneyin.`,
+          resetAt: resetDate.toISOString()
+        },
+        { status: 429 }
       )
     }
 
