@@ -4,6 +4,7 @@ import DiscordProvider from "next-auth/providers/discord"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { prisma } from "./prisma"
 import bcrypt from "bcryptjs"
+import { loginRateLimiter } from "./rate-limit"
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -27,6 +28,13 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
           return null
+        }
+
+        // Rate limiting: 5 login attempts per 15 minutes
+        const { success, reset } = await loginRateLimiter.limit(credentials.email)
+        if (!success) {
+          const minutesLeft = Math.ceil((reset - Date.now()) / 60000)
+          throw new Error(`Çok fazla giriş denemesi yaptınız. ${minutesLeft} dakika sonra tekrar deneyin.`)
         }
 
         const user = await prisma.user.findUnique({

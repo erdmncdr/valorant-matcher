@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
+import { aimTrainerRateLimiter } from "@/lib/rate-limit"
 
 const scoreSchema = z.object({
   score: z.number().min(0),
@@ -19,6 +20,19 @@ export async function POST(req: Request) {
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    // Rate limiting: 10 attempts per 10 minutes
+    const { success, reset } = await aimTrainerRateLimiter.limit(session.user.id)
+    if (!success) {
+      const minutesLeft = Math.ceil((reset - Date.now()) / 60000)
+      return NextResponse.json(
+        {
+          error: `Çok fazla deneme yaptınız. ${minutesLeft} dakika sonra tekrar deneyin.`,
+          resetAt: new Date(reset).toISOString()
+        },
+        { status: 429 }
+      )
     }
 
     const body = await req.json()

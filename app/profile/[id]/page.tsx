@@ -31,6 +31,8 @@ import { usePresence } from "@/hooks/use-presence"
 import { OnlineStatusIndicator } from "@/components/ui/online-status-indicator"
 import { ReportForm } from "@/components/reports/report-form"
 import { RatingForm } from "@/components/profile/rating-form"
+import { AchievementCard } from "@/components/achievements/achievement-card"
+import { Trophy } from "lucide-react"
 
 export default function UserProfilePage() {
   usePresence()
@@ -45,6 +47,8 @@ export default function UserProfilePage() {
   const [myProfile, setMyProfile] = useState<any>(null)
   const [showReportDialog, setShowReportDialog] = useState(false)
   const [showRatingDialog, setShowRatingDialog] = useState(false)
+  const [achievements, setAchievements] = useState<any[]>([])
+  const [achievementStats, setAchievementStats] = useState<any>(null)
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -80,6 +84,9 @@ export default function UserProfilePage() {
       }
 
       setUser(data.user)
+
+      // Fetch achievements
+      fetchAchievements(params.id as string)
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -89,6 +96,20 @@ export default function UserProfilePage() {
       router.push("/dashboard")
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const fetchAchievements = async (userId: string) => {
+    try {
+      const response = await fetch(`/api/achievements?userId=${userId}&unlockedOnly=true`)
+      if (response.ok) {
+        const data = await response.json()
+        // Show only the first 6 unlocked achievements
+        setAchievements(data.achievements.filter((a: any) => a.isUnlocked).slice(0, 6))
+        setAchievementStats(data.stats)
+      }
+    } catch (error) {
+      console.error('Failed to fetch achievements:', error)
     }
   }
 
@@ -319,6 +340,41 @@ export default function UserProfilePage() {
                 )}
               </CardContent>
             </Card>
+
+            {/* Achievements Card */}
+            {achievementStats && achievementStats.unlocked > 0 && (
+              <Card className="border-yellow-500/20">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-white flex items-center gap-2">
+                      <Trophy className="h-5 w-5 text-yellow-500" />
+                      {t.common.achievements || "Achievements"}
+                    </CardTitle>
+                    <Link href={`/achievements${!isOwnProfile ? `?userId=${user.id}` : ''}`}>
+                      <Button variant="ghost" size="sm" className="text-xs">
+                        {t.common.viewAll || "View All"} ({achievementStats.unlocked}/{achievementStats.total})
+                      </Button>
+                    </Link>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {achievements.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {achievements.map((achievement: any) => (
+                        <AchievementCard key={achievement.id} achievement={achievement} />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-gray-400">
+                      <Trophy className="h-12 w-12 mx-auto mb-3 opacity-30" />
+                      <p className="text-sm">
+                        {t.common.noAchievements || "No achievements unlocked yet"}
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
 
             {/* Agents Card */}
             {profile?.playerAgents && profile.playerAgents.length > 0 && (

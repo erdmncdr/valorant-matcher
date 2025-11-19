@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
+import { messageRateLimiter } from "@/lib/rate-limit"
 
 const sendMessageSchema = z.object({
   receiverUserId: z.string(),
@@ -105,6 +106,19 @@ export async function POST(req: Request) {
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    // Rate limiting: 20 messages per minute
+    const { success, reset } = await messageRateLimiter.limit(session.user.id)
+    if (!success) {
+      const secondsLeft = Math.ceil((reset - Date.now()) / 1000)
+      return NextResponse.json(
+        {
+          error: `Çok fazla mesaj gönderdiniz. ${secondsLeft} saniye sonra tekrar deneyin.`,
+          resetAt: new Date(reset).toISOString()
+        },
+        { status: 429 }
+      )
     }
 
     const body = await req.json()

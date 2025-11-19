@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 import { ReportReason, ReportCategory } from "@prisma/client"
+import { reportRateLimiter } from "@/lib/rate-limit"
 
 const createReportSchema = z.object({
   targetUserId: z.string(),
@@ -22,6 +23,19 @@ export async function POST(req: Request) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
+      )
+    }
+
+    // Rate limiting: 3 reports per hour
+    const { success, reset } = await reportRateLimiter.limit(session.user.id)
+    if (!success) {
+      const minutesLeft = Math.ceil((reset - Date.now()) / 60000)
+      return NextResponse.json(
+        {
+          error: `Çok fazla şikayet gönderdiniz. ${minutesLeft} dakika sonra tekrar deneyin.`,
+          resetAt: new Date(reset).toISOString()
+        },
+        { status: 429 }
       )
     }
 

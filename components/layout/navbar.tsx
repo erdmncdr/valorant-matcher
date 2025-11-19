@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { LogOut, User, LayoutDashboard, ChevronDown, Languages, Shield } from "lucide-react"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
+import { NotificationBell } from "@/components/notifications/notification-bell"
 
 interface NavbarProps {
   profile?: {
@@ -102,6 +103,9 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
 
             {/* Theme Toggle */}
             <ThemeToggle />
+
+            {/* Notifications */}
+            {profile && <NotificationBell />}
 
             {profile && (
               <DropdownMenu>
