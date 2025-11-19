@@ -102,7 +102,21 @@ export default function AimTrainerPage() {
     if (!gameAreaRef.current) return
 
     const area = gameAreaRef.current.getBoundingClientRect()
-    const size = 60 + Math.random() * 40 // 60-100px
+
+    // Weighted random target sizes
+    const rand = Math.random()
+    let size: number
+
+    if (rand < 0.6) {
+      // 60% chance - Small targets (35-45px)
+      size = 35 + Math.random() * 10
+    } else if (rand < 0.9) {
+      // 30% chance - Medium targets (50-65px)
+      size = 50 + Math.random() * 15
+    } else {
+      // 10% chance - Large targets (70-85px)
+      size = 70 + Math.random() * 15
+    }
 
     const targetId = Date.now() + Math.random()
 
