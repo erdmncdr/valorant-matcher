@@ -4,6 +4,7 @@ const nextConfig = {
   images: {
     domains: ['cdn.discordapp.com'],
   },
+  transpilePackages: ['recharts'],
 }
 
 module.exports = nextConfig
