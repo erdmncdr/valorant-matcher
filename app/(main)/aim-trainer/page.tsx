@@ -16,6 +16,7 @@ interface Target {
   x: number
   y: number
   size: number
+  timeoutId: NodeJS.Timeout
 }
 
 export default function AimTrainerPage() {
@@ -35,6 +36,7 @@ export default function AimTrainerPage() {
   const [userBest, setUserBest] = useState<any>(null)
   const [canClaimReward, setCanClaimReward] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [spawnInterval, setSpawnInterval] = useState(800)
   
   const gameAreaRef = useRef<HTMLDivElement>(null)
   const gameIntervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -58,6 +60,16 @@ export default function AimTrainerPage() {
       if (targetIntervalRef.current) clearInterval(targetIntervalRef.current)
     }
   }, [])
+
+  // Update spawn interval during gameplay
+  useEffect(() => {
+    if (gameState === "playing") {
+      if (targetIntervalRef.current) clearInterval(targetIntervalRef.current)
+      targetIntervalRef.current = setInterval(() => {
+        spawnTarget()
+      }, spawnInterval)
+    }
+  }, [spawnInterval, gameState])
 
   const fetchProfile = async () => {
     try {
@@ -91,21 +103,30 @@ export default function AimTrainerPage() {
 
     const area = gameAreaRef.current.getBoundingClientRect()
     const size = 60 + Math.random() * 40 // 60-100px
-    
+
+    const targetId = Date.now() + Math.random()
+
+    // Remove target after 1.5 seconds if not clicked
+    const timeoutId = setTimeout(() => {
+      setTargets(prev => {
+        const stillExists = prev.find(t => t.id === targetId)
+        if (stillExists) {
+          setTargetsMissed(prev => prev + 1)
+          return prev.filter(t => t.id !== targetId)
+        }
+        return prev
+      })
+    }, 1500)
+
     const target: Target = {
-      id: Date.now() + Math.random(),
+      id: targetId,
       x: Math.random() * (area.width - size),
       y: Math.random() * (area.height - size),
       size,
+      timeoutId,
     }
 
     setTargets(prev => [...prev, target])
-
-    // Remove target after 1.5 seconds if not clicked
-    setTimeout(() => {
-      setTargets(prev => prev.filter(t => t.id !== target.id))
-      setTargetsMissed(prev => prev + 1)
-    }, 1500)
   }
 
   const startGame = () => {
@@ -115,6 +136,7 @@ export default function AimTrainerPage() {
     setTargetsMissed(0)
     setTimeLeft(30)
     setTargets([])
+    setSpawnInterval(800)
 
     // Countdown timer
     gameIntervalRef.current = setInterval(() => {
@@ -123,11 +145,18 @@ export default function AimTrainerPage() {
           endGame()
           return 0
         }
-        return prev - 1
+
+        // Increase difficulty every 5 seconds
+        const newTime = prev - 1
+        if (newTime % 5 === 0 && newTime > 0) {
+          setSpawnInterval(current => Math.max(400, current - 80)) // Minimum 400ms
+        }
+
+        return newTime
       })
     }, 1000)
 
-    // Spawn targets
+    // Spawn targets - will be re-created when interval changes
     targetIntervalRef.current = setInterval(() => {
       spawnTarget()
     }, 800)
@@ -136,16 +165,32 @@ export default function AimTrainerPage() {
   const endGame = () => {
     if (gameIntervalRef.current) clearInterval(gameIntervalRef.current)
     if (targetIntervalRef.current) clearInterval(targetIntervalRef.current)
-    
+
+    // Clear all remaining targets and their timeouts
+    setTargets(prev => {
+      prev.forEach(target => clearTimeout(target.timeoutId))
+      return []
+    })
+
     setGameState("finished")
-    setTargets([])
-    saveScore()
+
+    // Save score after state updates
+    setTimeout(() => {
+      saveScore()
+    }, 100)
   }
 
   const hitTarget = (targetId: number) => {
-    setTargets(prev => prev.filter(t => t.id !== targetId))
-    setTargetsHit(prev => prev + 1)
-    setScore(prev => prev + 10)
+    setTargets(prev => {
+      const target = prev.find(t => t.id === targetId)
+      if (target) {
+        // Cancel the timeout so target is not counted as missed
+        clearTimeout(target.timeoutId)
+        setTargetsHit(prevHits => prevHits + 1)
+        setScore(prevScore => prevScore + 10)
+      }
+      return prev.filter(t => t.id !== targetId)
+    })
   }
 
   const saveScore = async () => {
