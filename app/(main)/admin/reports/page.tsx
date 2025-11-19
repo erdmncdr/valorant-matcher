@@ -59,18 +59,16 @@ export default function AdminReportsPage() {
       const data = await response.json()
       if (data.profile) {
         setProfile(data.profile)
-      }
 
-      // Check if user is admin
-      const userResponse = await fetch("/api/users/me")
-      const userData = await userResponse.json()
-      if (!userData.user?.isAdmin) {
-        router.push("/")
-        toast({
-          title: "Access Denied",
-          description: "You don't have permission to access this page",
-          variant: "destructive",
-        })
+        // Check if user is admin
+        if (!data.profile.isAdmin) {
+          router.push("/")
+          toast({
+            title: "Access Denied",
+            description: "You don't have permission to access this page",
+            variant: "destructive",
+          })
+        }
       }
     } catch (error) {
       console.error("Failed to fetch profile:", error)
