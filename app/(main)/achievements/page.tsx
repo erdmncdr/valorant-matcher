@@ -85,7 +85,6 @@ export default function AchievementsPage() {
   const { t, language } = useLanguage()
   const [profile, setProfile] = useState<any>(null)
   const [achievements, setAchievements] = useState<Achievement[]>([])
-  const [userAchievements, setUserAchievements] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState("all")
 
@@ -115,12 +114,9 @@ export default function AchievementsPage() {
         setProfile(profileData.profile)
       }
 
-      if (achievementsData.allAchievements) {
-        setAchievements(achievementsData.allAchievements)
-      }
-
-      if (achievementsData.userAchievements) {
-        setUserAchievements(achievementsData.userAchievements)
+      // API returns achievements with progress already merged
+      if (achievementsData.achievements) {
+        setAchievements(achievementsData.achievements)
       }
     } catch (error) {
       console.error("Failed to fetch data:", error)
@@ -137,22 +133,13 @@ export default function AchievementsPage() {
     )
   }
 
-  const mergedAchievements = achievements.map(achievement => {
-    const userAch = userAchievements.find(ua => ua.achievementId === achievement.id)
-    return {
-      ...achievement,
-      progress: userAch?.progress || 0,
-      isUnlocked: userAch?.isUnlocked || false,
-      unlockedAt: userAch?.unlockedAt
-    }
-  })
-
+  // Achievements already come with progress from API
   const filteredAchievements = selectedCategory === "all"
-    ? mergedAchievements
-    : mergedAchievements.filter(a => a.category.toLowerCase() === selectedCategory)
+    ? achievements
+    : achievements.filter(a => a.category.toLowerCase() === selectedCategory)
 
-  const unlockedCount = mergedAchievements.filter(a => a.isUnlocked).length
-  const totalCount = mergedAchievements.length
+  const unlockedCount = achievements.filter(a => a.isUnlocked).length
+  const totalCount = achievements.length
   const completionRate = totalCount > 0 ? Math.round((unlockedCount / totalCount) * 100) : 0
 
   return (
@@ -193,7 +180,7 @@ export default function AchievementsPage() {
                 <CardContent className="pt-6">
                   <div className="text-center">
                     <p className="text-3xl font-bold text-accent">
-                      {mergedAchievements.filter(a => a.isUnlocked).reduce((sum, a) => sum + a.reputationBonus, 0)}
+                      {achievements.filter(a => a.isUnlocked).reduce((sum, a) => sum + a.reputationBonus, 0)}
                     </p>
                     <p className="text-sm text-muted-foreground mt-1">{t.achievements?.reputationBonus}</p>
                   </div>

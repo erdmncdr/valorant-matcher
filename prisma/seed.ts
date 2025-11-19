@@ -1,10 +1,15 @@
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
+import seedAchievements from './achievements-seed'
 
 const prisma = new PrismaClient()
 
 async function main() {
   console.log('🌱 Starting seed...')
+
+  // Seed achievements first
+  await seedAchievements()
+  console.log('✅ Seeded achievements')
 
   // Create test users
   const password_hash = await bcrypt.hash('password123', 10)
