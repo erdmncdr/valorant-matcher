@@ -22,12 +22,12 @@ export function ListingCard({ listing }: ListingCardProps) {
 
   return (
     <Link href={`/listings/${listing.id}`}>
-      <Card className="border-primary/20 hover:border-primary/40 transition-all cursor-pointer hover:glow-red">
+      <Card className="border-primary/20 hover:border-primary/40 transition-all cursor-pointer hover:glow-red overflow-hidden">
         <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <CardTitle className="text-lg mb-1">{listing.title}</CardTitle>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <CardTitle className="text-lg mb-1 line-clamp-2 break-words">{listing.title}</CardTitle>
+              <div className="flex items-center flex-wrap gap-2 text-sm text-muted-foreground">
                 <div className="relative">
                   <Avatar className="h-6 w-6 ring-1 ring-border">
                     <AvatarFallback className="bg-accent text-accent-foreground text-xs">

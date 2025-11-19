@@ -39,10 +39,25 @@ export async function GET() {
       where: { userId: session.user.id },
       include: {
         playerAgents: true,
+        user: {
+          select: {
+            isAdmin: true,
+          },
+        },
       },
     })
 
-    return NextResponse.json({ profile })
+    if (!profile) {
+      return NextResponse.json({ profile: null })
+    }
+
+    // Add isAdmin to profile object
+    const profileWithAdmin = {
+      ...profile,
+      isAdmin: profile.user.isAdmin,
+    }
+
+    return NextResponse.json({ profile: profileWithAdmin })
   } catch (error) {
     console.error("Get profile error:", error)
     return NextResponse.json(

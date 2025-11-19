@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ListingCard } from "@/components/listings/listing-card"
-import { Loader2, Filter } from "lucide-react"
+import { Loader2, Filter, LayoutGrid, LayoutList } from "lucide-react"
 import { GAME_MODES, REGIONS, VALORANT_RANKS, PLAYER_ROLES } from "@/lib/constants"
 import { ListingType } from "@prisma/client"
 import { Navbar } from "@/components/layout/navbar"
@@ -26,6 +26,7 @@ export default function ListingsPage() {
   const [profile, setProfile] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<ListingType>("TEAM")
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
 
   const [filters, setFilters] = useState({
     mode: "",
@@ -254,6 +255,29 @@ export default function ListingsPage() {
 
           {/* Listings */}
           <div className="lg:col-span-3 lg:order-2">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex-1">
+                {/* TabsList will be here */}
+              </div>
+              <div className="flex items-center gap-2 ml-4">
+                <Button
+                  variant={viewMode === "grid" ? "default" : "outline"}
+                  size="icon"
+                  onClick={() => setViewMode("grid")}
+                  title="Grid View"
+                >
+                  <LayoutGrid className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewMode === "list" ? "default" : "outline"}
+                  size="icon"
+                  onClick={() => setViewMode("list")}
+                  title="List View"
+                >
+                  <LayoutList className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
             <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as ListingType)}>
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="TEAM">{t.listings.teamsLookingFor5th}</TabsTrigger>
@@ -277,7 +301,7 @@ export default function ListingsPage() {
                     </CardContent>
                   </Card>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 gap-4" : "grid grid-cols-1 gap-4"}>
                     {listings.map((listing) => (
                       <ListingCard key={listing.id} listing={listing} />
                     ))}
@@ -302,7 +326,7 @@ export default function ListingsPage() {
                     </CardContent>
                   </Card>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 gap-4" : "grid grid-cols-1 gap-4"}>
                     {listings.map((listing) => (
                       <ListingCard key={listing.id} listing={listing} />
                     ))}

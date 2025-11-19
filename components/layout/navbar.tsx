@@ -11,7 +11,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { LogOut, User, LayoutDashboard, ChevronDown, Languages } from "lucide-react"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { LogOut, User, LayoutDashboard, ChevronDown, Languages, Shield } from "lucide-react"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 
@@ -19,6 +20,7 @@ interface NavbarProps {
   profile?: {
     nickname: string
     tagline: string
+    isAdmin?: boolean
   }
   currentPage?: string
 }
@@ -97,6 +99,11 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="flex items-center space-x-2">
+                    <Avatar className="h-8 w-8 ring-1 ring-border">
+                      <AvatarFallback className="bg-accent text-accent-foreground text-sm font-semibold">
+                        {profile.nickname.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
                     <div className="text-right hidden sm:block">
                       <p className="text-sm font-medium text-foreground">{profile.nickname}</p>
                       <p className="text-xs text-muted-foreground">{profile.tagline}</p>
@@ -111,6 +118,14 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
                       {t.nav.dashboard}
                     </DropdownMenuItem>
                   </Link>
+                  {profile.isAdmin && (
+                    <Link href="/admin/reports">
+                      <DropdownMenuItem className="cursor-pointer">
+                        <Shield className="mr-2 h-4 w-4" />
+                        Admin Panel
+                      </DropdownMenuItem>
+                    </Link>
+                  )}
                   <Link href="/profile/edit">
                     <DropdownMenuItem className="cursor-pointer">
                       <User className="mr-2 h-4 w-4" />

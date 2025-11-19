@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ListingCard } from "@/components/listings/listing-card"
-import { Loader2, Clock, MapPin, Users, CheckCircle, XCircle, Trash2 } from "lucide-react"
+import { Loader2, Clock, MapPin, Users, CheckCircle, XCircle, Trash2, LayoutGrid, LayoutList } from "lucide-react"
 import { Navbar } from "@/components/layout/navbar"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { getRankBadgeClass } from "@/lib/constants"
@@ -30,6 +30,8 @@ export default function MyListingsPage() {
   const [myApplications, setMyApplications] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [cancellingId, setCancellingId] = useState<string | null>(null)
+  const [listingViewMode, setListingViewMode] = useState<"grid" | "list">("list")
+  const [applicationViewMode, setApplicationViewMode] = useState<"grid" | "list">("grid")
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -130,12 +132,32 @@ export default function MyListingsPage() {
             </div>
 
         <Tabs defaultValue="listings" className="space-y-6">
-          <TabsList className="grid w-full max-w-md grid-cols-2">
-            <TabsTrigger value="listings">{t.myListings.myActiveListings}</TabsTrigger>
-            <TabsTrigger value="applications">{t.myListings.myApplications}</TabsTrigger>
-          </TabsList>
+          <div className="flex items-center justify-between mb-4">
+            <TabsList className="grid max-w-md grid-cols-2">
+              <TabsTrigger value="listings">{t.myListings.myActiveListings}</TabsTrigger>
+              <TabsTrigger value="applications">{t.myListings.myApplications}</TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="listings" className="space-y-4">
+            <div className="flex justify-end gap-2 mb-4">
+              <Button
+                variant={listingViewMode === "grid" ? "default" : "outline"}
+                size="icon"
+                onClick={() => setListingViewMode("grid")}
+                title="Grid View"
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={listingViewMode === "list" ? "default" : "outline"}
+                size="icon"
+                onClick={() => setListingViewMode("list")}
+                title="List View"
+              >
+                <LayoutList className="h-4 w-4" />
+              </Button>
+            </div>
             {myListings.length === 0 ? (
               <Card className="border-dashed">
                 <CardContent className="py-12 text-center">
@@ -146,7 +168,7 @@ export default function MyListingsPage() {
                 </CardContent>
               </Card>
             ) : (
-              <div className="grid grid-cols-1 gap-4">
+              <div className={listingViewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 gap-4" : "grid grid-cols-1 gap-4"}>
                 {myListings.map((listing) => (
                   <ListingCard key={listing.id} listing={listing} />
                 ))}
@@ -155,6 +177,24 @@ export default function MyListingsPage() {
           </TabsContent>
 
           <TabsContent value="applications" className="space-y-4">
+            <div className="flex justify-end gap-2 mb-4">
+              <Button
+                variant={applicationViewMode === "grid" ? "default" : "outline"}
+                size="icon"
+                onClick={() => setApplicationViewMode("grid")}
+                title="Grid View"
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={applicationViewMode === "list" ? "default" : "outline"}
+                size="icon"
+                onClick={() => setApplicationViewMode("list")}
+                title="List View"
+              >
+                <LayoutList className="h-4 w-4" />
+              </Button>
+            </div>
             {myApplications.length === 0 ? (
               <Card className="border-dashed">
                 <CardContent className="py-12 text-center">
@@ -165,7 +205,7 @@ export default function MyListingsPage() {
                 </CardContent>
               </Card>
             ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className={applicationViewMode === "grid" ? "grid grid-cols-1 lg:grid-cols-2 gap-4" : "grid grid-cols-1 gap-4"}>
                 {myApplications.map((application) => {
                   const listing = application.listing
                   const owner = listing?.owner
