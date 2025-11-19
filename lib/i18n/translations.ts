@@ -449,8 +449,8 @@ export const translations = {
       roles: {
         duelist: "Düellocu",
         controller: "Kontrolcü",
-        sentinel: "Muhafız",
-        initiator: "Başlatıcı",
+        sentinel: "Gözcü",
+        initiator: "Öncü",
         flex: "Esnek",
       },
     },
