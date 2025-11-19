@@ -410,7 +410,7 @@ export default function AimTrainerPage() {
                 )}
 
                 {gameState === "playing" && (
-                  <div className="relative h-[500px] rounded-lg p-[3px]">
+                  <div className="relative h-[500px] rounded-lg p-[3px] overflow-hidden">
                     {/* Neon snake border effect */}
                     <div
                       className="absolute inset-0 rounded-lg"
@@ -424,7 +424,7 @@ export default function AimTrainerPage() {
                     {/* Game area */}
                     <div
                       ref={gameAreaRef}
-                      className="h-full bg-gradient-to-br from-muted/30 to-muted/10 rounded-lg relative cursor-crosshair overflow-hidden"
+                      className="h-full bg-gradient-to-br from-background/95 to-background/90 rounded-lg relative cursor-crosshair overflow-hidden"
                       style={{ position: 'relative', zIndex: 1 }}
                     >
                       {targets.map(target => (
