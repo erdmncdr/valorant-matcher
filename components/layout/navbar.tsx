@@ -119,7 +119,7 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
                     </DropdownMenuItem>
                   </Link>
                   {profile.isAdmin && (
-                    <Link href="/admin/reports">
+                    <Link href="/admin">
                       <DropdownMenuItem className="cursor-pointer">
                         <Shield className="mr-2 h-4 w-4" />
                         Admin Panel
