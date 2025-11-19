@@ -202,7 +202,9 @@ export default function MyListingsPage() {
                     const isClosed = listing.status !== "OPEN"
                     return isExpired || isClosed
                   }).map((listing) => (
-                    <ListingCard key={listing.id} listing={listing} />
+                    <div key={listing.id} className="opacity-60">
+                      <ListingCard listing={listing} />
+                    </div>
                   ))}
                 </div>
               </div>
