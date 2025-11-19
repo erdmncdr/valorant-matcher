@@ -248,16 +248,16 @@ export default function AdminAnalyticsPage() {
 
           <Card className="border-yellow-500/20 bg-gradient-to-br from-yellow-500/10 to-transparent">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Avg. Session</CardTitle>
+              <CardTitle className="text-sm font-medium">{t.admin.avgSession}</CardTitle>
               <Clock className="h-4 w-4 text-yellow-500" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-foreground">
                 {analytics.engagement.avgSessionDuration}
-                <span className="text-sm ml-1">min</span>
+                <span className="text-sm ml-1">{t.admin.min}</span>
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                Average session duration
+                {t.admin.avgSessionDesc}
               </p>
             </CardContent>
           </Card>
@@ -278,8 +278,8 @@ export default function AdminAnalyticsPage() {
               {/* Daily Active Users */}
               <Card className="border-primary/20">
                 <CardHeader>
-                  <CardTitle>{t.admin.activityTrends}</CardTitle>
-                  <CardDescription>Active users and logins per day</CardDescription>
+                  <CardTitle>{t.admin.dailyActiveUsersChart}</CardTitle>
+                  <CardDescription>{t.admin.dailyActiveUsersDesc}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
@@ -323,8 +323,8 @@ export default function AdminAnalyticsPage() {
               {/* New Registrations */}
               <Card className="border-secondary/20">
                 <CardHeader>
-                  <CardTitle>New Registrations (7 Days)</CardTitle>
-                  <CardDescription>New user sign-ups per day</CardDescription>
+                  <CardTitle>{t.admin.newRegistrations}</CardTitle>
+                  <CardDescription>{t.admin.newRegistrationsDesc}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
@@ -352,8 +352,8 @@ export default function AdminAnalyticsPage() {
               {/* Peak Hours */}
               <Card className="border-accent/20">
                 <CardHeader>
-                  <CardTitle>Peak Activity Hours (24h)</CardTitle>
-                  <CardDescription>User activity by hour</CardDescription>
+                  <CardTitle>{t.admin.peakActivityHours}</CardTitle>
+                  <CardDescription>{t.admin.peakActivityDesc}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
@@ -387,14 +387,14 @@ export default function AdminAnalyticsPage() {
               {/* Platform Stats */}
               <Card className="border-primary/20">
                 <CardHeader>
-                  <CardTitle>Platform Statistics</CardTitle>
-                  <CardDescription>Overall platform metrics</CardDescription>
+                  <CardTitle>{t.admin.platformStats}</CardTitle>
+                  <CardDescription>{t.admin.platformStatsDesc}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
                     <div className="flex items-center gap-3">
                       <Users className="h-5 w-5 text-primary" />
-                      <span className="text-sm">Total Users</span>
+                      <span className="text-sm">{t.admin.totalUsers}</span>
                     </div>
                     <span className="text-lg font-bold">{analytics.overview.totalUsers}</span>
                   </div>
@@ -402,7 +402,7 @@ export default function AdminAnalyticsPage() {
                   <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
                     <div className="flex items-center gap-3">
                       <FileText className="h-5 w-5 text-accent" />
-                      <span className="text-sm">Total Listings</span>
+                      <span className="text-sm">{t.admin.totalListings}</span>
                     </div>
                     <span className="text-lg font-bold">{analytics.overview.totalListings}</span>
                   </div>
@@ -410,7 +410,7 @@ export default function AdminAnalyticsPage() {
                   <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
                     <div className="flex items-center gap-3">
                       <MessageSquare className="h-5 w-5 text-secondary" />
-                      <span className="text-sm">Total Messages</span>
+                      <span className="text-sm">{t.admin.totalMessages}</span>
                     </div>
                     <span className="text-lg font-bold">{analytics.overview.totalMessages}</span>
                   </div>
@@ -418,7 +418,7 @@ export default function AdminAnalyticsPage() {
                   <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
                     <div className="flex items-center gap-3">
                       <AlertTriangle className="h-5 w-5 text-yellow-500" />
-                      <span className="text-sm">Pending Reports</span>
+                      <span className="text-sm">{t.admin.pendingReports}</span>
                     </div>
                     <span className="text-lg font-bold text-yellow-500">
                       {analytics.overview.pendingReports}
@@ -428,7 +428,7 @@ export default function AdminAnalyticsPage() {
                   <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
                     <div className="flex items-center gap-3">
                       <TrendingUp className="h-5 w-5 text-green-500" />
-                      <span className="text-sm">Monthly Growth</span>
+                      <span className="text-sm">{t.admin.monthlyGrowth}</span>
                     </div>
                     <span className="text-lg font-bold text-green-500">
                       +{analytics.users.growthRate}%
