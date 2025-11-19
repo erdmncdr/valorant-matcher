@@ -10,6 +10,7 @@ import { Navbar } from "@/components/layout/navbar"
 import { Loader2, Target, Trophy, Zap, Award, Clock, Gift } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { usePresence } from "@/hooks/use-presence"
+import { useLanguage } from "@/lib/i18n/language-context"
 import confetti from "canvas-confetti"
 import {
   Dialog,
@@ -32,7 +33,8 @@ export default function AimTrainerPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const { toast } = useToast()
-  
+  const { t } = useLanguage()
+
   const [profile, setProfile] = useState<any>(null)
   const [gameState, setGameState] = useState<"menu" | "playing" | "finished">("menu")
   const [score, setScore] = useState(0)
@@ -130,7 +132,7 @@ export default function AimTrainerPage() {
       const diff = nextReward.getTime() - now.getTime()
 
       if (diff <= 0) {
-        setCountdown("Ödül hazır!")
+        setCountdown(t.aimTrainer.available)
         setCanClaimReward(true)
         return
       }
@@ -398,8 +400,8 @@ export default function AimTrainerPage() {
         <div className="mb-8 flex items-center gap-3">
           <Target className="h-8 w-8 text-primary" />
           <div>
-            <h1 className="text-4xl font-bold text-foreground">Aim Trainer</h1>
-            <p className="text-muted-foreground">Aim'ini geliştir, ödül kazan!</p>
+            <h1 className="text-4xl font-bold text-foreground">{t.aimTrainer.title}</h1>
+            <p className="text-muted-foreground">{t.aimTrainer.subtitle}</p>
           </div>
         </div>
 
@@ -426,37 +428,35 @@ export default function AimTrainerPage() {
                 {gameState === "menu" && (
                   <div className="h-[500px] flex flex-col items-center justify-center gap-6">
                     <div className="text-center">
-                      <h3 className="text-3xl font-bold text-foreground mb-2">Hazır mısın?</h3>
+                      <h3 className="text-3xl font-bold text-foreground mb-2">{t.aimTrainer.getReady}</h3>
                       <p className="text-muted-foreground mb-6">
-                        30 saniyede mümkün olduğunca çok hedef vur!
+                        {t.aimTrainer.howToPlayDesc}
                       </p>
                       <div className="space-y-2 mb-6">
-                        <p className="text-sm text-muted-foreground">• Normal hedef: +4 puan</p>
-                        <p className="text-sm text-muted-foreground">• Hızlı hedef: +8 puan</p>
-                        <p className="text-sm text-muted-foreground">• 100+ puan: +1 itibar (günlük)</p>
+                        <p className="text-sm text-muted-foreground">• {t.aimTrainer.dailyRewardDesc}</p>
                         {!canClaimReward && countdown && (
                           <div className="flex flex-col items-center gap-2 mt-4">
                             <Badge variant="outline" className="text-red-500 border-red-500">
-                              Bugünlük ödülünü aldın 🎉
+                              {t.aimTrainer.rewardAlreadyClaimed} 🎉
                             </Badge>
                             <div className="flex items-center gap-2 bg-red-500/10 px-4 py-2 rounded-lg border border-red-500/20">
                               <Clock className="h-4 w-4 text-red-500 animate-pulse" />
                               <span className="text-sm font-semibold text-foreground">
-                                {countdown} kaldı
+                                {countdown}
                               </span>
                             </div>
                           </div>
                         )}
                         {canClaimReward && (
                           <Badge variant="outline" className="text-green-500 border-green-500 animate-pulse">
-                            Ödül hazır! 100+ puan yap!
+                            {t.aimTrainer.canClaimReward}
                           </Badge>
                         )}
                       </div>
                     </div>
                     <Button onClick={startGame} size="lg" variant="valorant" className="text-xl px-8 py-6">
                       <Target className="mr-2 h-6 w-6" />
-                      Oyuna Başla
+                      {t.aimTrainer.clickToStart}
                     </Button>
                   </div>
                 )}
@@ -497,22 +497,22 @@ export default function AimTrainerPage() {
                   <div className="h-[500px] flex flex-col items-center justify-center gap-6">
                     <Award className="h-24 w-24 text-primary animate-bounce" />
                     <div className="text-center">
-                      <h3 className="text-4xl font-bold text-foreground mb-4">Oyun Bitti!</h3>
+                      <h3 className="text-4xl font-bold text-foreground mb-4">{t.aimTrainer.gameOver}</h3>
                       <div className="grid grid-cols-2 gap-6 mb-6">
                         <div className="bg-muted/30 p-4 rounded-lg">
-                          <p className="text-sm text-muted-foreground mb-1">Skor</p>
+                          <p className="text-sm text-muted-foreground mb-1">{t.aimTrainer.score}</p>
                           <p className="text-3xl font-bold text-primary">{score}</p>
                         </div>
                         <div className="bg-muted/30 p-4 rounded-lg">
-                          <p className="text-sm text-muted-foreground mb-1">İsabet</p>
+                          <p className="text-sm text-muted-foreground mb-1">{t.aimTrainer.accuracy}</p>
                           <p className="text-3xl font-bold text-accent">{accuracy}%</p>
                         </div>
                         <div className="bg-muted/30 p-4 rounded-lg">
-                          <p className="text-sm text-muted-foreground mb-1">Vuruş</p>
+                          <p className="text-sm text-muted-foreground mb-1">{t.aimTrainer.targetsHit}</p>
                           <p className="text-2xl font-bold text-green-500">{targetsHit}</p>
                         </div>
                         <div className="bg-muted/30 p-4 rounded-lg">
-                          <p className="text-sm text-muted-foreground mb-1">Kaçan</p>
+                          <p className="text-sm text-muted-foreground mb-1">{t.aimTrainer.targetsMissed}</p>
                           <p className="text-2xl font-bold text-red-500">{targetsMissed}</p>
                         </div>
                       </div>
@@ -526,10 +526,10 @@ export default function AimTrainerPage() {
                       {isSaving ? (
                         <>
                           <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                          Kaydediliyor...
+                          {t.common.loading}
                         </>
                       ) : (
-                        "Tekrar Oyna"
+                        t.aimTrainer.playAgain
                       )}
                     </Button>
                   </div>
@@ -546,17 +546,17 @@ export default function AimTrainerPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-red-500">
                     <Clock className="h-5 w-5" />
-                    Sonraki Ödül İçin Tekrar Gel
+                    {t.aimTrainer.nextReward}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center space-y-2">
-                    <p className="text-sm text-muted-foreground">Ödülünü aldın! 🎉</p>
+                    <p className="text-sm text-muted-foreground">{t.aimTrainer.rewardAlreadyClaimed} 🎉</p>
                     <div className="flex items-center justify-center gap-2 bg-background/50 px-4 py-3 rounded-lg border border-red-500/20">
                       <Clock className="h-5 w-5 text-red-500 animate-pulse" />
                       <span className="text-xl font-bold text-foreground">{countdown}</span>
                     </div>
-                    <p className="text-xs text-muted-foreground">kaldı</p>
+                    <p className="text-xs text-muted-foreground"></p>
                   </div>
                 </CardContent>
               </Card>
@@ -567,12 +567,12 @@ export default function AimTrainerPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-green-500">
                     <Gift className="h-5 w-5" />
-                    Ödül Hazır!
+                    {t.aimTrainer.dailyReward}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-center text-sm text-muted-foreground">
-                    100+ puan yaparak +1 itibar kazan! 🎯
+                    {t.aimTrainer.dailyRewardDesc} 🎯
                   </p>
                 </CardContent>
               </Card>
@@ -583,29 +583,29 @@ export default function AimTrainerPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Trophy className="h-5 w-5 text-yellow-500" />
-                  En İyi Skorun
+                  {t.aimTrainer.personalBest}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {userBest ? (
                   <div className="space-y-3">
                     <div>
-                      <p className="text-sm text-muted-foreground">Skor</p>
+                      <p className="text-sm text-muted-foreground">{t.aimTrainer.score}</p>
                       <p className="text-3xl font-bold text-primary">{userBest.score}</p>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <p className="text-xs text-muted-foreground">İsabet</p>
+                        <p className="text-xs text-muted-foreground">{t.aimTrainer.accuracy}</p>
                         <p className="text-lg font-bold text-accent">{(userBest.accuracy || 0).toFixed(1)}%</p>
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground">Vuruş</p>
+                        <p className="text-xs text-muted-foreground">{t.aimTrainer.targetsHit}</p>
                         <p className="text-lg font-bold text-green-500">{userBest.targetsHit}</p>
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <p className="text-muted-foreground text-center py-4">Henüz skor yok</p>
+                  <p className="text-muted-foreground text-center py-4">{t.aimTrainer.noScoresYet}</p>
                 )}
               </CardContent>
             </Card>
@@ -615,7 +615,7 @@ export default function AimTrainerPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Award className="h-5 w-5 text-secondary" />
-                  Günlük Liderler
+                  {t.aimTrainer.todaysLeaderboard}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -634,7 +634,7 @@ export default function AimTrainerPage() {
                             {entry.user.playerProfile?.nickname || "Unknown"}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {(entry.accuracy || 0).toFixed(1)}% isabet
+                            {(entry.accuracy || 0).toFixed(1)}% {t.aimTrainer.accuracy.toLowerCase()}
                           </p>
                         </div>
                         <div className="text-right">
@@ -644,7 +644,7 @@ export default function AimTrainerPage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-muted-foreground text-center py-4">Henüz skor yok</p>
+                  <p className="text-muted-foreground text-center py-4">{t.aimTrainer.noScoresYet}</p>
                 )}
               </CardContent>
             </Card>
