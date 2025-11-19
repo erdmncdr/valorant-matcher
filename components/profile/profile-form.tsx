@@ -21,6 +21,7 @@ import {
   VALORANT_AGENTS,
 } from "@/lib/constants"
 import { ValorantRank, PlayerRole, Seriousness } from "@/lib/types"
+import { useLanguage } from "@/lib/i18n/language-context"
 
 interface ProfileFormProps {
   initialData?: any
@@ -30,6 +31,7 @@ interface ProfileFormProps {
 export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
   const router = useRouter()
   const { toast } = useToast()
+  const { t } = useLanguage()
   const [isLoading, setIsLoading] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -63,8 +65,8 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
     if (selectedAgents.length >= 10) {
       toast({
         variant: "destructive",
-        title: "Too many agents",
-        description: "You can select up to 10 agents",
+        title: t.profileEdit.tooManyAgents,
+        description: t.profileEdit.maxAgentsDesc,
       })
       return
     }
@@ -90,8 +92,8 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
       if (selectedAgents.length === 0) {
         toast({
           variant: "destructive",
-          title: "No agents selected",
-          description: "Please select at least one agent",
+          title: t.profileEdit.noAgentsSelected,
+          description: t.profileEdit.selectOneAgent,
         })
         setIsLoading(false)
         return
@@ -100,8 +102,8 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
       if (formData.languages.length === 0) {
         toast({
           variant: "destructive",
-          title: "No languages selected",
-          description: "Please select at least one language",
+          title: t.profileEdit.noLanguagesSelected,
+          description: t.profileEdit.selectOneLanguage,
         })
         setIsLoading(false)
         return
@@ -123,8 +125,8 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
       }
 
       toast({
-        title: "Profile saved!",
-        description: "Your profile has been updated successfully",
+        title: t.common.success,
+        description: t.profileEdit.profileUpdateSuccess,
       })
 
       if (onSuccess) {
@@ -135,8 +137,8 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: error.message,
+        title: t.common.error,
+        description: t.profileEdit.profileUpdateError,
       })
     } finally {
       setIsLoading(false)
@@ -147,13 +149,13 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
     <form onSubmit={handleSubmit} className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Basic Information</CardTitle>
-          <CardDescription>Your in-game identity</CardDescription>
+          <CardTitle>{t.profileEdit.basicInfo}</CardTitle>
+          <CardDescription>{t.profileEdit.basicInfoDesc}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="nickname">In-Game Name *</Label>
+              <Label htmlFor="nickname">{t.profileEdit.nickname} *</Label>
               <Input
                 id="nickname"
                 value={formData.nickname}
@@ -164,7 +166,7 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="tagline">Tagline *</Label>
+              <Label htmlFor="tagline">{t.profileEdit.tagline} *</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold">#</span>
                 <Input
@@ -187,14 +189,14 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="region">Region *</Label>
+            <Label htmlFor="region">{t.profileEdit.region} *</Label>
             <Select
               value={formData.region}
               onValueChange={(value) => setFormData({ ...formData, region: value })}
               required
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select region" />
+                <SelectValue placeholder={t.profileEdit.selectRegion} />
               </SelectTrigger>
               <SelectContent>
                 {REGIONS.map((region) => (
@@ -216,14 +218,14 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="rankCurrent">Current Rank *</Label>
+              <Label htmlFor="rankCurrent">{t.profileEdit.currentRank} *</Label>
               <Select
                 value={formData.rankCurrent}
                 onValueChange={(value) => setFormData({ ...formData, rankCurrent: value as ValorantRank })}
                 required
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select current rank" />
+                  <SelectValue placeholder={t.profileEdit.selectRank} />
                 </SelectTrigger>
                 <SelectContent>
                   {VALORANT_RANKS.map((rank) => (
@@ -236,14 +238,14 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="rankPeak">Peak Rank *</Label>
+              <Label htmlFor="rankPeak">{t.profileEdit.peakRank} *</Label>
               <Select
                 value={formData.rankPeak}
                 onValueChange={(value) => setFormData({ ...formData, rankPeak: value as ValorantRank })}
                 required
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select peak rank" />
+                  <SelectValue placeholder={t.profileEdit.selectRank} />
                 </SelectTrigger>
                 <SelectContent>
                   {VALORANT_RANKS.map((rank) => (
@@ -257,14 +259,14 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="mainRole">Main Role *</Label>
+            <Label htmlFor="mainRole">{t.profileEdit.mainRole} *</Label>
             <Select
               value={formData.mainRole}
               onValueChange={(value) => setFormData({ ...formData, mainRole: value as PlayerRole })}
               required
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select main role" />
+                <SelectValue placeholder={t.profileEdit.selectRole} />
               </SelectTrigger>
               <SelectContent>
                 {PLAYER_ROLES.map((role) => (
@@ -280,8 +282,8 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Agents</CardTitle>
-          <CardDescription>Select agents you play (1-10) *</CardDescription>
+          <CardTitle>{t.profileEdit.agentPool}</CardTitle>
+          <CardDescription>{t.profileEdit.agentPoolDesc}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex flex-wrap gap-2">
@@ -302,7 +304,7 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
 
           <Select onValueChange={handleAddAgent}>
             <SelectTrigger>
-              <SelectValue placeholder="Add agent" />
+              <SelectValue placeholder={t.profileEdit.selectAgent} />
             </SelectTrigger>
             <SelectContent>
               {VALORANT_AGENTS.filter(a => !selectedAgents.find(sa => sa.agentName === a)).map((agent) => (
@@ -318,12 +320,12 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Communication & Preferences</CardTitle>
-          <CardDescription>How you like to play</CardDescription>
+          <CardTitle>{t.profileEdit.gameplayPreferences}</CardTitle>
+          <CardDescription>{t.profileEdit.gameplayPreferencesDesc}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label>Languages *</Label>
+            <Label>{t.profileEdit.languages} *</Label>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {LANGUAGES.map((lang) => (
                 <div key={lang.value} className="flex items-center space-x-2">
@@ -347,12 +349,12 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
               onCheckedChange={(checked) => setFormData({ ...formData, mic: checked as boolean })}
             />
             <Label htmlFor="mic" className="text-sm font-normal cursor-pointer">
-              I have a microphone
+              {t.profileEdit.hasMicrophone}
             </Label>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="seriousness">Playstyle *</Label>
+            <Label htmlFor="seriousness">{t.profileEdit.playstyle} *</Label>
             <Select
               value={formData.seriousness}
               onValueChange={(value) => setFormData({ ...formData, seriousness: value as Seriousness })}
@@ -372,22 +374,22 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="typicalPlaytime">Typical Playtime</Label>
+            <Label htmlFor="typicalPlaytime">{t.profileEdit.typicalPlaytime}</Label>
             <Input
               id="typicalPlaytime"
               value={formData.typicalPlaytime}
               onChange={(e) => setFormData({ ...formData, typicalPlaytime: e.target.value })}
-              placeholder="e.g., Weekdays 18:00-23:00"
+              placeholder={t.profileEdit.playtimeHelper}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="bio">Bio</Label>
+            <Label htmlFor="bio">{t.profileEdit.bio}</Label>
             <Textarea
               id="bio"
               value={formData.bio}
               onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-              placeholder="Tell others about yourself..."
+              placeholder={t.profileEdit.bioHelper}
               maxLength={500}
               rows={4}
             />
@@ -408,10 +410,10 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Saving...
+            {t.profileEdit.saving}
           </>
         ) : (
-          "Save Profile"
+          t.profileEdit.saveChanges
         )}
       </Button>
     </form>

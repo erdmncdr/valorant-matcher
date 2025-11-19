@@ -9,11 +9,13 @@ import { ProfileForm } from "@/components/profile/profile-form"
 import { Loader2 } from "lucide-react"
 import { Navbar } from "@/components/layout/navbar"
 import { usePresence } from "@/hooks/use-presence"
+import { useLanguage } from "@/lib/i18n/language-context"
 
 export default function EditProfilePage() {
   usePresence()
   const { status } = useSession()
   const router = useRouter()
+  const { t } = useLanguage()
   const [profile, setProfile] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -64,8 +66,8 @@ export default function EditProfilePage() {
 
       <div className="container max-w-3xl mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Edit Profile</h1>
-          <p className="text-gray-400">Update your Valorant profile information</p>
+          <h1 className="text-4xl font-bold text-white mb-2">{t.profileEdit.title}</h1>
+          <p className="text-gray-400">{t.profileEdit.subtitle}</p>
         </div>
 
         {profile && <ProfileForm initialData={profile} onSuccess={handleSuccess} />}
