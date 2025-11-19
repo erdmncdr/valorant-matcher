@@ -427,6 +427,26 @@ export const translations = {
       selectOneLanguage: "Lütfen en az bir dil seçin",
       profileUpdateSuccess: "Profil başarıyla güncellendi!",
       profileUpdateError: "Profil güncellenemedi",
+      rankAndRole: "Rank ve Rol",
+      rankAndRoleDesc: "Yetenek seviyeniz ve tercih ettiğiniz oyun tarzı",
+      ranks: {
+        iron: "Demir",
+        bronze: "Bronz",
+        silver: "Gümüş",
+        gold: "Altın",
+        platinum: "Platin",
+        diamond: "Elmas",
+        ascendant: "Yükseliş",
+        immortal: "Ölümsüz",
+        radiant: "Parlak",
+      },
+      roles: {
+        duelist: "Düellocu",
+        controller: "Kontrolcü",
+        sentinel: "Muhafız",
+        initiator: "Başlatıcı",
+        flex: "Esnek",
+      },
     },
 
     // Admin Analytics
@@ -931,6 +951,26 @@ export const translations = {
       selectOneLanguage: "Please select at least one language",
       profileUpdateSuccess: "Profile updated successfully!",
       profileUpdateError: "Failed to update profile",
+      rankAndRole: "Rank & Role",
+      rankAndRoleDesc: "Your skill level and preferred playstyle",
+      ranks: {
+        iron: "Iron",
+        bronze: "Bronze",
+        silver: "Silver",
+        gold: "Gold",
+        platinum: "Platinum",
+        diamond: "Diamond",
+        ascendant: "Ascendant",
+        immortal: "Immortal",
+        radiant: "Radiant",
+      },
+      roles: {
+        duelist: "Duelist",
+        controller: "Controller",
+        sentinel: "Sentinel",
+        initiator: "Initiator",
+        flex: "Flex",
+      },
     },
 
     // Admin Analytics

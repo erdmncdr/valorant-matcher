@@ -1,5 +1,32 @@
 import { ValorantRank, PlayerRole, Seriousness, GameMode } from "./types"
 
+// Helper function to get translated rank labels
+export function getValorantRanks(t: any) {
+  return [
+    { value: ValorantRank.IRON, label: t.profileEdit.ranks.iron },
+    { value: ValorantRank.BRONZE, label: t.profileEdit.ranks.bronze },
+    { value: ValorantRank.SILVER, label: t.profileEdit.ranks.silver },
+    { value: ValorantRank.GOLD, label: t.profileEdit.ranks.gold },
+    { value: ValorantRank.PLATINUM, label: t.profileEdit.ranks.platinum },
+    { value: ValorantRank.DIAMOND, label: t.profileEdit.ranks.diamond },
+    { value: ValorantRank.ASCENDANT, label: t.profileEdit.ranks.ascendant },
+    { value: ValorantRank.IMMORTAL, label: t.profileEdit.ranks.immortal },
+    { value: ValorantRank.RADIANT, label: t.profileEdit.ranks.radiant },
+  ]
+}
+
+// Helper function to get translated role labels
+export function getPlayerRoles(t: any) {
+  return [
+    { value: PlayerRole.DUELIST, label: t.profileEdit.roles.duelist },
+    { value: PlayerRole.CONTROLLER, label: t.profileEdit.roles.controller },
+    { value: PlayerRole.SENTINEL, label: t.profileEdit.roles.sentinel },
+    { value: PlayerRole.INITIATOR, label: t.profileEdit.roles.initiator },
+    { value: PlayerRole.FLEX, label: t.profileEdit.roles.flex },
+  ]
+}
+
+// Static exports for backwards compatibility (English labels)
 export const VALORANT_RANKS = [
   { value: ValorantRank.IRON, label: "Iron" },
   { value: ValorantRank.BRONZE, label: "Bronze" },

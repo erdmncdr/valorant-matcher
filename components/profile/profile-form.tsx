@@ -13,8 +13,8 @@ import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
 import { Loader2, X } from "lucide-react"
 import {
-  VALORANT_RANKS,
-  PLAYER_ROLES,
+  getValorantRanks,
+  getPlayerRoles,
   SERIOUSNESS_LEVELS,
   REGIONS,
   LANGUAGES,
@@ -33,6 +33,10 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
   const { toast } = useToast()
   const { t } = useLanguage()
   const [isLoading, setIsLoading] = useState(false)
+
+  // Get translated labels
+  const valorantRanks = getValorantRanks(t)
+  const playerRoles = getPlayerRoles(t)
 
   const [formData, setFormData] = useState({
     nickname: initialData?.nickname || "",
@@ -212,8 +216,8 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Rank & Role</CardTitle>
-          <CardDescription>Your skill level and preferred playstyle</CardDescription>
+          <CardTitle>{t.profileEdit.rankAndRole}</CardTitle>
+          <CardDescription>{t.profileEdit.rankAndRoleDesc}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -228,7 +232,7 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
                   <SelectValue placeholder={t.profileEdit.selectRank} />
                 </SelectTrigger>
                 <SelectContent>
-                  {VALORANT_RANKS.map((rank) => (
+                  {valorantRanks.map((rank) => (
                     <SelectItem key={rank.value} value={rank.value}>
                       {rank.label}
                     </SelectItem>
@@ -248,7 +252,7 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
                   <SelectValue placeholder={t.profileEdit.selectRank} />
                 </SelectTrigger>
                 <SelectContent>
-                  {VALORANT_RANKS.map((rank) => (
+                  {valorantRanks.map((rank) => (
                     <SelectItem key={rank.value} value={rank.value}>
                       {rank.label}
                     </SelectItem>
@@ -269,7 +273,7 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
                 <SelectValue placeholder={t.profileEdit.selectRole} />
               </SelectTrigger>
               <SelectContent>
-                {PLAYER_ROLES.map((role) => (
+                {playerRoles.map((role) => (
                   <SelectItem key={role.value} value={role.value}>
                     {role.label}
                   </SelectItem>
