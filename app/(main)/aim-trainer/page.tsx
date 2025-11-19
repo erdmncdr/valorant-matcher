@@ -14,7 +14,6 @@ import confetti from "canvas-confetti"
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
@@ -49,10 +48,12 @@ export default function AimTrainerPage() {
   const [showRewardModal, setShowRewardModal] = useState(false)
   const [rewardAmount, setRewardAmount] = useState(0)
   const [countdown, setCountdown] = useState<string>("")
-  
+
   const gameAreaRef = useRef<HTMLDivElement>(null)
   const gameIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const targetIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const hasSavedRef = useRef(false)
+  const finalScoreRef = useRef({ score: 0, hit: 0, missed: 0 })
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -146,6 +147,14 @@ export default function AimTrainerPage() {
     return () => clearInterval(interval)
   }, [lastRewardTime])
 
+  // Auto-save score when game ends
+  useEffect(() => {
+    if (gameState === "finished" && !hasSavedRef.current) {
+      hasSavedRef.current = true
+      saveScore()
+    }
+  }, [gameState])
+
   const spawnTarget = () => {
     if (!gameAreaRef.current) return
 
@@ -199,6 +208,8 @@ export default function AimTrainerPage() {
     setTimeLeft(30)
     setTargets([])
     setSpawnInterval(800)
+    hasSavedRef.current = false
+    finalScoreRef.current = { score: 0, hit: 0, missed: 0 }
 
     // Countdown timer
     gameIntervalRef.current = setInterval(() => {
@@ -234,12 +245,17 @@ export default function AimTrainerPage() {
       return []
     })
 
-    setGameState("finished")
+    // Capture final scores to ref immediately
+    finalScoreRef.current = {
+      score: score,
+      hit: targetsHit,
+      missed: targetsMissed
+    }
 
-    // Save score after state updates
-    setTimeout(() => {
-      saveScore()
-    }, 100)
+    console.log('End game - captured scores:', finalScoreRef.current)
+
+    hasSavedRef.current = false
+    setGameState("finished")
   }
 
   const hitTarget = (targetId: number) => {
@@ -258,10 +274,10 @@ export default function AimTrainerPage() {
   const saveScore = async () => {
     setIsSaving(true)
     try {
-      // Capture current state values to avoid stale closure
-      const currentScore = score
-      const currentHit = targetsHit
-      const currentMissed = targetsMissed
+      // Use ref values captured at game end
+      const currentScore = finalScoreRef.current.score
+      const currentHit = finalScoreRef.current.hit
+      const currentMissed = finalScoreRef.current.missed
       const total = currentHit + currentMissed
       const accuracy = total > 0 ? (currentHit / total) * 100 : 0
 
@@ -432,7 +448,7 @@ export default function AimTrainerPage() {
                 )}
 
                 {gameState === "playing" && (
-                  <div className="relative h-[500px] rounded-lg p-[3px] overflow-hidden">
+                  <div className="relative h-[500px] rounded-lg p-[4px]">
                     {/* Neon snake border effect - single traveling light */}
                     <div
                       className="absolute inset-0 rounded-lg"
@@ -453,7 +469,7 @@ export default function AimTrainerPage() {
                     {/* Game area */}
                     <div
                       ref={gameAreaRef}
-                      className="h-full bg-gradient-to-br from-background/95 to-background/90 rounded-lg relative cursor-crosshair overflow-hidden"
+                      className="h-full rounded-lg relative cursor-crosshair overflow-hidden aim-trainer-bg"
                       style={{ position: 'relative', zIndex: 1 }}
                     >
                       {targets.map(target => (
@@ -644,26 +660,24 @@ export default function AimTrainerPage() {
             <DialogTitle className="text-3xl font-bold text-center text-primary">
               🎉 KAZANDIN! 🎉
             </DialogTitle>
-            <DialogDescription className="text-center pt-4">
-              <div className="space-y-4">
-                <div className="bg-gradient-to-r from-primary/20 via-accent/20 to-secondary/20 p-6 rounded-lg">
-                  <p className="text-sm text-muted-foreground mb-2">Günlük Ödül</p>
-                  <div className="flex items-center justify-center gap-3">
-                    <Trophy className="h-8 w-8 text-yellow-500" />
-                    <span className="text-5xl font-bold text-primary">+{rewardAmount}</span>
-                    <Gift className="h-8 w-8 text-accent" />
-                  </div>
-                  <p className="text-2xl font-bold text-foreground mt-2">İtibar Puanı!</p>
-                </div>
-                <p className="text-muted-foreground">
-                  Harika performans! Günlük ödülünü kazandın.
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Bir sonraki ödül için 24 saat bekle!
-                </p>
-              </div>
-            </DialogDescription>
           </DialogHeader>
+          <div className="text-center pt-4 space-y-4">
+            <div className="bg-gradient-to-r from-primary/20 via-accent/20 to-secondary/20 p-6 rounded-lg">
+              <p className="text-sm text-muted-foreground mb-2">Günlük Ödül</p>
+              <div className="flex items-center justify-center gap-3">
+                <Trophy className="h-8 w-8 text-yellow-500" />
+                <span className="text-5xl font-bold text-primary">+{rewardAmount}</span>
+                <Gift className="h-8 w-8 text-accent" />
+              </div>
+              <p className="text-2xl font-bold text-foreground mt-2">İtibar Puanı!</p>
+            </div>
+            <p className="text-muted-foreground">
+              Harika performans! Günlük ödülünü kazandın.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Bir sonraki ödül için 24 saat bekle!
+            </p>
+          </div>
           <div className="flex justify-center pt-4">
             <Button
               onClick={() => setShowRewardModal(false)}
