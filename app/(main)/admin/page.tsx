@@ -10,11 +10,13 @@ import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
 import { Loader2, Shield, AlertTriangle, Users, ArrowRight, Activity, Flag } from "lucide-react"
 import { Navbar } from "@/components/layout/navbar"
+import { useLanguage } from "@/lib/i18n/language-context"
 
 export default function AdminPage() {
   const { status } = useSession()
   const router = useRouter()
   const { toast } = useToast()
+  const { t } = useLanguage()
   const [stats, setStats] = useState({
     totalReports: 0,
     openReports: 0,
@@ -109,8 +111,8 @@ export default function AdminPage() {
         <div className="mb-8 flex items-center gap-3">
           <Shield className="h-8 w-8 text-primary" />
           <div>
-            <h1 className="text-4xl font-bold text-foreground">Admin Panel</h1>
-            <p className="text-muted-foreground">Sistem yönetimi ve moderasyon kontrol paneli</p>
+            <h1 className="text-4xl font-bold text-foreground">{t.admin.title}</h1>
+            <p className="text-muted-foreground">{t.admin.subtitle}</p>
           </div>
         </div>
 
@@ -126,8 +128,8 @@ export default function AdminPage() {
                       <Activity className="h-6 w-6 text-secondary" />
                     </div>
                     <div>
-                      <CardTitle className="text-foreground">Analytics</CardTitle>
-                      <CardDescription>İstatistikler ve metrikler</CardDescription>
+                      <CardTitle className="text-foreground">{t.admin.analytics}</CardTitle>
+                      <CardDescription>{t.admin.analyticsDesc}</CardDescription>
                     </div>
                   </div>
                   <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-secondary group-hover:translate-x-1 transition-all" />
@@ -156,8 +158,8 @@ export default function AdminPage() {
                       <Flag className="h-6 w-6 text-primary" />
                     </div>
                     <div>
-                      <CardTitle className="text-foreground">Reportlar</CardTitle>
-                      <CardDescription>Kullanıcı şikayetlerini yönet</CardDescription>
+                      <CardTitle className="text-foreground">{t.admin.reportsTitle}</CardTitle>
+                      <CardDescription>{t.admin.reportsDesc}</CardDescription>
                     </div>
                   </div>
                   <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
