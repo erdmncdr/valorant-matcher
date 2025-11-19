@@ -350,6 +350,38 @@ export const translations = {
       reputation: "İtibar",
     },
 
+    // Achievements
+    achievements: {
+      title: "Başarımlar",
+      subtitle: "Görevleri tamamla ve rozetler kazan",
+      myAchievements: "Başarımlarım",
+      progress: "İlerleme",
+      unlocked: "Kazanıldı",
+      locked: "Kilitli",
+      reputationBonus: "İtibar Bonusu",
+      howToUnlock: "Nasıl Kazanılır",
+      unlockedOn: "Kazanıldığı Tarih",
+      categories: {
+        all: "Tümü",
+        general: "Genel",
+        matchmaking: "Eşleştirme",
+        social: "Sosyal",
+        skill: "Yetenek",
+        reputation: "İtibar",
+      },
+      rarity: {
+        common: "Sıradan",
+        rare: "Nadir",
+        epic: "Epik",
+        legendary: "Efsanevi",
+      },
+      stats: {
+        total: "Toplam Başarım",
+        completed: "Tamamlandı",
+        completionRate: "Tamamlanma Oranı",
+      },
+    },
+
     // Aim Trainer
     aimTrainer: {
       title: "Aim Trainer",
@@ -878,6 +910,38 @@ export const translations = {
       topPlayers: "Top Players",
       noPlayers: "No players in the leaderboard yet",
       reputation: "Reputation",
+    },
+
+    // Achievements
+    achievements: {
+      title: "Achievements",
+      subtitle: "Complete challenges and earn badges",
+      myAchievements: "My Achievements",
+      progress: "Progress",
+      unlocked: "Unlocked",
+      locked: "Locked",
+      reputationBonus: "Reputation Bonus",
+      howToUnlock: "How to Unlock",
+      unlockedOn: "Unlocked On",
+      categories: {
+        all: "All",
+        general: "General",
+        matchmaking: "Matchmaking",
+        social: "Social",
+        skill: "Skill",
+        reputation: "Reputation",
+      },
+      rarity: {
+        common: "Common",
+        rare: "Rare",
+        epic: "Epic",
+        legendary: "Legendary",
+      },
+      stats: {
+        total: "Total Achievements",
+        completed: "Completed",
+        completionRate: "Completion Rate",
+      },
     },
 
     // Aim Trainer
