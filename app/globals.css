@@ -252,13 +252,19 @@
   pointer-events: none;
 }
 
-/* Aim Trainer Neon Border Animation */
-@keyframes neon-border-rotate {
-  from {
-    transform: rotate(0deg);
+/* Aim Trainer White Breathing Border */
+@keyframes border-breathing {
+  0%, 100% {
+    box-shadow:
+      0 0 10px rgba(255, 255, 255, 0.3),
+      0 0 20px rgba(255, 255, 255, 0.2),
+      inset 0 0 10px rgba(255, 255, 255, 0.1);
   }
-  to {
-    transform: rotate(360deg);
+  50% {
+    box-shadow:
+      0 0 20px rgba(255, 255, 255, 0.6),
+      0 0 40px rgba(255, 255, 255, 0.4),
+      inset 0 0 20px rgba(255, 255, 255, 0.2);
   }
 }
 

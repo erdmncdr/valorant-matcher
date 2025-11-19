@@ -448,29 +448,14 @@ export default function AimTrainerPage() {
                 )}
 
                 {gameState === "playing" && (
-                  <div className="relative h-[500px] rounded-lg p-[4px]">
-                    {/* Neon snake border effect - single traveling light */}
-                    <div
-                      className="absolute inset-0 rounded-lg"
-                      style={{
-                        background: `conic-gradient(from 0deg,
-                          transparent 0%,
-                          transparent 85%,
-                          rgba(255, 8, 68, 0.3) 88%,
-                          rgba(255, 234, 0, 0.6) 91%,
-                          rgba(0, 217, 255, 0.9) 94%,
-                          rgba(124, 58, 237, 1) 97%,
-                          rgba(0, 217, 255, 0.6) 99%,
-                          transparent 100%)`,
-                        animation: 'neon-border-rotate 3s linear infinite',
-                      }}
-                    />
-
-                    {/* Game area */}
+                  <div className="relative h-[500px]">
+                    {/* Game area with white breathing border */}
                     <div
                       ref={gameAreaRef}
-                      className="h-full rounded-lg relative cursor-crosshair overflow-hidden aim-trainer-bg"
-                      style={{ position: 'relative', zIndex: 1 }}
+                      className="h-full rounded-lg relative cursor-crosshair overflow-hidden aim-trainer-bg border-2 border-white/30"
+                      style={{
+                        animation: 'border-breathing 2.5s ease-in-out infinite',
+                      }}
                     >
                       {targets.map(target => (
                         <div
