@@ -166,6 +166,7 @@ export async function GET(req: Request) {
       leaderboard,
       userBest,
       canClaimReward: !todayReward,
+      lastRewardTime: todayReward?.createdAt || null,
     })
   } catch (error) {
     console.error("Get aim trainer stats error:", error)
