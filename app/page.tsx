@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Shield, Users, Star, MessageCircle, Loader2, Languages } from "lucide-react"
 import { useLanguage } from "@/lib/i18n/language-context"
+import { ThemeToggle } from "@/components/ui/theme-toggle"
 
 export default function HomePage() {
   const { data: session, status } = useSession()
@@ -40,6 +41,7 @@ export default function HomePage() {
               <span className="text-foreground font-bold text-xl">{t.nav.logo}</span>
             </div>
             <div className="flex items-center space-x-2">
+              <ThemeToggle />
               <Button
                 variant="outline"
                 size="sm"

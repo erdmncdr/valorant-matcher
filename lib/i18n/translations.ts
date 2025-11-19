@@ -436,9 +436,9 @@ export const translations = {
         gold: "Altın",
         platinum: "Platin",
         diamond: "Elmas",
-        ascendant: "Yükseliş",
-        immortal: "Ölümsüz",
-        radiant: "Parlak",
+        ascendant: "Yücelik",
+        immortal: "Ölümsüzlük",
+        radiant: "Radyant",
       },
       roles: {
         duelist: "Düellocu",
