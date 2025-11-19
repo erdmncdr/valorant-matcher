@@ -411,13 +411,20 @@ export default function AimTrainerPage() {
 
                 {gameState === "playing" && (
                   <div className="relative h-[500px] rounded-lg p-[3px] overflow-hidden">
-                    {/* Neon snake border effect */}
+                    {/* Neon snake border effect - single traveling light */}
                     <div
                       className="absolute inset-0 rounded-lg"
                       style={{
-                        background: 'conic-gradient(from 0deg, #ff0844, #ffea00, #00d9ff, #7c3aed, #ff0844)',
-                        animation: 'neon-border-rotate 4s linear infinite',
-                        filter: 'blur(2px) brightness(1.3)',
+                        background: `conic-gradient(from 0deg,
+                          transparent 0%,
+                          transparent 85%,
+                          rgba(255, 8, 68, 0.3) 88%,
+                          rgba(255, 234, 0, 0.6) 91%,
+                          rgba(0, 217, 255, 0.9) 94%,
+                          rgba(124, 58, 237, 1) 97%,
+                          rgba(0, 217, 255, 0.6) 99%,
+                          transparent 100%)`,
+                        animation: 'neon-border-rotate 3s linear infinite',
                       }}
                     />
 
