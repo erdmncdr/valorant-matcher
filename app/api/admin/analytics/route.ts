@@ -173,53 +173,70 @@ export async function GET(req: Request) {
     })
 
     // 8. MOST ACTIVE USERS (last 7 days)
-    const mostActiveUsers = await prisma.user.findMany({
-      where: {
-        lastSeenAt: { gte: last7Days },
-      },
-      select: {
-        id: true,
-        email: true,
-        playerProfile: {
-          select: {
-            nickname: true,
-            tagline: true,
-            reputationScore: true,
+    let mostActiveUsers: any[] = []
+    try {
+      mostActiveUsers = await prisma.user.findMany({
+        where: {
+          lastSeenAt: { gte: last7Days },
+        },
+        select: {
+          id: true,
+          email: true,
+          playerProfile: {
+            select: {
+              nickname: true,
+              tagline: true,
+              reputationScore: true,
+            },
+          },
+          lastSeenAt: true,
+          _count: {
+            select: {
+              listingsOwned: true,
+              messagesSent: true,
+              listingApplications: true,
+            },
           },
         },
-        lastSeenAt: true,
-        _count: {
-          select: {
-            listingsOwned: true,
-            messagesSent: true,
-            listingApplications: true,
-          },
+        orderBy: {
+          lastSeenAt: "desc",
         },
-      },
-      orderBy: {
-        lastSeenAt: "desc",
-      },
-      take: 10,
-    })
+        take: 10,
+      })
+    } catch (error) {
+      console.log('Error fetching most active users, using empty array')
+      // If query fails, just return empty array
+      mostActiveUsers = []
+    }
 
     // 9. ENGAGEMENT METRICS
     let totalAimTrainerScores = 0
+    let totalApplications = 0
+    let totalRatings = 0
+
     try {
       totalAimTrainerScores = await prisma.aimTrainerScore.count({
         where: { createdAt: { gte: last7Days } },
       })
     } catch (error) {
-      // Table might not exist yet, ignore error
       console.log('aimTrainerScore table not found, skipping...')
     }
 
-    const totalApplications = await prisma.listingApplication.count({
-      where: { createdAt: { gte: last7Days } },
-    })
+    try {
+      totalApplications = await prisma.listingApplication.count({
+        where: { createdAt: { gte: last7Days } },
+      })
+    } catch (error) {
+      console.log('listingApplication table not found, skipping...')
+    }
 
-    const totalRatings = await prisma.rating.count({
-      where: { createdAt: { gte: last7Days } },
-    })
+    try {
+      totalRatings = await prisma.rating.count({
+        where: { createdAt: { gte: last7Days } },
+      })
+    } catch (error) {
+      console.log('rating table not found, skipping...')
+    }
 
     // 10. REPORT STATS
     const pendingReports = await prisma.report.count({
