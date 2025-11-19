@@ -22,7 +22,10 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json()
+    console.log('Received score data:', body)
+
     const data = scoreSchema.parse(body)
+    console.log('Validated score data:', data)
 
     // Check if user already claimed reward today
     const today = new Date()
@@ -41,6 +44,8 @@ export async function POST(req: Request) {
     const canClaimReward = !todayScore && data.score >= 100
     let reputationAdded = 0
 
+    console.log('Can claim reward:', canClaimReward, 'Score:', data.score, 'Already claimed today:', !!todayScore)
+
     // Save score
     const score = await prisma.aimTrainerScore.create({
       data: {
@@ -54,6 +59,8 @@ export async function POST(req: Request) {
       },
     })
 
+    console.log('Score saved:', score.id, 'Accuracy:', score.accuracy)
+
     // If eligible for reward, add reputation
     if (canClaimReward) {
       await prisma.playerProfile.update({
@@ -65,6 +72,7 @@ export async function POST(req: Request) {
         },
       })
       reputationAdded = 1
+      console.log('Reputation added: +1')
     }
 
     return NextResponse.json({
