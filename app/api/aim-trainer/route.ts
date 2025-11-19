@@ -100,20 +100,17 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url)
     const limit = parseInt(searchParams.get("limit") || "10")
 
-    // Get today's best scores (leaderboard)
+    // Get today's best scores (leaderboard) - one per user
     const today = new Date()
     today.setHours(0, 0, 0, 0)
 
-    const leaderboard = await prisma.aimTrainerScore.findMany({
+    // Get all today's scores grouped by user, selecting max score
+    const todayScores = await prisma.aimTrainerScore.findMany({
       where: {
         createdAt: {
           gte: today,
         },
       },
-      orderBy: {
-        score: "desc",
-      },
-      take: limit,
       include: {
         user: {
           select: {
@@ -126,7 +123,23 @@ export async function GET(req: Request) {
           },
         },
       },
+      orderBy: {
+        score: "desc",
+      },
     })
+
+    // Group by user and keep only best score per user
+    const userBestScores = new Map()
+    todayScores.forEach(score => {
+      const existing = userBestScores.get(score.userId)
+      if (!existing || score.score > existing.score) {
+        userBestScores.set(score.userId, score)
+      }
+    })
+
+    const leaderboard = Array.from(userBestScores.values())
+      .sort((a, b) => b.score - a.score)
+      .slice(0, limit)
 
     // Get user's personal best
     const userBest = await prisma.aimTrainerScore.findFirst({
@@ -153,6 +166,7 @@ export async function GET(req: Request) {
       leaderboard,
       userBest,
       canClaimReward: !todayReward,
+      lastRewardTime: todayReward?.createdAt || null,
     })
   } catch (error) {
     console.error("Get aim trainer stats error:", error)

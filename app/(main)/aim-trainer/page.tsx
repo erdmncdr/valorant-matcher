@@ -7,15 +7,24 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Navbar } from "@/components/layout/navbar"
-import { Loader2, Target, Trophy, Zap, Award } from "lucide-react"
+import { Loader2, Target, Trophy, Zap, Award, Clock, Gift } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { usePresence } from "@/hooks/use-presence"
+import confetti from "canvas-confetti"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 interface Target {
   id: number
   x: number
   y: number
   size: number
+  timeoutId: NodeJS.Timeout
 }
 
 export default function AimTrainerPage() {
@@ -35,6 +44,11 @@ export default function AimTrainerPage() {
   const [userBest, setUserBest] = useState<any>(null)
   const [canClaimReward, setCanClaimReward] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [spawnInterval, setSpawnInterval] = useState(800)
+  const [lastRewardTime, setLastRewardTime] = useState<Date | null>(null)
+  const [showRewardModal, setShowRewardModal] = useState(false)
+  const [rewardAmount, setRewardAmount] = useState(0)
+  const [countdown, setCountdown] = useState<string>("")
   
   const gameAreaRef = useRef<HTMLDivElement>(null)
   const gameIntervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -59,6 +73,16 @@ export default function AimTrainerPage() {
     }
   }, [])
 
+  // Update spawn interval during gameplay
+  useEffect(() => {
+    if (gameState === "playing") {
+      if (targetIntervalRef.current) clearInterval(targetIntervalRef.current)
+      targetIntervalRef.current = setInterval(() => {
+        spawnTarget()
+      }, spawnInterval)
+    }
+  }, [spawnInterval, gameState])
+
   const fetchProfile = async () => {
     try {
       const response = await fetch("/api/profile")
@@ -75,37 +99,96 @@ export default function AimTrainerPage() {
     try {
       const response = await fetch("/api/aim-trainer")
       const data = await response.json()
-      
+
       if (response.ok) {
         setLeaderboard(data.leaderboard || [])
         setUserBest(data.userBest)
         setCanClaimReward(data.canClaimReward)
+        if (data.lastRewardTime) {
+          setLastRewardTime(new Date(data.lastRewardTime))
+        }
       }
     } catch (error) {
       console.error("Failed to fetch stats:", error)
     }
   }
 
+  // Countdown timer for next reward
+  useEffect(() => {
+    if (!lastRewardTime) {
+      setCountdown("")
+      return
+    }
+
+    const updateCountdown = () => {
+      const now = new Date()
+      const nextReward = new Date(lastRewardTime)
+      nextReward.setHours(nextReward.getHours() + 24)
+
+      const diff = nextReward.getTime() - now.getTime()
+
+      if (diff <= 0) {
+        setCountdown("Ödül hazır!")
+        setCanClaimReward(true)
+        return
+      }
+
+      const hours = Math.floor(diff / (1000 * 60 * 60))
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000)
+
+      setCountdown(`${hours}s ${minutes}d ${seconds}s`)
+    }
+
+    updateCountdown()
+    const interval = setInterval(updateCountdown, 1000)
+
+    return () => clearInterval(interval)
+  }, [lastRewardTime])
+
   const spawnTarget = () => {
     if (!gameAreaRef.current) return
 
     const area = gameAreaRef.current.getBoundingClientRect()
-    const size = 60 + Math.random() * 40 // 60-100px
-    
+
+    // Weighted random target sizes
+    const rand = Math.random()
+    let size: number
+
+    if (rand < 0.6) {
+      // 60% chance - Small targets (35-45px)
+      size = 35 + Math.random() * 10
+    } else if (rand < 0.9) {
+      // 30% chance - Medium targets (50-65px)
+      size = 50 + Math.random() * 15
+    } else {
+      // 10% chance - Large targets (70-85px)
+      size = 70 + Math.random() * 15
+    }
+
+    const targetId = Date.now() + Math.random()
+
+    // Remove target after 1.5 seconds if not clicked
+    const timeoutId = setTimeout(() => {
+      setTargets(prev => {
+        const stillExists = prev.find(t => t.id === targetId)
+        if (stillExists) {
+          setTargetsMissed(prev => prev + 1)
+          return prev.filter(t => t.id !== targetId)
+        }
+        return prev
+      })
+    }, 1500)
+
     const target: Target = {
-      id: Date.now() + Math.random(),
+      id: targetId,
       x: Math.random() * (area.width - size),
       y: Math.random() * (area.height - size),
       size,
+      timeoutId,
     }
 
     setTargets(prev => [...prev, target])
-
-    // Remove target after 1.5 seconds if not clicked
-    setTimeout(() => {
-      setTargets(prev => prev.filter(t => t.id !== target.id))
-      setTargetsMissed(prev => prev + 1)
-    }, 1500)
   }
 
   const startGame = () => {
@@ -115,6 +198,7 @@ export default function AimTrainerPage() {
     setTargetsMissed(0)
     setTimeLeft(30)
     setTargets([])
+    setSpawnInterval(800)
 
     // Countdown timer
     gameIntervalRef.current = setInterval(() => {
@@ -123,11 +207,18 @@ export default function AimTrainerPage() {
           endGame()
           return 0
         }
-        return prev - 1
+
+        // Increase difficulty every 5 seconds
+        const newTime = prev - 1
+        if (newTime % 5 === 0 && newTime > 0) {
+          setSpawnInterval(current => Math.max(400, current - 80)) // Minimum 400ms
+        }
+
+        return newTime
       })
     }, 1000)
 
-    // Spawn targets
+    // Spawn targets - will be re-created when interval changes
     targetIntervalRef.current = setInterval(() => {
       spawnTarget()
     }, 800)
@@ -136,16 +227,32 @@ export default function AimTrainerPage() {
   const endGame = () => {
     if (gameIntervalRef.current) clearInterval(gameIntervalRef.current)
     if (targetIntervalRef.current) clearInterval(targetIntervalRef.current)
-    
+
+    // Clear all remaining targets and their timeouts
+    setTargets(prev => {
+      prev.forEach(target => clearTimeout(target.timeoutId))
+      return []
+    })
+
     setGameState("finished")
-    setTargets([])
-    saveScore()
+
+    // Save score after state updates
+    setTimeout(() => {
+      saveScore()
+    }, 100)
   }
 
   const hitTarget = (targetId: number) => {
-    setTargets(prev => prev.filter(t => t.id !== targetId))
-    setTargetsHit(prev => prev + 1)
-    setScore(prev => prev + 10)
+    setTargets(prev => {
+      const target = prev.find(t => t.id === targetId)
+      if (target) {
+        // Cancel the timeout so target is not counted as missed
+        clearTimeout(target.timeoutId)
+        setTargetsHit(prevHits => prevHits + 1)
+        setScore(prevScore => prevScore + 10)
+      }
+      return prev.filter(t => t.id !== targetId)
+    })
   }
 
   const saveScore = async () => {
@@ -170,17 +277,44 @@ export default function AimTrainerPage() {
 
       if (response.ok) {
         if (data.rewardClaimed && data.reputationAdded > 0) {
-          toast({
-            title: "Tebrikler! 🎉",
-            description: `${score} puan kazandın! +${data.reputationAdded} itibar puanı eklendi!`,
-          })
+          // Trigger confetti celebration!
+          const duration = 3000
+          const end = Date.now() + duration
+
+          const colors = ['#ff0844', '#ffea00', '#00d9ff', '#7c3aed']
+
+          const frame = () => {
+            confetti({
+              particleCount: 5,
+              angle: 60,
+              spread: 55,
+              origin: { x: 0 },
+              colors,
+            })
+            confetti({
+              particleCount: 5,
+              angle: 120,
+              spread: 55,
+              origin: { x: 1 },
+              colors,
+            })
+
+            if (Date.now() < end) {
+              requestAnimationFrame(frame)
+            }
+          }
+          frame()
+
+          // Show reward modal
+          setRewardAmount(data.reputationAdded)
+          setShowRewardModal(true)
         } else if (score >= 100 && !data.rewardClaimed) {
           toast({
             title: "Harika Skor!",
             description: "Bugünlük ödülünü aldın. Yarın tekrar dene!",
           })
         }
-        
+
         fetchStats()
       }
     } catch (error) {
@@ -248,9 +382,22 @@ export default function AimTrainerPage() {
                       <div className="space-y-2 mb-6">
                         <p className="text-sm text-muted-foreground">• Her hedef: +10 puan</p>
                         <p className="text-sm text-muted-foreground">• 100+ puan: +1 itibar (günlük)</p>
-                        {!canClaimReward && (
-                          <Badge variant="outline" className="text-yellow-500 border-yellow-500">
-                            Bugünlük ödülünü aldın
+                        {!canClaimReward && countdown && (
+                          <div className="flex flex-col items-center gap-2 mt-4">
+                            <Badge variant="outline" className="text-yellow-500 border-yellow-500">
+                              Bugünlük ödülünü aldın
+                            </Badge>
+                            <div className="flex items-center gap-2 bg-muted/50 px-4 py-2 rounded-lg">
+                              <Clock className="h-4 w-4 text-accent" />
+                              <span className="text-sm font-semibold text-foreground">
+                                Sonraki ödül: {countdown}
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                        {canClaimReward && (
+                          <Badge variant="outline" className="text-green-500 border-green-500 animate-pulse">
+                            Ödül hazır! 100+ puan yap!
                           </Badge>
                         )}
                       </div>
@@ -263,28 +410,42 @@ export default function AimTrainerPage() {
                 )}
 
                 {gameState === "playing" && (
-                  <div
-                    ref={gameAreaRef}
-                    className="h-[500px] bg-gradient-to-br from-muted/30 to-muted/10 rounded-lg relative cursor-crosshair overflow-hidden border-2 border-primary/20"
-                  >
-                    {targets.map(target => (
-                      <div
-                        key={target.id}
-                        onClick={() => hitTarget(target.id)}
-                        className="absolute bg-primary rounded-full cursor-pointer hover:scale-110 transition-transform animate-pulse"
-                        style={{
-                          left: target.x,
-                          top: target.y,
-                          width: target.size,
-                          height: target.size,
-                          boxShadow: "0 0 20px rgba(255, 0, 0, 0.5)",
-                        }}
-                      >
-                        <div className="w-full h-full flex items-center justify-center">
-                          <div className="w-2 h-2 bg-white rounded-full" />
+                  <div className="relative h-[500px] rounded-lg p-[3px]">
+                    {/* Neon snake border effect */}
+                    <div
+                      className="absolute inset-0 rounded-lg"
+                      style={{
+                        background: 'conic-gradient(from 0deg, #ff0844, #ffea00, #00d9ff, #7c3aed, #ff0844)',
+                        animation: 'neon-border-rotate 4s linear infinite',
+                        filter: 'blur(2px) brightness(1.3)',
+                      }}
+                    />
+
+                    {/* Game area */}
+                    <div
+                      ref={gameAreaRef}
+                      className="h-full bg-gradient-to-br from-muted/30 to-muted/10 rounded-lg relative cursor-crosshair overflow-hidden"
+                      style={{ position: 'relative', zIndex: 1 }}
+                    >
+                      {targets.map(target => (
+                        <div
+                          key={target.id}
+                          onClick={() => hitTarget(target.id)}
+                          className="absolute bg-primary rounded-full cursor-pointer hover:scale-110 transition-transform animate-pulse"
+                          style={{
+                            left: target.x,
+                            top: target.y,
+                            width: target.size,
+                            height: target.size,
+                            boxShadow: "0 0 20px rgba(255, 0, 0, 0.5)",
+                          }}
+                        >
+                          <div className="w-full h-full flex items-center justify-center">
+                            <div className="w-2 h-2 bg-white rounded-full" />
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 )}
 
@@ -335,6 +496,43 @@ export default function AimTrainerPage() {
 
           {/* Sidebar */}
           <div className="lg:col-span-1 space-y-6">
+            {/* Daily Reward Timer */}
+            {!canClaimReward && countdown && (
+              <Card className="border-yellow-500/30 bg-gradient-to-br from-yellow-500/10 to-transparent">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-yellow-500">
+                    <Gift className="h-5 w-5" />
+                    Günlük Ödül
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center">
+                    <p className="text-sm text-muted-foreground mb-2">Sonraki ödül:</p>
+                    <div className="flex items-center justify-center gap-2 bg-background/50 px-4 py-3 rounded-lg">
+                      <Clock className="h-5 w-5 text-yellow-500" />
+                      <span className="text-xl font-bold text-foreground">{countdown}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {canClaimReward && (
+              <Card className="border-green-500/30 bg-gradient-to-br from-green-500/10 to-transparent animate-pulse">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-green-500">
+                    <Gift className="h-5 w-5" />
+                    Ödül Hazır!
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-center text-sm text-muted-foreground">
+                    100+ puan yaparak +1 itibar kazan! 🎯
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Personal Best */}
             <Card className="border-accent/20">
               <CardHeader>
@@ -408,6 +606,46 @@ export default function AimTrainerPage() {
           </div>
         </div>
       </div>
+
+      {/* Reward Celebration Modal */}
+      <Dialog open={showRewardModal} onOpenChange={setShowRewardModal}>
+        <DialogContent className="sm:max-w-md border-primary/30">
+          <DialogHeader>
+            <DialogTitle className="text-3xl font-bold text-center text-primary">
+              🎉 KAZANDIN! 🎉
+            </DialogTitle>
+            <DialogDescription className="text-center pt-4">
+              <div className="space-y-4">
+                <div className="bg-gradient-to-r from-primary/20 via-accent/20 to-secondary/20 p-6 rounded-lg">
+                  <p className="text-sm text-muted-foreground mb-2">Günlük Ödül</p>
+                  <div className="flex items-center justify-center gap-3">
+                    <Trophy className="h-8 w-8 text-yellow-500" />
+                    <span className="text-5xl font-bold text-primary">+{rewardAmount}</span>
+                    <Gift className="h-8 w-8 text-accent" />
+                  </div>
+                  <p className="text-2xl font-bold text-foreground mt-2">İtibar Puanı!</p>
+                </div>
+                <p className="text-muted-foreground">
+                  Harika performans! Günlük ödülünü kazandın.
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Bir sonraki ödül için 24 saat bekle!
+                </p>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-center pt-4">
+            <Button
+              onClick={() => setShowRewardModal(false)}
+              variant="valorant"
+              size="lg"
+              className="w-full"
+            >
+              Harika! 🎯
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
