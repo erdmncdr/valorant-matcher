@@ -258,69 +258,91 @@ export default function AimTrainerPage() {
   const saveScore = async () => {
     setIsSaving(true)
     try {
-      const total = targetsHit + targetsMissed
-      const accuracy = total > 0 ? (targetsHit / total) * 100 : 0
-      
+      // Capture current state values to avoid stale closure
+      const currentScore = score
+      const currentHit = targetsHit
+      const currentMissed = targetsMissed
+      const total = currentHit + currentMissed
+      const accuracy = total > 0 ? (currentHit / total) * 100 : 0
+
+      console.log('Saving score:', { currentScore, accuracy, currentHit, currentMissed, total })
+
       const response = await fetch("/api/aim-trainer", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          score,
+          score: currentScore,
           accuracy,
           timeElapsed: 30,
-          targetsHit,
-          targetsMissed,
+          targetsHit: currentHit,
+          targetsMissed: currentMissed,
         }),
       })
 
       const data = await response.json()
+      console.log('Save response:', data)
 
-      if (response.ok) {
-        if (data.rewardClaimed && data.reputationAdded > 0) {
-          // Trigger confetti celebration!
-          const duration = 3000
-          const end = Date.now() + duration
-
-          const colors = ['#ff0844', '#ffea00', '#00d9ff', '#7c3aed']
-
-          const frame = () => {
-            confetti({
-              particleCount: 5,
-              angle: 60,
-              spread: 55,
-              origin: { x: 0 },
-              colors,
-            })
-            confetti({
-              particleCount: 5,
-              angle: 120,
-              spread: 55,
-              origin: { x: 1 },
-              colors,
-            })
-
-            if (Date.now() < end) {
-              requestAnimationFrame(frame)
-            }
-          }
-          frame()
-
-          // Show reward modal
-          setRewardAmount(data.reputationAdded)
-          setShowRewardModal(true)
-        } else if (score >= 100 && !data.rewardClaimed) {
-          toast({
-            title: "Harika Skor!",
-            description: "Bugünlük ödülünü aldın. Yarın tekrar dene!",
-          })
-        }
-
-        fetchStats()
+      if (!response.ok) {
+        console.error('Save failed:', response.status, data)
+        toast({
+          title: "Hata",
+          description: data.error || "Skor kaydedilemedi. Veritabanı tablosu oluşturuldu mu?",
+          variant: "destructive",
+        })
+        return
       }
-    } catch (error) {
+
+      // Successful save
+      if (data.rewardClaimed && data.reputationAdded > 0) {
+        // Trigger confetti celebration!
+        const duration = 3000
+        const end = Date.now() + duration
+
+        const colors = ['#ff0844', '#ffea00', '#00d9ff', '#7c3aed']
+
+        const frame = () => {
+          confetti({
+            particleCount: 5,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 },
+            colors,
+          })
+          confetti({
+            particleCount: 5,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 },
+            colors,
+          })
+
+          if (Date.now() < end) {
+            requestAnimationFrame(frame)
+          }
+        }
+        frame()
+
+        // Show reward modal
+        setRewardAmount(data.reputationAdded)
+        setShowRewardModal(true)
+      } else if (currentScore >= 100 && !data.rewardClaimed) {
+        toast({
+          title: "Harika Skor!",
+          description: "Bugünlük ödülünü aldın. Yarın tekrar dene!",
+        })
+      } else {
+        toast({
+          title: "Skor Kaydedildi",
+          description: `${currentScore} puan - ${accuracy.toFixed(1)}% isabet`,
+        })
+      }
+
+      fetchStats()
+    } catch (error: any) {
+      console.error('Save error:', error)
       toast({
         title: "Hata",
-        description: "Skor kaydedilemedi",
+        description: error.message || "Skor kaydedilemedi. Lütfen migration'ı çalıştırın.",
         variant: "destructive",
       })
     } finally {
@@ -411,13 +433,20 @@ export default function AimTrainerPage() {
 
                 {gameState === "playing" && (
                   <div className="relative h-[500px] rounded-lg p-[3px] overflow-hidden">
-                    {/* Neon snake border effect */}
+                    {/* Neon snake border effect - single traveling light */}
                     <div
                       className="absolute inset-0 rounded-lg"
                       style={{
-                        background: 'conic-gradient(from 0deg, #ff0844, #ffea00, #00d9ff, #7c3aed, #ff0844)',
-                        animation: 'neon-border-rotate 4s linear infinite',
-                        filter: 'blur(2px) brightness(1.3)',
+                        background: `conic-gradient(from 0deg,
+                          transparent 0%,
+                          transparent 85%,
+                          rgba(255, 8, 68, 0.3) 88%,
+                          rgba(255, 234, 0, 0.6) 91%,
+                          rgba(0, 217, 255, 0.9) 94%,
+                          rgba(124, 58, 237, 1) 97%,
+                          rgba(0, 217, 255, 0.6) 99%,
+                          transparent 100%)`,
+                        animation: 'neon-border-rotate 3s linear infinite',
                       }}
                     />
 
@@ -552,7 +581,7 @@ export default function AimTrainerPage() {
                     <div className="grid grid-cols-2 gap-2">
                       <div>
                         <p className="text-xs text-muted-foreground">İsabet</p>
-                        <p className="text-lg font-bold text-accent">{userBest.accuracy.toFixed(1)}%</p>
+                        <p className="text-lg font-bold text-accent">{(userBest.accuracy || 0).toFixed(1)}%</p>
                       </div>
                       <div>
                         <p className="text-xs text-muted-foreground">Vuruş</p>
@@ -590,7 +619,7 @@ export default function AimTrainerPage() {
                             {entry.user.playerProfile?.nickname || "Unknown"}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {entry.accuracy.toFixed(1)}% isabet
+                            {(entry.accuracy || 0).toFixed(1)}% isabet
                           </p>
                         </div>
                         <div className="text-right">
