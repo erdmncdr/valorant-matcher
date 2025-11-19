@@ -47,9 +47,9 @@ export async function GET(req: Request) {
     })
 
     // Map achievements with user progress
-    const achievementsWithProgress = achievements.map(achievement => {
+    const achievementsWithProgress = achievements.map((achievement: any) => {
       const userAchievement = userAchievements.find(
-        ua => ua.achievementId === achievement.id
+        (ua: any) => ua.achievementId === achievement.id
       )
 
       // Hide achievement details if it's hidden and not unlocked

@@ -1,9 +1,10 @@
-import { Message, EmbedBuilder, PrismaClient } from 'discord.js'
+import { Message, EmbedBuilder } from 'discord.js'
+import { prisma } from '../../lib/prisma'
 
 export async function handleStatsCommand(
   message: Message,
   args: string[],
-  prisma: PrismaClient
+  prisma: any
 ) {
   try {
     // Check if a user was mentioned
@@ -92,8 +93,8 @@ export async function handleStatsCommand(
       }),
     ])
 
-    const positiveRatings = reputationStats.find(r => r.score === 1)?._count || 0
-    const negativeRatings = reputationStats.find(r => r.score === -1)?._count || 0
+    const positiveRatings = reputationStats.find((r: any) => r.score === 1)?._count || 0
+    const negativeRatings = reputationStats.find((r: any) => r.score === -1)?._count || 0
     const totalRatings = positiveRatings + negativeRatings
 
     // Create stats embed

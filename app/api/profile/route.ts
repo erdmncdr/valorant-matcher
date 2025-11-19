@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
-import { ValorantRank, PlayerRole, Seriousness } from "@prisma/client"
+import { ValorantRank, PlayerRole, Seriousness } from "@/lib/types"
 
 const profileSchema = z.object({
   nickname: z.string().min(2).max(20),

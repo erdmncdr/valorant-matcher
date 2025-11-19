@@ -59,14 +59,14 @@ export async function GET(
     }
 
     // Calculate reputation stats
-    const positiveRatings = user.ratingsReceived.filter(r => r.score === 1).length
-    const negativeRatings = user.ratingsReceived.filter(r => r.score === -1).length
+    const positiveRatings = user.ratingsReceived.filter((r: any) => r.score === 1).length
+    const negativeRatings = user.ratingsReceived.filter((r: any) => r.score === -1).length
     const totalRatings = user.ratingsReceived.length
 
     // Calculate tag frequency
     const tagFrequency: { [key: string]: number } = {}
-    user.ratingsReceived.forEach(rating => {
-      rating.tags.forEach(tag => {
+    user.ratingsReceived.forEach((rating: any) => {
+      rating.tags.forEach((tag: any) => {
         tagFrequency[tag] = (tagFrequency[tag] || 0) + 1
       })
     })
@@ -91,7 +91,7 @@ export async function GET(
           total: totalRatings,
           topTags,
         },
-        recentRatings: user.ratingsReceived.slice(0, 10).map(rating => ({
+        recentRatings: user.ratingsReceived.slice(0, 10).map((rating: any) => ({
           id: rating.id,
           score: rating.score,
           tags: rating.tags,

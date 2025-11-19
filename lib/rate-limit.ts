@@ -73,7 +73,7 @@ function createRateLimiter(
     // Use Redis-backed rate limiter
     return new Ratelimit({
       redis,
-      limiter: Ratelimit.slidingWindow(requests, window),
+      limiter: Ratelimit.slidingWindow(requests, window as any),
       analytics: true,
       prefix: `needone:${name}`,
     })

@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ListingCard } from "@/components/listings/listing-card"
 import { Loader2, Filter, LayoutGrid, LayoutList } from "lucide-react"
 import { GAME_MODES, REGIONS, VALORANT_RANKS, PLAYER_ROLES } from "@/lib/constants"
-import { ListingType } from "@prisma/client"
+import { ListingType } from "@/lib/types"
 import { Navbar } from "@/components/layout/navbar"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { OnlineUsers } from "@/components/online-users"
@@ -25,7 +25,7 @@ export default function ListingsPage() {
   const [listings, setListings] = useState<any[]>([])
   const [profile, setProfile] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<ListingType>("TEAM")
+  const [activeTab, setActiveTab] = useState<ListingType>(ListingType.TEAM)
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
 
   const [filters, setFilters] = useState({

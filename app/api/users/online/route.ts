@@ -44,7 +44,7 @@ export async function GET(req: Request) {
     })
 
     // Filter out users without profiles
-    const usersWithProfiles = onlineUsers.filter(user => user.playerProfile !== null)
+    const usersWithProfiles = onlineUsers.filter((user: any) => user.playerProfile !== null)
 
     return NextResponse.json({
       onlineUsers: usersWithProfiles,

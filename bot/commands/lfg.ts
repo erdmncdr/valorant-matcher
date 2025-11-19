@@ -1,4 +1,5 @@
-import { Message, EmbedBuilder, PrismaClient } from 'discord.js'
+import { Message, EmbedBuilder } from 'discord.js'
+import { prisma } from '../../lib/prisma'
 
 const RANK_ORDER = [
   'Iron',
@@ -17,7 +18,7 @@ const ROLES = ['Duelist', 'Initiator', 'Controller', 'Sentinel', 'FLEX']
 export async function handleLFGCommand(
   message: Message,
   args: string[],
-  prisma: PrismaClient
+  prisma: any
 ) {
   try {
     // Parse filters from arguments
@@ -122,7 +123,7 @@ export async function handleLFGCommand(
     }
 
     // Add each listing
-    listings.forEach((listing, index) => {
+    listings.forEach((listing: any, index: number) => {
       const profile = listing.owner.playerProfile
       const nickname = profile?.nickname || 'Unknown'
       const tagline = profile?.tagline || ''

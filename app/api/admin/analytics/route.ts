@@ -146,16 +146,16 @@ export async function GET(req: Request) {
     })
 
     const sessionDurations = recentSessions
-      .filter(s => s.lastLoginAt && s.lastSeenAt)
-      .map(s => {
+      .filter((s: any) => s.lastLoginAt && s.lastSeenAt)
+      .map((s: any) => {
         const duration = s.lastSeenAt!.getTime() - s.lastLoginAt!.getTime()
         return Math.max(0, duration / (1000 * 60)) // minutes
       })
-      .filter(d => d > 0 && d < 480) // Filter out unrealistic durations (0-8 hours)
+      .filter((d: number) => d > 0 && d < 480) // Filter out unrealistic durations (0-8 hours)
 
     const avgSessionDuration =
       sessionDurations.length > 0
-        ? sessionDurations.reduce((a, b) => a + b, 0) / sessionDurations.length
+        ? sessionDurations.reduce((a: number, b: number) => a + b, 0) / sessionDurations.length
         : 0
 
     // 7. LISTING STATS
@@ -274,7 +274,7 @@ export async function GET(req: Request) {
     })
 
     const hourlyActivity = Array(24).fill(0)
-    last24HoursActivity.forEach(user => {
+    last24HoursActivity.forEach((user: any) => {
       if (user.lastSeenAt) {
         const hour = user.lastSeenAt.getHours()
         hourlyActivity[hour]++
@@ -327,7 +327,7 @@ export async function GET(req: Request) {
         aimTrainerPlays: totalAimTrainerScores,
         applications: totalApplications,
         ratings: totalRatings,
-        listingsByType: listingsByType.map(l => ({
+        listingsByType: listingsByType.map((l: any) => ({
           type: l.listingType,
           count: l._count,
         })),

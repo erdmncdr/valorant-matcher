@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
-import { ValorantRank, PlayerRole, Seriousness, GameMode, ListingType, ListingStatus } from "@prisma/client"
+import { ValorantRank, PlayerRole, Seriousness, GameMode, ListingType, ListingStatus } from "@/lib/types"
 import { listingRateLimiter } from "@/lib/rate-limit"
 
 const createListingSchema = z.object({

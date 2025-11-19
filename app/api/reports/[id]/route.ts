@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
-import { ReportStatus } from "@prisma/client"
+import { ReportStatus } from "@/lib/types"
 
 const updateReportSchema = z.object({
   status: z.nativeEnum(ReportStatus),

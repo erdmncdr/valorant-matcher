@@ -1,12 +1,4 @@
 import {
-  User,
-  PlayerProfile,
-  Listing,
-  ListingApplication,
-  ListingMessage,
-  PlayerRating,
-  Report,
-  Block,
   ValorantRank,
   PlayerRole,
   Seriousness,
@@ -14,20 +6,18 @@ import {
   ListingStatus,
   GameMode,
   ReportReason,
-  ReportStatus
-} from '@prisma/client'
+  ReportStatus,
+} from '@/lib/types'
 
-// Re-export Prisma types
-export type {
-  User,
-  PlayerProfile,
-  Listing,
-  ListingApplication,
-  ListingMessage,
-  PlayerRating,
-  Report,
-  Block,
-}
+// Placeholder types for Prisma models
+export type User = any
+export type PlayerProfile = any
+export type Listing = any
+export type ListingApplication = any
+export type ListingMessage = any
+export type PlayerRating = any
+export type Report = any
+export type Block = any
 
 // Re-export enums
 export {

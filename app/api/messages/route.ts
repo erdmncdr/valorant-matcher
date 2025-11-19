@@ -33,8 +33,8 @@ export async function GET(req: Request) {
     })
 
     const userIds = new Set([
-      ...sentMessages.map(m => m.receiverUserId),
-      ...receivedMessages.map(m => m.senderUserId),
+      ...sentMessages.map((m: any) => m.receiverUserId),
+      ...receivedMessages.map((m: any) => m.senderUserId),
     ])
 
     // Get user details and last message for each conversation

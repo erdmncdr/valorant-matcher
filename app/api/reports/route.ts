@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
-import { ReportReason, ReportCategory } from "@prisma/client"
+import { ReportReason, ReportCategory } from "@/lib/types"
 import { reportRateLimiter } from "@/lib/rate-limit"
 
 const createReportSchema = z.object({

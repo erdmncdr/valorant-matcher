@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { formatDistanceToNow } from "date-fns"
 import { tr, enUS } from "date-fns/locale"
-import { X, CheckCheck, Trash2, MessageSquare, UserPlus, UserX, Star, Clock } from "lucide-react"
+import { X, CheckCheck, Trash2, MessageSquare, UserPlus, UserX, Star, Clock, Bell } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"

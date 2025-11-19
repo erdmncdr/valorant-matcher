@@ -152,7 +152,7 @@ export async function GET(req: Request) {
 
     // Group by user and keep only best score per user
     const userBestScores = new Map()
-    todayScores.forEach(score => {
+    todayScores.forEach((score: any) => {
       const existing = userBestScores.get(score.userId)
       if (!existing || score.score > existing.score) {
         userBestScores.set(score.userId, score)
@@ -160,7 +160,7 @@ export async function GET(req: Request) {
     })
 
     const leaderboard = Array.from(userBestScores.values())
-      .sort((a, b) => b.score - a.score)
+      .sort((a: any, b: any) => b.score - a.score)
       .slice(0, limit)
 
     // Get user's personal best

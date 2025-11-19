@@ -47,7 +47,7 @@ export async function sendDiscordNotification(
       }
 
       const embed = new EmbedBuilder()
-        .setColor(notification.color || '#00D9FF')
+        .setColor((notification.color || '#00D9FF') as any)
         .setTitle(notification.title)
         .setDescription(notification.message)
         .setFooter({ text: '🌐 NeedOne - VALORANT Matchmaking' })
