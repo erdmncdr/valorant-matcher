@@ -384,13 +384,13 @@ export default function AimTrainerPage() {
                         <p className="text-sm text-muted-foreground">• 100+ puan: +1 itibar (günlük)</p>
                         {!canClaimReward && countdown && (
                           <div className="flex flex-col items-center gap-2 mt-4">
-                            <Badge variant="outline" className="text-yellow-500 border-yellow-500">
-                              Bugünlük ödülünü aldın
+                            <Badge variant="outline" className="text-red-500 border-red-500">
+                              Bugünlük ödülünü aldın 🎉
                             </Badge>
-                            <div className="flex items-center gap-2 bg-muted/50 px-4 py-2 rounded-lg">
-                              <Clock className="h-4 w-4 text-accent" />
+                            <div className="flex items-center gap-2 bg-red-500/10 px-4 py-2 rounded-lg border border-red-500/20">
+                              <Clock className="h-4 w-4 text-red-500 animate-pulse" />
                               <span className="text-sm font-semibold text-foreground">
-                                Sonraki ödül: {countdown}
+                                {countdown} kaldı
                               </span>
                             </div>
                           </div>
@@ -410,7 +410,7 @@ export default function AimTrainerPage() {
                 )}
 
                 {gameState === "playing" && (
-                  <div className="relative h-[500px] rounded-lg p-[3px]">
+                  <div className="relative h-[500px] rounded-lg p-[3px] overflow-hidden">
                     {/* Neon snake border effect */}
                     <div
                       className="absolute inset-0 rounded-lg"
@@ -424,7 +424,7 @@ export default function AimTrainerPage() {
                     {/* Game area */}
                     <div
                       ref={gameAreaRef}
-                      className="h-full bg-gradient-to-br from-muted/30 to-muted/10 rounded-lg relative cursor-crosshair overflow-hidden"
+                      className="h-full bg-gradient-to-br from-background/95 to-background/90 rounded-lg relative cursor-crosshair overflow-hidden"
                       style={{ position: 'relative', zIndex: 1 }}
                     >
                       {targets.map(target => (
@@ -498,20 +498,21 @@ export default function AimTrainerPage() {
           <div className="lg:col-span-1 space-y-6">
             {/* Daily Reward Timer */}
             {!canClaimReward && countdown && (
-              <Card className="border-yellow-500/30 bg-gradient-to-br from-yellow-500/10 to-transparent">
+              <Card className="border-red-500/30 bg-gradient-to-br from-red-500/10 to-transparent">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-yellow-500">
-                    <Gift className="h-5 w-5" />
-                    Günlük Ödül
+                  <CardTitle className="flex items-center gap-2 text-red-500">
+                    <Clock className="h-5 w-5" />
+                    Sonraki Ödül İçin Tekrar Gel
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-center">
-                    <p className="text-sm text-muted-foreground mb-2">Sonraki ödül:</p>
-                    <div className="flex items-center justify-center gap-2 bg-background/50 px-4 py-3 rounded-lg">
-                      <Clock className="h-5 w-5 text-yellow-500" />
+                  <div className="text-center space-y-2">
+                    <p className="text-sm text-muted-foreground">Ödülünü aldın! 🎉</p>
+                    <div className="flex items-center justify-center gap-2 bg-background/50 px-4 py-3 rounded-lg border border-red-500/20">
+                      <Clock className="h-5 w-5 text-red-500 animate-pulse" />
                       <span className="text-xl font-bold text-foreground">{countdown}</span>
                     </div>
+                    <p className="text-xs text-muted-foreground">kaldı</p>
                   </div>
                 </CardContent>
               </Card>
