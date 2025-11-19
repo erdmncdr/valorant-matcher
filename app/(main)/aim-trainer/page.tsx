@@ -308,28 +308,42 @@ export default function AimTrainerPage() {
                 )}
 
                 {gameState === "playing" && (
-                  <div
-                    ref={gameAreaRef}
-                    className="h-[500px] bg-gradient-to-br from-muted/30 to-muted/10 rounded-lg relative cursor-crosshair overflow-hidden border-2 border-primary/20"
-                  >
-                    {targets.map(target => (
-                      <div
-                        key={target.id}
-                        onClick={() => hitTarget(target.id)}
-                        className="absolute bg-primary rounded-full cursor-pointer hover:scale-110 transition-transform animate-pulse"
-                        style={{
-                          left: target.x,
-                          top: target.y,
-                          width: target.size,
-                          height: target.size,
-                          boxShadow: "0 0 20px rgba(255, 0, 0, 0.5)",
-                        }}
-                      >
-                        <div className="w-full h-full flex items-center justify-center">
-                          <div className="w-2 h-2 bg-white rounded-full" />
+                  <div className="relative h-[500px] rounded-lg p-[3px]">
+                    {/* Neon snake border effect */}
+                    <div
+                      className="absolute inset-0 rounded-lg"
+                      style={{
+                        background: 'conic-gradient(from 0deg, #ff0844, #ffea00, #00d9ff, #7c3aed, #ff0844)',
+                        animation: 'neon-border-rotate 4s linear infinite',
+                        filter: 'blur(2px) brightness(1.3)',
+                      }}
+                    />
+
+                    {/* Game area */}
+                    <div
+                      ref={gameAreaRef}
+                      className="h-full bg-gradient-to-br from-muted/30 to-muted/10 rounded-lg relative cursor-crosshair overflow-hidden"
+                      style={{ position: 'relative', zIndex: 1 }}
+                    >
+                      {targets.map(target => (
+                        <div
+                          key={target.id}
+                          onClick={() => hitTarget(target.id)}
+                          className="absolute bg-primary rounded-full cursor-pointer hover:scale-110 transition-transform animate-pulse"
+                          style={{
+                            left: target.x,
+                            top: target.y,
+                            width: target.size,
+                            height: target.size,
+                            boxShadow: "0 0 20px rgba(255, 0, 0, 0.5)",
+                          }}
+                        >
+                          <div className="w-full h-full flex items-center justify-center">
+                            <div className="w-2 h-2 bg-white rounded-full" />
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 )}
 

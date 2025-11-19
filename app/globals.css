@@ -251,3 +251,13 @@
   animation: admin-meteor-glow 2.5s linear infinite;
   pointer-events: none;
 }
+
+/* Aim Trainer Neon Border Animation */
+@keyframes neon-border-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
