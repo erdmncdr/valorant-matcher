@@ -137,6 +137,12 @@ export const translations = {
       myApplications: "Başvurularım",
       noActiveListings: "Aktif ilanın yok",
       noApplications: "Başvurun yok",
+      expiredListings: "Tarihi Geçmiş İlanlar",
+      expiredApplications: "Tarihi Geçmiş Başvurular",
+      noExpiredListings: "Tarihi geçmiş ilanın yok",
+      noExpiredApplications: "Tarihi geçmiş başvurun yok",
+      activeListings: "Aktif İlanlar",
+      activeApplications: "Aktif Başvurular",
     },
 
     // Create Listing
@@ -661,6 +667,12 @@ export const translations = {
       myApplications: "My Applications",
       noActiveListings: "You have no active listings",
       noApplications: "You have no applications",
+      expiredListings: "Expired Listings",
+      expiredApplications: "Expired Applications",
+      noExpiredListings: "You have no expired listings",
+      noExpiredApplications: "You have no expired applications",
+      activeListings: "Active Listings",
+      activeApplications: "Active Applications",
     },
 
     // Create Listing
