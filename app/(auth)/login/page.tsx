@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast"
 import { Loader2 } from "lucide-react"
 import { useLanguage } from "@/lib/i18n/language-context"
+import { ThemeToggle } from "@/components/ui/theme-toggle"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -29,8 +30,8 @@ export default function LoginPage() {
 
   if (status === "loading" || status === "authenticated") {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-black flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-valorant-red" />
+      <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }
@@ -76,7 +77,10 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-black flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-background flex items-center justify-center p-4">
+      <div className="fixed top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
       <Card className="w-full max-w-md border-valorant-red/20">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 h-12 w-12 rounded bg-valorant-red flex items-center justify-center">
