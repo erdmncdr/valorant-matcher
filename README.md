@@ -11,6 +11,15 @@ A full-stack web application for Valorant players to find compatible 5th teammat
 
 **New to the project?** Start with [Quick Start Guide](./HIZLI-BASLANGIC.md)!
 
+## 🎮 What's New
+
+**Latest Updates:**
+- 🎯 **Aim Trainer Mini-Game**: Practice your aim, earn reputation points daily
+- 🌓 **Theme System**: Seamless dark/light mode switching
+- 👥 **Enhanced Admin Panel**: Complete user management and moderation tools
+- 🏆 **Daily Leaderboards**: Compete with the community on aim trainer scores
+- 🎉 **Celebration Animations**: Confetti effects for achievements and rewards
+
 ---
 
 ## Features
@@ -23,7 +32,9 @@ A full-stack web application for Valorant players to find compatible 5th teammat
 - ✅ **Chat System**: Built-in messaging for each listing
 - ✅ **Reputation System**: Rate players after playing together
 - ✅ **Safety Features**: Report and block toxic players
-- ✅ **Admin Panel**: Moderation tools for banning users
+- ✅ **Admin Panel**: Moderation tools for user management and banning
+- ✅ **Aim Trainer**: Interactive mini-game with daily rewards and leaderboards
+- ✅ **Theme System**: Light and dark mode support
 
 ## Tech Stack
 
@@ -33,6 +44,8 @@ A full-stack web application for Valorant players to find compatible 5th teammat
 - **Authentication**: NextAuth.js
 - **Real-time**: WebSockets (ws library)
 - **UI Components**: shadcn/ui (Radix UI)
+- **Animations**: canvas-confetti for celebration effects
+- **Theming**: next-themes for dark/light mode
 
 ## 🚀 Quick Start
 
@@ -60,6 +73,7 @@ cp .env.example .env
 npm run db:generate
 npm run db:push
 npm run db:seed
+psql $DATABASE_URL -f prisma/migrations/add_aim_trainer.sql
 
 # 5. Run!
 npm run dev
@@ -122,6 +136,15 @@ For detailed step-by-step instructions in Turkish, see **[KURULUM.md](./KURULUM.
    npm run db:seed  # Adds test accounts
    ```
 
+   **Important:** If you're setting up the aim trainer, you need to run the migration:
+   ```bash
+   # Using psql
+   psql $DATABASE_URL -f prisma/migrations/add_aim_trainer.sql
+
+   # Or run the SQL directly in your database console
+   # See MIGRATION_INSTRUCTIONS.md for details
+   ```
+
 5. **Run the development server**
    ```bash
    npm run dev
@@ -165,13 +188,22 @@ Then use: `DATABASE_URL="postgresql://postgres:password@localhost:5432/needone"`
 valorant-matcher/
 ├── app/                      # Next.js App Router
 │   ├── (auth)/              # Auth pages (login, register)
-│   ├── (main)/              # Main app pages (dashboard, listings)
+│   ├── (main)/              # Main app pages
+│   │   ├── dashboard/       # Main dashboard
+│   │   ├── listings/        # Team and solo listings
+│   │   ├── aim-trainer/     # Aim trainer mini-game
+│   │   └── admin/          # Admin panel
 │   ├── api/                 # API routes
+│   │   ├── auth/           # Authentication endpoints
+│   │   ├── listings/       # Listing CRUD
+│   │   ├── aim-trainer/    # Aim trainer scores
+│   │   └── admin/          # Admin operations
 │   └── profile/             # Profile pages
 ├── components/              # React components
 │   ├── ui/                  # shadcn/ui components
 │   ├── listings/            # Listing-specific components
-│   └── profile/             # Profile-specific components
+│   ├── profile/             # Profile-specific components
+│   └── layout/              # Layout components (navbar, theme toggle)
 ├── lib/                     # Utilities and configuration
 │   ├── auth.ts             # NextAuth configuration
 │   ├── prisma.ts           # Prisma client
@@ -179,9 +211,17 @@ valorant-matcher/
 │   └── utils.ts            # Helper functions
 ├── prisma/                  # Database schema and migrations
 │   ├── schema.prisma       # Prisma schema
-│   └── seed.ts             # Seed script
+│   ├── seed.ts             # Seed script
+│   └── migrations/         # Database migrations
+│       └── add_aim_trainer.sql  # Aim trainer table migration
 ├── types/                   # TypeScript types
-└── hooks/                   # Custom React hooks
+├── hooks/                   # Custom React hooks
+│   └── use-presence.ts     # Real-time presence tracking
+└── docs/                    # Documentation
+    ├── HIZLI-BASLANGIC.md  # Quick start guide (Turkish)
+    ├── KURULUM.md          # Installation guide (Turkish)
+    ├── MIGRATION_INSTRUCTIONS.md  # Database migration guide
+    └── ARCHITECTURE.md     # Technical architecture
 ```
 
 ## Available Scripts
@@ -243,6 +283,30 @@ valorant-matcher/
 - Build trust through positive feedback
 - View reputation on user profiles
 
+### Aim Trainer
+
+**Interactive Mini-Game:**
+- 30-second aim training sessions
+- Dynamic target spawning with variable sizes
+- Real-time scoring and accuracy tracking
+
+**Scoring System:**
+- Normal targets (medium/large): +4 points
+- Fast targets (small, harder to hit): +8 points
+- Difficulty increases progressively during gameplay
+
+**Daily Rewards:**
+- Score 100+ points to earn +1 reputation point
+- One daily reward per 24 hours
+- Celebration animations with confetti effects
+- Countdown timer for next reward availability
+
+**Leaderboards:**
+- Daily leaderboard showing top players
+- Personal best score tracking
+- Accuracy percentage display
+- Compete with the community
+
 ## Deployment
 
 ### Environment Setup
@@ -283,10 +347,14 @@ UPDATE users SET "isAdmin" = true WHERE email = 'your-email@example.com';
 ```
 
 Admin features:
-- View all reports
-- Ban/unban users
-- Moderate content
-- Access user management
+- **User Management**: View all registered users with detailed profiles
+- **Ban System**: Temporarily or permanently ban users
+- **Unban Users**: Remove bans and restore account access
+- **View Reports**: Review all user-submitted reports
+- **Moderation Tools**: Monitor and moderate content
+- **Statistics**: View user counts and activity metrics
+
+Access the admin panel at: `/admin` (requires admin privileges)
 
 ## Contributing
 
