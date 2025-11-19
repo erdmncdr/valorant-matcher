@@ -115,7 +115,37 @@ export default function AdminPage() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {/* Analytics Card */}
+          <Card className="border-primary/20 hover:border-primary/40 transition-all cursor-pointer group">
+            <Link href="/admin/analytics">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-3 rounded-lg bg-secondary/10 group-hover:bg-secondary/20 transition-colors">
+                      <Activity className="h-6 w-6 text-secondary" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-foreground">Analytics</CardTitle>
+                      <CardDescription>İstatistikler ve metrikler</CardDescription>
+                    </div>
+                  </div>
+                  <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-secondary group-hover:translate-x-1 transition-all" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">
+                    Kullanıcı aktivitesi, oturum süreleri, online kullanıcılar ve daha fazlası
+                  </p>
+                  <Badge className="bg-green-500/20 text-green-500 border-green-500">
+                    Real-time Data
+                  </Badge>
+                </div>
+              </CardContent>
+            </Link>
+          </Card>
+
           {/* Reports Card */}
           <Card className="border-primary/20 hover:border-primary/40 transition-all cursor-pointer group">
             <Link href="/admin/reports">
