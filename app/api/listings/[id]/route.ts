@@ -10,6 +10,15 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    const session = await getServerSession(authOptions)
+
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      )
+    }
+
     const listing = await prisma.listing.findUnique({
       where: { id: params.id },
       include: {
@@ -58,6 +67,54 @@ export async function GET(
         { error: "Listing not found" },
         { status: 404 }
       )
+    }
+
+    // Check if user is authorized to see full details
+    const isOwner = listing.ownerUserId === session.user.id
+    const hasApplied = listing.applications.some(
+      app => app.applicantUserId === session.user.id
+    )
+
+    // Only owner and applicants can see messages and applications
+    if (!isOwner && !hasApplied) {
+      // Return public view - basic listing info only
+      return NextResponse.json({
+        listing: {
+          id: listing.id,
+          listingType: listing.listingType,
+          title: listing.title,
+          mode: listing.mode,
+          region: listing.region,
+          languages: listing.languages,
+          seriousness: listing.seriousness,
+          voiceRequired: listing.voiceRequired,
+          minRank: listing.minRank,
+          maxRank: listing.maxRank,
+          stackSize: listing.stackSize,
+          desiredRole: listing.desiredRole,
+          description: listing.description,
+          status: listing.status,
+          expiresAt: listing.expiresAt,
+          createdAt: listing.createdAt,
+          owner: {
+            id: listing.owner.id,
+            playerProfile: listing.owner.playerProfile
+              ? {
+                  nickname: listing.owner.playerProfile.nickname,
+                  tagline: listing.owner.playerProfile.tagline,
+                  rankCurrent: listing.owner.playerProfile.rankCurrent,
+                  reputationScore: listing.owner.playerProfile.reputationScore,
+                  mainRole: listing.owner.playerProfile.mainRole,
+                  playerAgents: listing.owner.playerProfile.playerAgents,
+                }
+              : null,
+          },
+          _count: {
+            applications: listing.applications.length,
+          },
+          // Don't include messages and applications for unauthorized users
+        },
+      })
     }
 
     return NextResponse.json({ listing })

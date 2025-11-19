@@ -2,6 +2,13 @@ import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { z } from "zod"
+
+const updateUserSchema = z.object({
+  isBanned: z.boolean(),
+  banDuration: z.number().int().min(1).max(3650).optional(), // Max 10 years
+  banReason: z.string().max(500).optional(),
+})
 
 // GET /api/admin/users/[id] - Get user details
 export async function GET(
@@ -92,20 +99,26 @@ export async function PATCH(
 
     const userId = params.id
     const body = await req.json()
-    const { isBanned, banDuration, banReason } = body
+    const data = updateUserSchema.parse(body)
 
     const updateData: any = {
-      isBanned,
+      isBanned: data.isBanned,
     }
 
-    if (isBanned && banDuration) {
+    if (data.isBanned && data.banDuration) {
+      // Temporary ban with validated duration
       updateData.bannedUntil = new Date(
-        Date.now() + banDuration * 24 * 60 * 60 * 1000
+        Date.now() + data.banDuration * 24 * 60 * 60 * 1000
       )
-      updateData.banReason = banReason || "Banned by admin"
-    } else if (!isBanned) {
+      updateData.banReason = data.banReason || "Banned by admin"
+    } else if (!data.isBanned) {
+      // Unban user
       updateData.bannedUntil = null
       updateData.banReason = null
+    } else {
+      // Permanent ban (isBanned true but no duration)
+      updateData.bannedUntil = null
+      updateData.banReason = data.banReason || "Permanently banned by admin"
     }
 
     const user = await prisma.user.update({
@@ -117,7 +130,14 @@ export async function PATCH(
     })
 
     return NextResponse.json({ user })
-  } catch (error) {
+  } catch (error: any) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: error.errors[0].message },
+        { status: 400 }
+      )
+    }
+
     console.error("Admin user update error:", error)
     return NextResponse.json(
       { error: "Internal server error" },
