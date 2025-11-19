@@ -23,6 +23,7 @@ interface Target {
   x: number
   y: number
   size: number
+  points: number
   timeoutId: NodeJS.Timeout
 }
 
@@ -163,16 +164,20 @@ export default function AimTrainerPage() {
     // Weighted random target sizes
     const rand = Math.random()
     let size: number
+    let points: number
 
     if (rand < 0.6) {
-      // 60% chance - Small targets (35-45px)
+      // 60% chance - Small targets (35-45px) - Fast disappearing, worth more points
       size = 35 + Math.random() * 10
+      points = 8
     } else if (rand < 0.9) {
       // 30% chance - Medium targets (50-65px)
       size = 50 + Math.random() * 15
+      points = 4
     } else {
       // 10% chance - Large targets (70-85px)
       size = 70 + Math.random() * 15
+      points = 4
     }
 
     const targetId = Date.now() + Math.random()
@@ -198,6 +203,7 @@ export default function AimTrainerPage() {
       x: Math.random() * (area.width - size),
       y: Math.random() * (area.height - size),
       size,
+      points,
       timeoutId,
     }
 
@@ -268,7 +274,7 @@ export default function AimTrainerPage() {
           return newHit
         })
         setScore(prevScore => {
-          const newScore = prevScore + 10
+          const newScore = prevScore + target.points
           finalScoreRef.current.score = newScore
           return newScore
         })
@@ -425,7 +431,8 @@ export default function AimTrainerPage() {
                         30 saniyede mümkün olduğunca çok hedef vur!
                       </p>
                       <div className="space-y-2 mb-6">
-                        <p className="text-sm text-muted-foreground">• Her hedef: +10 puan</p>
+                        <p className="text-sm text-muted-foreground">• Normal hedef: +4 puan</p>
+                        <p className="text-sm text-muted-foreground">• Hızlı hedef: +8 puan</p>
                         <p className="text-sm text-muted-foreground">• 100+ puan: +1 itibar (günlük)</p>
                         {!canClaimReward && countdown && (
                           <div className="flex flex-col items-center gap-2 mt-4">
