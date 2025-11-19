@@ -38,6 +38,7 @@ import {
   Loader2,
 } from "lucide-react"
 import { Navbar } from "@/components/layout/navbar"
+import { useLanguage } from "@/lib/i18n/language-context"
 
 interface AnalyticsData {
   overview: {
@@ -83,6 +84,7 @@ export default function AdminAnalyticsPage() {
   const [loading, setLoading] = useState(true)
   const [profile, setProfile] = useState<any>(null)
   const [autoRefresh, setAutoRefresh] = useState(true)
+  const { t } = useLanguage()
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -176,10 +178,10 @@ export default function AdminAnalyticsPage() {
           <div>
             <h1 className="text-4xl font-bold text-foreground flex items-center gap-3">
               <Activity className="h-8 w-8 text-primary" />
-              Analytics Dashboard
+              {t.admin.analytics}
             </h1>
             <p className="text-muted-foreground">
-              Platform analytics and user statistics
+              {t.admin.overview}
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -201,7 +203,7 @@ export default function AdminAnalyticsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <Card className="border-primary/20 bg-gradient-to-br from-primary/10 to-transparent">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Online Users</CardTitle>
+              <CardTitle className="text-sm font-medium">{t.admin.onlineUsers}</CardTitle>
               <Eye className="h-4 w-4 text-green-500 animate-pulse" />
             </CardHeader>
             <CardContent>
@@ -209,14 +211,14 @@ export default function AdminAnalyticsPage() {
                 {analytics.overview.onlineUsers}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                Active in last 5 minutes
+                {t.admin.activeUsers}
               </p>
             </CardContent>
           </Card>
 
           <Card className="border-secondary/20 bg-gradient-to-br from-secondary/10 to-transparent">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Today's Active Users</CardTitle>
+              <CardTitle className="text-sm font-medium">{t.admin.activeUsers}</CardTitle>
               <Activity className="h-4 w-4 text-accent" />
             </CardHeader>
             <CardContent>
@@ -231,7 +233,7 @@ export default function AdminAnalyticsPage() {
 
           <Card className="border-accent/20 bg-gradient-to-br from-accent/10 to-transparent">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">New Users Today</CardTitle>
+              <CardTitle className="text-sm font-medium">{t.admin.newUsersToday}</CardTitle>
               <UserPlus className="h-4 w-4 text-primary" />
             </CardHeader>
             <CardContent>
@@ -264,10 +266,10 @@ export default function AdminAnalyticsPage() {
         {/* Tabs */}
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="users">Users</TabsTrigger>
-            <TabsTrigger value="engagement">Engagement</TabsTrigger>
-            <TabsTrigger value="content">Content</TabsTrigger>
+            <TabsTrigger value="overview">{t.admin.overview}</TabsTrigger>
+            <TabsTrigger value="users">{t.admin.userMetrics}</TabsTrigger>
+            <TabsTrigger value="engagement">{t.admin.engagement}</TabsTrigger>
+            <TabsTrigger value="content">{t.admin.contentModeration}</TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
@@ -276,7 +278,7 @@ export default function AdminAnalyticsPage() {
               {/* Daily Active Users */}
               <Card className="border-primary/20">
                 <CardHeader>
-                  <CardTitle>Daily Active Users (7 Days)</CardTitle>
+                  <CardTitle>{t.admin.activityTrends}</CardTitle>
                   <CardDescription>Active users and logins per day</CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -443,7 +445,7 @@ export default function AdminAnalyticsPage() {
               {/* Most Active Users */}
               <Card className="border-primary/20 lg:col-span-2">
                 <CardHeader>
-                  <CardTitle>Most Active Users (Last 7 Days)</CardTitle>
+                  <CardTitle>{t.admin.mostActiveUsers}</CardTitle>
                   <CardDescription>Users with highest activity</CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -535,7 +537,7 @@ export default function AdminAnalyticsPage() {
               {/* Listing Types */}
               <Card className="border-primary/20">
                 <CardHeader>
-                  <CardTitle>Listings by Type (7 Days)</CardTitle>
+                  <CardTitle>{t.admin.listingsByType}</CardTitle>
                   <CardDescription>Distribution of listing types</CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -573,7 +575,7 @@ export default function AdminAnalyticsPage() {
               {/* Engagement Metrics */}
               <Card className="border-secondary/20">
                 <CardHeader>
-                  <CardTitle>Engagement Metrics (7 Days)</CardTitle>
+                  <CardTitle>{t.admin.engagement}</CardTitle>
                   <CardDescription>User engagement activities</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
