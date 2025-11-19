@@ -194,8 +194,8 @@ export default function AdminPage() {
                       <Users className="h-6 w-6 text-accent" />
                     </div>
                     <div>
-                      <CardTitle className="text-foreground">Kullanıcılar</CardTitle>
-                      <CardDescription>Kullanıcı yönetimi ve aktivite</CardDescription>
+                      <CardTitle className="text-foreground">{t.admin.usersTitle}</CardTitle>
+                      <CardDescription>{t.admin.usersDesc}</CardDescription>
                     </div>
                   </div>
                   <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-accent group-hover:translate-x-1 transition-all" />
@@ -204,15 +204,15 @@ export default function AdminPage() {
               <CardContent>
                 <div className="grid grid-cols-3 gap-4">
                   <div>
-                    <p className="text-sm text-muted-foreground mb-1">Toplam</p>
+                    <p className="text-sm text-muted-foreground mb-1">{t.admin.total}</p>
                     <p className="text-2xl font-bold text-foreground">{stats.totalUsers}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground mb-1">Aktif</p>
+                    <p className="text-sm text-muted-foreground mb-1">{t.admin.active}</p>
                     <p className="text-2xl font-bold text-green-500">{stats.activeUsers}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground mb-1">Banlı</p>
+                    <p className="text-sm text-muted-foreground mb-1">{t.admin.banned}</p>
                     <p className="text-2xl font-bold text-red-500">{stats.bannedUsers}</p>
                   </div>
                 </div>
@@ -227,17 +227,17 @@ export default function AdminPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <AlertTriangle className="h-5 w-5 text-primary" />
-                Dikkat Gerektiren
+                {t.admin.needsAttention}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 <div className="flex items-center justify-between p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                  <span className="text-sm text-foreground">Açık Reportlar</span>
+                  <span className="text-sm text-foreground">{t.admin.openReports}</span>
                   <Badge variant="destructive">{stats.openReports}</Badge>
                 </div>
                 <div className="flex items-center justify-between p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-                  <span className="text-sm text-foreground">İncelemede</span>
+                  <span className="text-sm text-foreground">{t.admin.underReview}</span>
                   <Badge className="bg-yellow-500/20 text-yellow-500 border-yellow-500">{stats.underReview}</Badge>
                 </div>
               </div>
@@ -248,7 +248,7 @@ export default function AdminPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Activity className="h-5 w-5 text-accent" />
-                Hızlı Aksiyonlar
+                {t.admin.quickActions}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -256,13 +256,13 @@ export default function AdminPage() {
                 <Link href="/admin/reports?status=OPEN">
                   <Button variant="outline" className="w-full justify-start" size="sm">
                     <Flag className="h-4 w-4 mr-2" />
-                    Açık Reportları Görüntüle
+                    {t.admin.viewOpenReports}
                   </Button>
                 </Link>
                 <Link href="/admin/users?status=banned">
                   <Button variant="outline" className="w-full justify-start" size="sm">
                     <Users className="h-4 w-4 mr-2" />
-                    Banlı Kullanıcılar
+                    {t.admin.bannedUsers}
                   </Button>
                 </Link>
               </div>
@@ -273,21 +273,21 @@ export default function AdminPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Shield className="h-5 w-5 text-secondary" />
-                Sistem Bilgisi
+                {t.admin.systemInfo}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Toplam Kullanıcı:</span>
+                  <span className="text-muted-foreground">{t.admin.totalUsersLabel}</span>
                   <span className="font-semibold text-foreground">{stats.totalUsers}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Toplam Report:</span>
+                  <span className="text-muted-foreground">{t.admin.totalReportsLabel}</span>
                   <span className="font-semibold text-foreground">{stats.totalReports}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Ban Oranı:</span>
+                  <span className="text-muted-foreground">{t.admin.banRate}</span>
                   <span className="font-semibold text-foreground">
                     {stats.totalUsers > 0 ? ((stats.bannedUsers / stats.totalUsers) * 100).toFixed(1) : 0}%
                   </span>
