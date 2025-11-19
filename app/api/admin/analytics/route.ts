@@ -203,9 +203,15 @@ export async function GET(req: Request) {
     })
 
     // 9. ENGAGEMENT METRICS
-    const totalAimTrainerScores = await prisma.aimTrainerScore.count({
-      where: { createdAt: { gte: last7Days } },
-    })
+    let totalAimTrainerScores = 0
+    try {
+      totalAimTrainerScores = await prisma.aimTrainerScore.count({
+        where: { createdAt: { gte: last7Days } },
+      })
+    } catch (error) {
+      // Table might not exist yet, ignore error
+      console.log('aimTrainerScore table not found, skipping...')
+    }
 
     const totalApplications = await prisma.listingApplication.count({
       where: { createdAt: { gte: last7Days } },
@@ -217,7 +223,7 @@ export async function GET(req: Request) {
 
     // 10. REPORT STATS
     const pendingReports = await prisma.report.count({
-      where: { status: "PENDING" },
+      where: { status: "OPEN" },
     })
 
     const todayReports = await prisma.report.count({
