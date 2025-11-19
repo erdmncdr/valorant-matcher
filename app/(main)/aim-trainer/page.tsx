@@ -182,7 +182,11 @@ export default function AimTrainerPage() {
       setTargets(prev => {
         const stillExists = prev.find(t => t.id === targetId)
         if (stillExists) {
-          setTargetsMissed(prev => prev + 1)
+          setTargetsMissed(prevMissed => {
+            const newMissed = prevMissed + 1
+            finalScoreRef.current.missed = newMissed
+            return newMissed
+          })
           return prev.filter(t => t.id !== targetId)
         }
         return prev
@@ -245,14 +249,8 @@ export default function AimTrainerPage() {
       return []
     })
 
-    // Capture final scores to ref immediately
-    finalScoreRef.current = {
-      score: score,
-      hit: targetsHit,
-      missed: targetsMissed
-    }
-
-    console.log('End game - captured scores:', finalScoreRef.current)
+    // Ref is already updated in real-time from hitTarget and missed timeouts
+    console.log('End game - final scores in ref:', finalScoreRef.current)
 
     hasSavedRef.current = false
     setGameState("finished")
@@ -264,8 +262,16 @@ export default function AimTrainerPage() {
       if (target) {
         // Cancel the timeout so target is not counted as missed
         clearTimeout(target.timeoutId)
-        setTargetsHit(prevHits => prevHits + 1)
-        setScore(prevScore => prevScore + 10)
+        setTargetsHit(prevHits => {
+          const newHit = prevHits + 1
+          finalScoreRef.current.hit = newHit
+          return newHit
+        })
+        setScore(prevScore => {
+          const newScore = prevScore + 10
+          finalScoreRef.current.score = newScore
+          return newScore
+        })
       }
       return prev.filter(t => t.id !== targetId)
     })
@@ -274,14 +280,15 @@ export default function AimTrainerPage() {
   const saveScore = async () => {
     setIsSaving(true)
     try {
-      // Use ref values captured at game end
+      // Use ref values that were updated in real-time during gameplay
       const currentScore = finalScoreRef.current.score
       const currentHit = finalScoreRef.current.hit
       const currentMissed = finalScoreRef.current.missed
       const total = currentHit + currentMissed
       const accuracy = total > 0 ? (currentHit / total) * 100 : 0
 
-      console.log('Saving score:', { currentScore, accuracy, currentHit, currentMissed, total })
+      console.log('Saving score from ref:', { currentScore, accuracy, currentHit, currentMissed, total })
+      console.log('State values (might be stale):', { score, targetsHit, targetsMissed })
 
       const response = await fetch("/api/aim-trainer", {
         method: "POST",
