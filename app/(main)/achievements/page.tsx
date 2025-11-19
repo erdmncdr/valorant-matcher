@@ -234,8 +234,13 @@ export default function AchievementsPage() {
                         <CardHeader className="relative pb-3">
                           <div className="flex items-start justify-between gap-3">
                             <div className="flex items-center gap-3">
-                              <div className={`text-4xl ${achievement.isUnlocked ? '' : 'grayscale'}`}>
-                                {achievement.isUnlocked ? achievement.icon : <Lock className="h-10 w-10 text-muted-foreground" />}
+                              <div className={`text-4xl relative ${achievement.isUnlocked ? '' : 'grayscale opacity-50'}`}>
+                                {achievement.icon}
+                                {!achievement.isUnlocked && (
+                                  <div className="absolute inset-0 flex items-center justify-center">
+                                    <Lock className="h-6 w-6 text-foreground drop-shadow-lg" />
+                                  </div>
+                                )}
                               </div>
                               <div className="flex-1">
                                 <CardTitle className="text-lg flex items-center gap-2">
