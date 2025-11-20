@@ -80,14 +80,6 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
                   {t.nav.myListings}
                 </Button>
               </Link>
-              <Link href="/aim-trainer">
-                <Button
-                  variant="ghost"
-                  className={currentPage === 'aim-trainer' ? 'text-primary' : 'text-foreground'}
-                >
-                  🎯 Aim Trainer
-                </Button>
-              </Link>
               <Link href="/store">
                 <Button
                   variant="ghost"
@@ -95,6 +87,14 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
                 >
                   <ShoppingCart className="h-4 w-4 mr-2" />
                   {language === 'tr' ? 'Mağaza' : 'Store'}
+                </Button>
+              </Link>
+              <Link href="/aim-trainer">
+                <Button
+                  variant="ghost"
+                  className={currentPage === 'aim-trainer' ? 'text-primary' : 'text-foreground'}
+                >
+                  🎯 Aim Trainer
                 </Button>
               </Link>
               <Link href="/wheel">
