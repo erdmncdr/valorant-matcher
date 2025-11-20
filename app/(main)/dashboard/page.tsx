@@ -20,7 +20,7 @@ export default function DashboardPage() {
   const router = useRouter()
   const { t } = useLanguage()
   const [profile, setProfile] = useState<any>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -34,6 +34,7 @@ export default function DashboardPage() {
   }, [status, router])
 
   const fetchProfile = async () => {
+    setIsLoading(true)
     try {
       const response = await fetch("/api/profile")
       const data = await response.json()
@@ -51,7 +52,15 @@ export default function DashboardPage() {
     }
   }
 
-  if (status === "loading" || isLoading) {
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />

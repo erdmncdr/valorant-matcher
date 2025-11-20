@@ -28,12 +28,16 @@ export default function LoginPage() {
     }
   }, [status, router])
 
-  if (status === "loading" || status === "authenticated") {
+  if (status === "loading") {
     return (
       <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
+  }
+
+  if (status === "authenticated") {
+    return null
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
