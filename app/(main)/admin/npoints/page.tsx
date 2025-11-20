@@ -86,8 +86,8 @@ export default function AdminNPointsPage() {
         if (!data.profile.isAdmin) {
           router.push("/")
           toast({
-            title: "Access Denied",
-            description: "You don't have admin permissions",
+            title: t.adminNPoints.accessDenied,
+            description: t.adminNPoints.noAdminPermissions,
             variant: "destructive",
           })
         }
@@ -111,8 +111,8 @@ export default function AdminNPointsPage() {
     } catch (error: any) {
       console.error("Failed to fetch N-Points data:", error)
       toast({
-        title: "Error",
-        description: "Failed to load N-Points data",
+        title: t.adminNPoints.error,
+        description: t.adminNPoints.failedToLoad,
         variant: "destructive",
       })
     } finally {
@@ -129,8 +129,8 @@ export default function AdminNPointsPage() {
       setSearchResults(data.users || [])
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to search users",
+        title: t.adminNPoints.error,
+        description: t.adminNPoints.failedToSearch,
         variant: "destructive",
       })
     }
@@ -159,7 +159,7 @@ export default function AdminNPointsPage() {
       if (response.ok) {
         const data = await response.json()
         toast({
-          title: "Success",
+          title: t.adminNPoints.success,
           description: data.message,
         })
         setShowGrantDialog(false)
@@ -174,8 +174,8 @@ export default function AdminNPointsPage() {
       }
     } catch (error: any) {
       toast({
-        title: "Error",
-        description: error.message || "Failed to process N-Points",
+        title: t.adminNPoints.error,
+        description: error.message || t.adminNPoints.failedToProcess,
         variant: "destructive",
       })
     }
@@ -198,13 +198,13 @@ export default function AdminNPointsPage() {
           <div>
             <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
               <Coins className="h-8 w-8 text-yellow-500" />
-              N-Points Management
+              {t.adminNPoints.title}
             </h1>
-            <p className="text-muted-foreground mt-2">Grant or deduct N-Points from users</p>
+            <p className="text-muted-foreground mt-2">{t.adminNPoints.subtitle}</p>
           </div>
           <Button onClick={() => setShowGrantDialog(true)}>
             <Plus className="h-4 w-4 mr-2" />
-            Grant/Deduct N-Points
+            {t.adminNPoints.grantDeduct}
           </Button>
         </div>
 
@@ -214,12 +214,12 @@ export default function AdminNPointsPage() {
             <CardHeader>
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <TrendingUp className="h-4 w-4 text-green-500" />
-                Total Earned
+                {t.adminNPoints.totalEarned}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{stats.totalEarned.toLocaleString()}</div>
-              <p className="text-xs text-muted-foreground mt-1">All-time earnings</p>
+              <p className="text-xs text-muted-foreground mt-1">{t.adminNPoints.allTimeEarnings}</p>
             </CardContent>
           </Card>
 
@@ -227,12 +227,12 @@ export default function AdminNPointsPage() {
             <CardHeader>
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <TrendingDown className="h-4 w-4 text-red-500" />
-                Total Spent
+                {t.adminNPoints.totalSpent}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{stats.totalSpent.toLocaleString()}</div>
-              <p className="text-xs text-muted-foreground mt-1">All-time spending</p>
+              <p className="text-xs text-muted-foreground mt-1">{t.adminNPoints.allTimeSpending}</p>
             </CardContent>
           </Card>
 
@@ -240,12 +240,12 @@ export default function AdminNPointsPage() {
             <CardHeader>
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <Coins className="h-4 w-4 text-yellow-500" />
-                In Circulation
+                {t.adminNPoints.inCirculation}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{stats.totalNPointsInCirculation.toLocaleString()}</div>
-              <p className="text-xs text-muted-foreground mt-1">Total N-Points held</p>
+              <p className="text-xs text-muted-foreground mt-1">{t.adminNPoints.totalHeld}</p>
             </CardContent>
           </Card>
 
@@ -253,12 +253,12 @@ export default function AdminNPointsPage() {
             <CardHeader>
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <Users className="h-4 w-4" />
-                Total Players
+                {t.adminNPoints.totalPlayers}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{stats.totalPlayers}</div>
-              <p className="text-xs text-muted-foreground mt-1">With profiles</p>
+              <p className="text-xs text-muted-foreground mt-1">{t.adminNPoints.withProfiles}</p>
             </CardContent>
           </Card>
         </div>
@@ -266,18 +266,18 @@ export default function AdminNPointsPage() {
         {/* Recent Transactions */}
         <Card>
           <CardHeader>
-            <CardTitle>Recent Transactions</CardTitle>
-            <CardDescription>Last 50 N-Points transactions</CardDescription>
+            <CardTitle>{t.adminNPoints.recentTransactions}</CardTitle>
+            <CardDescription>{t.adminNPoints.last50Transactions}</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>User</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Date</TableHead>
+                  <TableHead>{t.adminNPoints.user}</TableHead>
+                  <TableHead>{t.adminNPoints.type}</TableHead>
+                  <TableHead>{t.adminNPoints.amount}</TableHead>
+                  <TableHead>{t.adminNPoints.description}</TableHead>
+                  <TableHead>{t.adminNPoints.date}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -310,21 +310,21 @@ export default function AdminNPointsPage() {
       <Dialog open={showGrantDialog} onOpenChange={setShowGrantDialog}>
         <DialogContent className="sm:max-w-[525px]">
           <DialogHeader>
-            <DialogTitle>Grant or Deduct N-Points</DialogTitle>
-            <DialogDescription>Search for a user and modify their N-Points balance</DialogDescription>
+            <DialogTitle>{t.adminNPoints.grantDeduct}</DialogTitle>
+            <DialogDescription>{t.adminNPoints.searchAndModify}</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="search">Search User</Label>
+              <Label htmlFor="search">{t.adminNPoints.searchUser}</Label>
               <div className="flex gap-2">
                 <Input
                   id="search"
-                  placeholder="Enter nickname or tagline..."
+                  placeholder={t.adminNPoints.searchPlaceholder}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSearchUsers()}
                 />
-                <Button onClick={handleSearchUsers}>Search</Button>
+                <Button onClick={handleSearchUsers}>{t.adminNPoints.search}</Button>
               </div>
               {searchResults.length > 0 && (
                 <div className="border rounded-md mt-2 max-h-40 overflow-y-auto">
@@ -347,24 +347,24 @@ export default function AdminNPointsPage() {
             {selectedUser && (
               <>
                 <div className="grid gap-2">
-                  <Label htmlFor="amount">Amount</Label>
+                  <Label htmlFor="amount">{t.adminNPoints.amount}</Label>
                   <Input
                     id="amount"
                     type="number"
-                    placeholder="Positive to grant, negative to deduct"
+                    placeholder={t.adminNPoints.amountPlaceholder}
                     value={grantAmount || ""}
                     onChange={(e) => setGrantAmount(parseInt(e.target.value) || 0)}
                   />
                   <p className="text-sm text-muted-foreground">
-                    Current balance: {selectedUser.playerProfile.nPoints} N-Points
+                    {t.adminNPoints.currentBalance}: {selectedUser.playerProfile.nPoints} N-Points
                   </p>
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="reason">Reason (optional)</Label>
+                  <Label htmlFor="reason">{t.adminNPoints.reason}</Label>
                   <Textarea
                     id="reason"
-                    placeholder="Why are you modifying their balance?"
+                    placeholder={t.adminNPoints.reasonPlaceholder}
                     value={grantReason}
                     onChange={(e) => setGrantReason(e.target.value)}
                   />
@@ -380,11 +380,11 @@ export default function AdminNPointsPage() {
               setGrantAmount(0)
               setGrantReason("")
             }}>
-              Cancel
+              {t.adminNPoints.cancel}
             </Button>
             <Button onClick={handleGrant} disabled={!selectedUser || grantAmount === 0}>
               {grantAmount > 0 ? <Plus className="h-4 w-4 mr-2" /> : <Minus className="h-4 w-4 mr-2" />}
-              {grantAmount > 0 ? "Grant" : "Deduct"}
+              {grantAmount > 0 ? t.adminNPoints.grant : t.adminNPoints.deduct}
             </Button>
           </DialogFooter>
         </DialogContent>
