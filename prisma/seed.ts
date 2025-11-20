@@ -40,7 +40,7 @@ async function main() {
           seriousness: 'TRYHARD',
           typicalPlaytime: 'Evenings and weekends',
           bio: 'Admin account for testing and moderation',
-          nPoints: 10000, // Starting N-Points for testing
+          nPoints: 100, // Minimal starting N-Points (sistem zor olmalı)
           playerAgents: {
             create: [
               { agentName: 'Jett', priority: 'main' },

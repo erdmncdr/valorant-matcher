@@ -163,24 +163,28 @@ export async function getTransactionHistory(userId: string, limit: number = 50) 
 export function calculateAimTrainerReward(score: number, accuracy: number): number {
   let nPoints = 0
 
-  // Base reward from score
-  if (score >= 300) {
-    nPoints += 50 // Excellent
+  // Base reward from score (çok düşük tutuldu, zor kazanılmalı)
+  if (score >= 400) {
+    nPoints += 10 // Excellent (çok zor)
+  } else if (score >= 300) {
+    nPoints += 7 // Very Good
   } else if (score >= 200) {
-    nPoints += 30 // Very Good
+    nPoints += 5 // Good
   } else if (score >= 100) {
-    nPoints += 15 // Good
+    nPoints += 2 // Okay
   } else if (score >= 50) {
-    nPoints += 5 // Okay
+    nPoints += 1 // Başlangıç
   }
 
-  // Accuracy bonus
-  if (accuracy >= 90) {
-    nPoints += 20 // 90%+ accuracy
+  // Accuracy bonus (çok düşük)
+  if (accuracy >= 95) {
+    nPoints += 5 // 95%+ accuracy (neredeyse imkansız)
+  } else if (accuracy >= 90) {
+    nPoints += 3 // 90%+ accuracy
+  } else if (accuracy >= 85) {
+    nPoints += 2 // 85%+ accuracy
   } else if (accuracy >= 80) {
-    nPoints += 10 // 80%+ accuracy
-  } else if (accuracy >= 70) {
-    nPoints += 5 // 70%+ accuracy
+    nPoints += 1 // 80%+ accuracy
   }
 
   return nPoints
