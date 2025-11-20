@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { LogOut, User, LayoutDashboard, ChevronDown, Languages, Shield, Trophy } from "lucide-react"
+import { LogOut, User, LayoutDashboard, ChevronDown, Languages, Shield, Trophy, ShoppingCart, Coins } from "lucide-react"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { NotificationBell } from "@/components/notifications/notification-bell"
@@ -22,6 +22,7 @@ interface NavbarProps {
     nickname: string
     tagline: string
     isAdmin?: boolean
+    nPoints?: number
   }
   currentPage?: string
 }
@@ -87,9 +88,33 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
                   🎯 Aim Trainer
                 </Button>
               </Link>
+              <Link href="/store">
+                <Button
+                  variant="ghost"
+                  className={currentPage === 'store' ? 'text-primary' : 'text-foreground'}
+                >
+                  <ShoppingCart className="h-4 w-4 mr-2" />
+                  {language === 'tr' ? 'Mağaza' : 'Store'}
+                </Button>
+              </Link>
             </div>
           </div>
           <div className="flex items-center space-x-2">
+            {/* N-Points Balance */}
+            {profile?.nPoints !== undefined && (
+              <Link href="/store">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-yellow-500/50 hover:border-yellow-500 hover:bg-yellow-500/10 flex items-center gap-1.5 px-3"
+                >
+                  <Coins className="h-4 w-4 text-yellow-500" />
+                  <span className="font-semibold text-base text-yellow-500">
+                    {profile.nPoints.toLocaleString()}
+                  </span>
+                </Button>
+              </Link>
+            )}
             {/* Language Switcher - More Visible */}
             <Button
               variant="outline"
