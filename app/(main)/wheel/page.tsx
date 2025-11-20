@@ -117,10 +117,17 @@ export default function WheelPage() {
         throw new Error(data.error || "Failed to spin")
       }
 
-      // Calculate target rotation based on prize
+      // Calculate target rotation based on prize (using probability-based angles)
       const prizeIndex = prizes.findIndex(p => p.nPoints === data.prize.nPoints)
-      const segmentAngle = 360 / prizes.length
-      const targetAngle = prizeIndex * segmentAngle + segmentAngle / 2
+
+      // Calculate cumulative angles based on probability
+      let cumulativeAngle = 0
+      for (let i = 0; i < prizeIndex; i++) {
+        cumulativeAngle += (prizes[i].probability / 100) * 360
+      }
+
+      const segmentAngle = (prizes[prizeIndex].probability / 100) * 360
+      const targetAngle = cumulativeAngle + segmentAngle / 2
 
       // Add multiple full rotations for effect (5-7 spins)
       const fullRotations = 5 + Math.random() * 2
@@ -244,8 +251,16 @@ export default function WheelPage() {
                         }}
                       >
                         {prizes.map((prize, index) => {
-                          const segmentAngle = 360 / prizes.length
-                          const startAngle = index * segmentAngle - 90 // -90 to start from top
+                          // Calculate segment angle based on probability
+                          const segmentAngle = (prize.probability / 100) * 360
+
+                          // Calculate start angle based on cumulative probabilities
+                          let cumulativeAngle = -90 // Start from top
+                          for (let i = 0; i < index; i++) {
+                            cumulativeAngle += (prizes[i].probability / 100) * 360
+                          }
+
+                          const startAngle = cumulativeAngle
                           const endAngle = startAngle + segmentAngle
 
                           // Calculate path for pie slice
@@ -276,6 +291,9 @@ export default function WheelPage() {
                           const textX = cx + textRadius * Math.cos(textRad)
                           const textY = cy + textRadius * Math.sin(textRad)
 
+                          // Dynamic font size based on segment size
+                          const fontSize = Math.max(12, Math.min(24, segmentAngle / 6))
+
                           return (
                             <g key={index}>
                               <path
@@ -288,7 +306,7 @@ export default function WheelPage() {
                                 x={textX}
                                 y={textY}
                                 fill="white"
-                                fontSize="24"
+                                fontSize={fontSize}
                                 fontWeight="bold"
                                 textAnchor="middle"
                                 dominantBaseline="middle"
