@@ -12,20 +12,25 @@ import { ThemeToggle } from "@/components/ui/theme-toggle"
 
 export default function HomePage() {
   const { data: session, status } = useSession()
+  const router = useRouter()
   const { t, language, setLanguage } = useLanguage()
 
   useEffect(() => {
     if (status === "authenticated") {
-      window.location.href = "/dashboard"
+      router.push("/dashboard")
     }
-  }, [status])
+  }, [status, router])
 
-  if (status === "loading" || status === "authenticated") {
+  if (status === "loading") {
     return (
       <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
+  }
+
+  if (status === "authenticated") {
+    return null
   }
 
   return (
