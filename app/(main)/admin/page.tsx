@@ -138,10 +138,10 @@ export default function AdminPage() {
               <CardContent>
                 <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">
-                    Kullanıcı aktivitesi, oturum süreleri, online kullanıcılar ve daha fazlası
+                    {t.admin.analyticsCardDesc}
                   </p>
                   <Badge className="bg-green-500/20 text-green-500 border-green-500">
-                    Real-time Data
+                    {t.admin.realTimeData}
                   </Badge>
                 </div>
               </CardContent>
@@ -230,8 +230,8 @@ export default function AdminPage() {
                       <Store className="h-6 w-6 text-purple-500" />
                     </div>
                     <div>
-                      <CardTitle className="text-foreground">Store</CardTitle>
-                      <CardDescription>VP Bundles</CardDescription>
+                      <CardTitle className="text-foreground">{t.admin.storeCard}</CardTitle>
+                      <CardDescription>{t.admin.vpBundles}</CardDescription>
                     </div>
                   </div>
                   <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-purple-500 group-hover:translate-x-1 transition-all" />
@@ -240,10 +240,10 @@ export default function AdminPage() {
               <CardContent>
                 <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">
-                    Manage VP bundles, pricing, and sales
+                    {t.admin.manageVpDesc}
                   </p>
                   <Badge className="bg-purple-500/20 text-purple-500 border-purple-500">
-                    Economy System
+                    {t.admin.economySystem}
                   </Badge>
                 </div>
               </CardContent>
@@ -260,8 +260,8 @@ export default function AdminPage() {
                       <Coins className="h-6 w-6 text-yellow-500" />
                     </div>
                     <div>
-                      <CardTitle className="text-foreground">N-Points</CardTitle>
-                      <CardDescription>Currency Management</CardDescription>
+                      <CardTitle className="text-foreground">{t.admin.nPointsCard}</CardTitle>
+                      <CardDescription>{t.admin.currencyManagement}</CardDescription>
                     </div>
                   </div>
                   <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-yellow-500 group-hover:translate-x-1 transition-all" />
@@ -270,10 +270,10 @@ export default function AdminPage() {
               <CardContent>
                 <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">
-                    Grant/deduct N-Points, view transactions
+                    {t.admin.nPointsDesc}
                   </p>
                   <Badge className="bg-yellow-500/20 text-yellow-500 border-yellow-500">
-                    Financial Control
+                    {t.admin.financialControl}
                   </Badge>
                 </div>
               </CardContent>
