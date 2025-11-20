@@ -97,6 +97,14 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
                   {language === 'tr' ? 'Mağaza' : 'Store'}
                 </Button>
               </Link>
+              <Link href="/wheel">
+                <Button
+                  variant="ghost"
+                  className={currentPage === 'wheel' ? 'text-primary' : 'text-foreground'}
+                >
+                  🎡 {language === 'tr' ? 'Çark' : 'Wheel'}
+                </Button>
+              </Link>
             </div>
           </div>
           <div className="flex items-center space-x-2">
