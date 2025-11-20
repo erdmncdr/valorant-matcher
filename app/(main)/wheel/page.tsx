@@ -231,41 +231,91 @@ export default function WheelPage() {
                     </div>
 
                     {/* Wheel Container */}
-                    <div
-                      ref={wheelRef}
-                      className="relative w-[400px] h-[400px] rounded-full overflow-hidden shadow-2xl"
-                      style={{
-                        transform: `rotate(${rotation}deg)`,
-                        transition: isSpinning ? 'transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99)' : 'none',
-                      }}
-                    >
-                      {prizes.map((prize, index) => {
-                        const segmentAngle = 360 / prizes.length
-                        const startAngle = index * segmentAngle
+                    <div className="relative w-[400px] h-[400px]">
+                      <svg
+                        ref={wheelRef}
+                        width="400"
+                        height="400"
+                        viewBox="0 0 400 400"
+                        className="drop-shadow-2xl"
+                        style={{
+                          transform: `rotate(${rotation}deg)`,
+                          transition: isSpinning ? 'transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99)' : 'none',
+                        }}
+                      >
+                        {prizes.map((prize, index) => {
+                          const segmentAngle = 360 / prizes.length
+                          const startAngle = index * segmentAngle - 90 // -90 to start from top
+                          const endAngle = startAngle + segmentAngle
 
-                        return (
-                          <div
-                            key={index}
-                            className="absolute w-full h-full"
-                            style={{
-                              clipPath: `polygon(50% 50%, 50% 0%, ${50 + 50 * Math.cos((startAngle + segmentAngle) * Math.PI / 180)}% ${50 - 50 * Math.sin((startAngle + segmentAngle) * Math.PI / 180)}%)`,
-                              transform: `rotate(${startAngle}deg)`,
-                              backgroundColor: prize.color,
-                            }}
-                          >
-                            <div
-                              className="absolute top-12 left-1/2 -translate-x-1/2 text-white font-bold text-xl"
-                              style={{ transform: 'rotate(0deg)' }}
-                            >
-                              {prize.nPoints}
-                            </div>
-                          </div>
-                        )
-                      })}
+                          // Calculate path for pie slice
+                          const startRad = (startAngle * Math.PI) / 180
+                          const endRad = (endAngle * Math.PI) / 180
+                          const radius = 200
+                          const cx = 200
+                          const cy = 200
 
-                      {/* Center Circle */}
-                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-white border-4 border-yellow-500 shadow-lg flex items-center justify-center">
-                        <Sparkles className="h-8 w-8 text-yellow-500" />
+                          const x1 = cx + radius * Math.cos(startRad)
+                          const y1 = cy + radius * Math.sin(startRad)
+                          const x2 = cx + radius * Math.cos(endRad)
+                          const y2 = cy + radius * Math.sin(endRad)
+
+                          const largeArcFlag = segmentAngle > 180 ? 1 : 0
+
+                          const pathData = [
+                            `M ${cx} ${cy}`,
+                            `L ${x1} ${y1}`,
+                            `A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`,
+                            'Z'
+                          ].join(' ')
+
+                          // Calculate text position (middle of segment)
+                          const textAngle = startAngle + segmentAngle / 2
+                          const textRad = (textAngle * Math.PI) / 180
+                          const textRadius = 130
+                          const textX = cx + textRadius * Math.cos(textRad)
+                          const textY = cy + textRadius * Math.sin(textRad)
+
+                          return (
+                            <g key={index}>
+                              <path
+                                d={pathData}
+                                fill={prize.color}
+                                stroke="white"
+                                strokeWidth="2"
+                              />
+                              <text
+                                x={textX}
+                                y={textY}
+                                fill="white"
+                                fontSize="24"
+                                fontWeight="bold"
+                                textAnchor="middle"
+                                dominantBaseline="middle"
+                                style={{
+                                  filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))',
+                                }}
+                              >
+                                {prize.nPoints}
+                              </text>
+                            </g>
+                          )
+                        })}
+
+                        {/* Center Circle */}
+                        <circle
+                          cx="200"
+                          cy="200"
+                          r="40"
+                          fill="white"
+                          stroke="#eab308"
+                          strokeWidth="4"
+                        />
+                      </svg>
+
+                      {/* Center Icon (overlay on top of SVG) */}
+                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                        <Sparkles className="h-10 w-10 text-yellow-500" />
                       </div>
                     </div>
                   </div>
