@@ -5,10 +5,15 @@ import { prisma } from "@/lib/prisma"
 
 export async function GET(req: NextRequest) {
   try {
+    console.log("🔍 Admin purchases API called")
+
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
+      console.log("❌ No session found")
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
+
+    console.log("✅ Session found:", session.user.id)
 
     // Check if user is admin
     const user = await prisma.user.findUnique({
@@ -16,9 +21,14 @@ export async function GET(req: NextRequest) {
       include: { playerProfile: true },
     })
 
+    console.log("👤 User found:", user?.email, "isAdmin:", user?.playerProfile?.isAdmin)
+
     if (!user?.playerProfile?.isAdmin) {
+      console.log("❌ User is not admin")
       return NextResponse.json({ error: "Admin access required" }, { status: 403 })
     }
+
+    console.log("📦 Fetching purchases...")
 
     // Fetch all purchases with user and store item details
     const purchases = await prisma.purchase.findMany({
@@ -46,11 +56,15 @@ export async function GET(req: NextRequest) {
       },
     })
 
+    console.log("✅ Purchases fetched:", purchases.length)
+
     return NextResponse.json({ purchases })
   } catch (error: any) {
-    console.error("Failed to fetch purchases:", error)
+    console.error("❌ Failed to fetch purchases:", error)
+    console.error("Error details:", error.message)
+    console.error("Error stack:", error.stack)
     return NextResponse.json(
-      { error: "Failed to fetch purchases" },
+      { error: "Failed to fetch purchases", details: error.message },
       { status: 500 }
     )
   }
