@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
-import { Loader2, Shield, AlertTriangle, Users, ArrowRight, Activity, Flag, Store, Coins } from "lucide-react"
+import { Loader2, Shield, AlertTriangle, Users, ArrowRight, Activity, Flag, Store, Coins, ShoppingCart } from "lucide-react"
 import { Navbar } from "@/components/layout/navbar"
 import { useLanguage } from "@/lib/i18n/language-context"
 
@@ -274,6 +274,36 @@ export default function AdminPage() {
                   </p>
                   <Badge className="bg-yellow-500/20 text-yellow-500 border-yellow-500">
                     {t.admin.financialControl}
+                  </Badge>
+                </div>
+              </CardContent>
+            </Link>
+          </Card>
+
+          {/* Purchases Management Card */}
+          <Card className="border-primary/20 hover:border-primary/40 transition-all cursor-pointer group">
+            <Link href="/admin/purchases">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-3 rounded-lg bg-green-500/10 group-hover:bg-green-500/20 transition-colors">
+                      <ShoppingCart className="h-6 w-6 text-green-500" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-foreground">{t.admin.purchasesCard}</CardTitle>
+                      <CardDescription>{t.admin.orderManagement}</CardDescription>
+                    </div>
+                  </div>
+                  <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-green-500 group-hover:translate-x-1 transition-all" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">
+                    {t.admin.purchasesDesc}
+                  </p>
+                  <Badge className="bg-green-500/20 text-green-500 border-green-500">
+                    {t.admin.manualDelivery}
                   </Badge>
                 </div>
               </CardContent>
