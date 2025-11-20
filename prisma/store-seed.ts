@@ -10,7 +10,7 @@ export const storeItems = [
     descriptionEn: 'Small Valorant Points bundle',
     descriptionTr: 'Küçük Valorant Points paketi',
     vpAmount: 475,
-    nPointsCost: 500,
+    nPointsCost: 5000, // 10x daha pahalı (çok zor kazanılmalı)
     icon: '💎',
     isActive: true,
     sortOrder: 1,
@@ -22,7 +22,7 @@ export const storeItems = [
     descriptionEn: 'Medium Valorant Points bundle',
     descriptionTr: 'Orta Valorant Points paketi',
     vpAmount: 1000,
-    nPointsCost: 1000,
+    nPointsCost: 10000, // 10x daha pahalı
     icon: '💎',
     isActive: true,
     sortOrder: 2,
@@ -34,7 +34,7 @@ export const storeItems = [
     descriptionEn: 'Large Valorant Points bundle',
     descriptionTr: 'Büyük Valorant Points paketi',
     vpAmount: 2050,
-    nPointsCost: 2000,
+    nPointsCost: 20000, // 10x daha pahalı
     icon: '💎',
     isActive: true,
     sortOrder: 3,
@@ -46,7 +46,7 @@ export const storeItems = [
     descriptionEn: 'Extra Large Valorant Points bundle',
     descriptionTr: 'Ekstra Büyük Valorant Points paketi',
     vpAmount: 3650,
-    nPointsCost: 3500,
+    nPointsCost: 35000, // 10x daha pahalı
     icon: '💎',
     isActive: true,
     sortOrder: 4,
@@ -58,7 +58,7 @@ export const storeItems = [
     descriptionEn: 'Mega Valorant Points bundle',
     descriptionTr: 'Mega Valorant Points paketi',
     vpAmount: 5350,
-    nPointsCost: 5000,
+    nPointsCost: 50000, // 10x daha pahalı
     icon: '💎',
     isActive: true,
     sortOrder: 5,
@@ -70,7 +70,7 @@ export const storeItems = [
     descriptionEn: 'Ultimate Valorant Points bundle',
     descriptionTr: 'Ultimate Valorant Points paketi',
     vpAmount: 11000,
-    nPointsCost: 10000,
+    nPointsCost: 100000, // 10x daha pahalı (çok zor!)
     icon: '💎',
     isActive: true,
     sortOrder: 6,

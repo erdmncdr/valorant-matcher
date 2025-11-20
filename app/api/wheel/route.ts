@@ -4,15 +4,15 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { addNPoints } from "@/lib/npoints"
 
-// Wheel prizes with probabilities
+// Wheel prizes with probabilities (çok düşük tutuldu, zor kazanılmalı)
 const WHEEL_PRIZES = [
-  { nPoints: 10, probability: 30, color: '#94a3b8' },    // 30% - Gray
-  { nPoints: 25, probability: 25, color: '#3b82f6' },    // 25% - Blue
-  { nPoints: 50, probability: 20, color: '#10b981' },    // 20% - Green
-  { nPoints: 100, probability: 15, color: '#8b5cf6' },   // 15% - Purple
-  { nPoints: 250, probability: 7, color: '#f59e0b' },    // 7% - Orange
-  { nPoints: 500, probability: 2.5, color: '#ef4444' },  // 2.5% - Red
-  { nPoints: 1000, probability: 0.5, color: '#eab308' }, // 0.5% - Gold
+  { nPoints: 2, probability: 35, color: '#94a3b8' },     // 35% - Gray (çok az)
+  { nPoints: 5, probability: 30, color: '#3b82f6' },     // 30% - Blue
+  { nPoints: 10, probability: 20, color: '#10b981' },    // 20% - Green
+  { nPoints: 15, probability: 10, color: '#8b5cf6' },    // 10% - Purple
+  { nPoints: 25, probability: 4, color: '#f59e0b' },     // 4% - Orange
+  { nPoints: 35, probability: 0.8, color: '#ef4444' },   // 0.8% - Red
+  { nPoints: 50, probability: 0.2, color: '#eab308' },   // 0.2% - Gold (çok nadir!)
 ]
 
 const SPIN_COST = 0 // Free spins (can be changed to cost N-Points)
