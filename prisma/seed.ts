@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 import seedAchievements from './achievements-seed'
+import seedStoreItems from './store-seed'
 
 const prisma = new PrismaClient()
 
@@ -10,6 +11,10 @@ async function main() {
   // Seed achievements first
   await seedAchievements()
   console.log('✅ Seeded achievements')
+
+  // Seed store items
+  await seedStoreItems()
+  console.log('✅ Seeded store items')
 
   // Create test users
   const password_hash = await bcrypt.hash('password123', 10)
@@ -35,6 +40,7 @@ async function main() {
           seriousness: 'TRYHARD',
           typicalPlaytime: 'Evenings and weekends',
           bio: 'Admin account for testing and moderation',
+          nPoints: 10000, // Starting N-Points for testing
           playerAgents: {
             create: [
               { agentName: 'Jett', priority: 'main' },

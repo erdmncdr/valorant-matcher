@@ -7,7 +7,7 @@ import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { Loader2, Trophy, Star, Medal, Crown } from "lucide-react"
+import { Loader2, Trophy, Star, Medal, Crown, Coins } from "lucide-react"
 import { getRankBadgeClass } from "@/lib/constants"
 import { ValorantRank } from "@/lib/types"
 import { Navbar } from "@/components/layout/navbar"
@@ -127,6 +127,53 @@ export default function LeaderboardPage() {
               </p>
             </div>
 
+            {/* Daily Rewards Info */}
+            <Card className="border-yellow-500/30 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 mb-6">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Trophy className="h-8 w-8 text-yellow-500" />
+                    <div>
+                      <h3 className="font-bold text-lg text-foreground">
+                        {t.language === 'tr' ? 'Günlük Ödüller!' : 'Daily Rewards!'}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {t.language === 'tr'
+                          ? 'İlk 3 sırada bitir ve N-Points kazan!'
+                          : 'Finish in top 3 and earn N-Points!'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-4">
+                    <div className="text-center">
+                      <div className="flex items-center gap-1 justify-center mb-1">
+                        <Crown className="h-5 w-5 text-yellow-500" />
+                        <Coins className="h-4 w-4 text-yellow-500" />
+                      </div>
+                      <p className="text-2xl font-bold text-yellow-500">1,000</p>
+                      <p className="text-xs text-muted-foreground">1st</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="flex items-center gap-1 justify-center mb-1">
+                        <Medal className="h-4 w-4 text-gray-400" />
+                        <Coins className="h-4 w-4 text-gray-400" />
+                      </div>
+                      <p className="text-xl font-bold text-gray-400">500</p>
+                      <p className="text-xs text-muted-foreground">2nd</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="flex items-center gap-1 justify-center mb-1">
+                        <Medal className="h-4 w-4 text-amber-600" />
+                        <Coins className="h-4 w-4 text-amber-600" />
+                      </div>
+                      <p className="text-xl font-bold text-amber-600">250</p>
+                      <p className="text-xs text-muted-foreground">3rd</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             <Card className="border-yellow-500/20">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -209,7 +256,7 @@ export default function LeaderboardPage() {
                               </div>
                             </div>
 
-                            {/* Reputation Score */}
+                            {/* Reputation Score & Reward */}
                             <div className="flex flex-col items-center gap-1">
                               <div className="flex items-center gap-1">
                                 <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
@@ -220,6 +267,13 @@ export default function LeaderboardPage() {
                               <span className="text-xs text-muted-foreground">
                                 {t.leaderboard?.reputation || "İtibar"}
                               </span>
+                              {/* Daily Reward Badge */}
+                              {index < 3 && (
+                                <Badge className="mt-2 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-yellow-500/50 text-yellow-500 text-xs">
+                                  <Coins className="h-3 w-3 mr-1" />
+                                  {index === 0 ? '+1,000' : index === 1 ? '+500' : '+250'}
+                                </Badge>
+                              )}
                             </div>
                           </div>
                         </div>
