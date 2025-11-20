@@ -117,32 +117,26 @@ export default function WheelPage() {
         throw new Error(data.error || "Failed to spin")
       }
 
-      // Calculate target rotation based on prize (using probability-based angles with minimum)
+      // Calculate target rotation based on prize (using same power scaling as rendering)
       const prizeIndex = prizes.findIndex(p => p.nPoints === data.prize.nPoints)
 
-      // Calculate normalized angles with minimum segment size (same as rendering)
-      const MIN_SEGMENT_ANGLE = 15
-      const totalMinAngle = prizes.filter(p => (p.probability / 100) * 360 < MIN_SEGMENT_ANGLE).length * MIN_SEGMENT_ANGLE
-      const remainingAngle = 360 - totalMinAngle
-      const largePrizes = prizes.filter(p => (p.probability / 100) * 360 >= MIN_SEGMENT_ANGLE)
-      const totalLargeProbability = largePrizes.reduce((sum, p) => sum + p.probability, 0)
+      // Use same scaling as rendering
+      const SCALE_POWER = 0.6
+      const MIN_VISUAL_SIZE = 8
+
+      const scaledProbs = prizes.map(p => Math.pow(p.probability, SCALE_POWER))
+      const totalScaled = scaledProbs.reduce((sum, val) => sum + val, 0)
 
       // Calculate cumulative angles
       let cumulativeAngle = 0
       for (let i = 0; i < prizeIndex; i++) {
-        const naturalAngle = (prizes[i].probability / 100) * 360
-        if (naturalAngle < MIN_SEGMENT_ANGLE) {
-          cumulativeAngle += MIN_SEGMENT_ANGLE
-        } else {
-          cumulativeAngle += (prizes[i].probability / totalLargeProbability) * remainingAngle
-        }
+        const prevVisualProb = scaledProbs[i] / totalScaled
+        cumulativeAngle += Math.max(MIN_VISUAL_SIZE, prevVisualProb * 360)
       }
 
       // Calculate this prize's segment angle
-      const naturalAngle = (prizes[prizeIndex].probability / 100) * 360
-      const segmentAngle = naturalAngle < MIN_SEGMENT_ANGLE
-        ? MIN_SEGMENT_ANGLE
-        : (prizes[prizeIndex].probability / totalLargeProbability) * remainingAngle
+      const visualProbability = scaledProbs[prizeIndex] / totalScaled
+      const segmentAngle = Math.max(MIN_VISUAL_SIZE, visualProbability * 360)
 
       const targetAngle = cumulativeAngle + segmentAngle / 2
 
@@ -268,36 +262,25 @@ export default function WheelPage() {
                         }}
                       >
                         {(() => {
-                          // Calculate normalized angles with minimum segment size
-                          const MIN_SEGMENT_ANGLE = 15 // Minimum 15 degrees for visibility
-                          const totalMinAngle = prizes.filter(p => (p.probability / 100) * 360 < MIN_SEGMENT_ANGLE).length * MIN_SEGMENT_ANGLE
-                          const remainingAngle = 360 - totalMinAngle
+                          // Use power scaling to make small probabilities more visible while keeping differences
+                          // Power of 0.6 makes small values bigger but maintains relative differences
+                          const SCALE_POWER = 0.6
+                          const MIN_VISUAL_SIZE = 8 // Minimum visual size in degrees
 
-                          // Calculate adjusted probabilities for larger segments
-                          const largePrizes = prizes.filter(p => (p.probability / 100) * 360 >= MIN_SEGMENT_ANGLE)
-                          const totalLargeProbability = largePrizes.reduce((sum, p) => sum + p.probability, 0)
+                          // Calculate scaled probabilities for visual representation
+                          const scaledProbs = prizes.map(p => Math.pow(p.probability, SCALE_POWER))
+                          const totalScaled = scaledProbs.reduce((sum, val) => sum + val, 0)
 
                           return prizes.map((prize, index) => {
-                            // Calculate segment angle with minimum constraint
-                            let segmentAngle
-                            const naturalAngle = (prize.probability / 100) * 360
-
-                            if (naturalAngle < MIN_SEGMENT_ANGLE) {
-                              segmentAngle = MIN_SEGMENT_ANGLE
-                            } else {
-                              // Scale down larger segments proportionally
-                              segmentAngle = (prize.probability / totalLargeProbability) * remainingAngle
-                            }
+                            // Calculate segment angle based on scaled probability
+                            const visualProbability = scaledProbs[index] / totalScaled
+                            let segmentAngle = Math.max(MIN_VISUAL_SIZE, visualProbability * 360)
 
                             // Calculate start angle based on previous segments
                             let cumulativeAngle = -90 // Start from top
                             for (let i = 0; i < index; i++) {
-                              const prevNaturalAngle = (prizes[i].probability / 100) * 360
-                              if (prevNaturalAngle < MIN_SEGMENT_ANGLE) {
-                                cumulativeAngle += MIN_SEGMENT_ANGLE
-                              } else {
-                                cumulativeAngle += (prizes[i].probability / totalLargeProbability) * remainingAngle
-                              }
+                              const prevVisualProb = scaledProbs[i] / totalScaled
+                              cumulativeAngle += Math.max(MIN_VISUAL_SIZE, prevVisualProb * 360)
                             }
 
                             const startAngle = cumulativeAngle
