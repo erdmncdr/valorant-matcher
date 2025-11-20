@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 import { aimTrainerRateLimiter } from "@/lib/rate-limit"
+import { addNPoints, calculateAimTrainerReward } from "@/lib/npoints"
 
 const scoreSchema = z.object({
   score: z.number().min(0),
@@ -57,8 +58,12 @@ export async function POST(req: Request) {
 
     const canClaimReward = !todayScore && data.score >= 100
     let reputationAdded = 0
+    let nPointsAdded = 0
 
     console.log('Can claim reward:', canClaimReward, 'Score:', data.score, 'Already claimed today:', !!todayScore)
+
+    // Calculate N-Points reward based on performance (always awarded)
+    const nPointsReward = calculateAimTrainerReward(data.score, data.accuracy)
 
     // Save score
     const score = await prisma.aimTrainerScore.create({
@@ -75,7 +80,20 @@ export async function POST(req: Request) {
 
     console.log('Score saved:', score.id, 'Accuracy:', score.accuracy)
 
-    // If eligible for reward, add reputation
+    // Award N-Points based on performance (always)
+    if (nPointsReward > 0) {
+      await addNPoints(
+        session.user.id,
+        nPointsReward,
+        'EARN_AIM_TRAINER',
+        `Aim Trainer: ${data.score} points, ${data.accuracy.toFixed(1)}% accuracy`,
+        score.id
+      )
+      nPointsAdded = nPointsReward
+      console.log('N-Points added:', nPointsReward)
+    }
+
+    // If eligible for daily reward, add reputation
     if (canClaimReward) {
       await prisma.playerProfile.update({
         where: { userId: session.user.id },
@@ -86,13 +104,14 @@ export async function POST(req: Request) {
         },
       })
       reputationAdded = 1
-      console.log('Reputation added: +1')
+      console.log('Daily reputation added: +1')
     }
 
     return NextResponse.json({
       score,
       rewardClaimed: canClaimReward,
       reputationAdded,
+      nPointsAdded,
     })
   } catch (error: any) {
     if (error instanceof z.ZodError) {
