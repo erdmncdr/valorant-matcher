@@ -49,6 +49,10 @@ model User {
   notifications         Notification[]
   aimTrainerScores      AimTrainerScore[]
   achievements          UserAchievement[]
+  nPointsTransactions   NPointsTransaction[]
+  purchases             Purchase[]
+  wheelSpins            WheelSpin[]
+  leaderboardRewards    LeaderboardReward[]
 
   @@map("users")
 }
@@ -152,6 +156,7 @@ model PlayerProfile {
   typicalPlaytime String? // e.g. "Weekdays evening"
   bio             String?
   reputationScore Int           @default(0) // Calculated from ratings
+  nPoints         Int           @default(0) // N-Points virtual currency
 
   // Relations
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -474,4 +479,125 @@ model UserAchievement {
   @@unique([userId, achievementId])
   @@index([userId, isUnlocked])
   @@map("user_achievements")
+}
+
+// ============================================
+// N-POINTS ECONOMY SYSTEM
+// ============================================
+
+enum TransactionType {
+  EARN_AIM_TRAINER      // Aim trainer'dan kazanç
+  EARN_ACHIEVEMENT      // Başarım tamamlama
+  EARN_LEADERBOARD      // Leaderboard ödülü
+  EARN_WHEEL            // Şans çarkı
+  EARN_DAILY            // Günlük giriş bonusu
+  SPEND_STORE           // Mağazadan satın alma
+  SPEND_WHEEL           // Çark çevirme
+  ADMIN_GRANT           // Admin tarafından verildi
+  ADMIN_REMOVE          // Admin tarafından alındı
+}
+
+model NPointsTransaction {
+  id          String          @id @default(cuid())
+  userId      String
+  amount      Int             // Pozitif = kazanç, negatif = harcama
+  type        TransactionType
+  description String?
+  reference   String?         // İlgili kaynağın ID'si (purchase, wheel spin, vb.)
+  createdAt   DateTime        @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([type, createdAt])
+  @@map("npoints_transactions")
+}
+
+enum StoreItemType {
+  VP_BUNDLE             // Valorant Points paketi
+}
+
+model StoreItem {
+  id            String        @id @default(cuid())
+  type          StoreItemType
+  nameEn        String        // "475 VP"
+  nameTr        String        // "475 VP"
+  descriptionEn String?       // "Small VP bundle"
+  descriptionTr String?       // "Küçük VP paketi"
+  vpAmount      Int           // VP miktarı (475, 1000, vb.)
+  nPointsCost   Int           // N-Points maliyeti
+  icon          String?       // İkon/emoji
+  isActive      Boolean       @default(true)
+  sortOrder     Int           @default(0)
+  createdAt     DateTime      @default(now())
+
+  // Relations
+  purchases Purchase[]
+
+  @@index([isActive, sortOrder])
+  @@map("store_items")
+}
+
+enum PurchaseStatus {
+  PENDING               // Beklemede
+  COMPLETED             // Tamamlandı
+  FAILED                // Başarısız
+  REFUNDED              // İade edildi
+}
+
+model Purchase {
+  id          String         @id @default(cuid())
+  userId      String
+  storeItemId String
+  status      PurchaseStatus @default(PENDING)
+  nPointsCost Int            // Satın alma anındaki fiyat
+  vpAmount    Int            // Alınan VP miktarı
+  createdAt   DateTime       @default(now())
+  completedAt DateTime?
+
+  // Relations
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  storeItem StoreItem @relation(fields: [storeItemId], references: [id])
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+  @@map("purchases")
+}
+
+model WheelSpin {
+  id          String   @id @default(cuid())
+  userId      String
+  nPointsWon  Int      // Kazanılan N-Points
+  cost        Int      @default(0) // Çark çevirme maliyeti (0 = ücretsiz)
+  createdAt   DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("wheel_spins")
+}
+
+enum LeaderboardPeriod {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+model LeaderboardReward {
+  id          String            @id @default(cuid())
+  userId      String
+  period      LeaderboardPeriod
+  rank        Int               // 1st, 2nd, 3rd
+  nPointsWon  Int
+  periodEnd   DateTime          // Dönemin bitiş tarihi
+  createdAt   DateTime          @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, period, periodEnd])
+  @@index([period, periodEnd])
+  @@map("leaderboard_rewards")
 }
