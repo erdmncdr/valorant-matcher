@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
             playerProfile: {
               select: {
                 nickname: true,
-                tagLine: true,
+                tagline: true,
               },
             },
           },
