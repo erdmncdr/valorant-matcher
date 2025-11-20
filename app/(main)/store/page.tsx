@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Loader2, ShoppingCart, Sparkles, Check, X, Coins } from "lucide-react"
+import { Loader2, ShoppingCart, Sparkles, Check, X, Coins, Clock, Package, AlertCircle } from "lucide-react"
 import { Navbar } from "@/components/layout/navbar"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { OnlineUsers } from "@/components/online-users"
@@ -37,7 +37,11 @@ interface Purchase {
   id: string
   vpAmount: number
   nPointsCost: number
+  status: string
+  vpCode: string | null
+  adminNote: string | null
   createdAt: Date
+  completedAt: Date | null
   storeItem: StoreItem
 }
 
@@ -129,8 +133,10 @@ export default function StorePage() {
 
       // Success!
       toast({
-        title: "🎉 Purchase Successful!",
-        description: `You received ${selectedItem.vpAmount} VP!`,
+        title: language === 'tr' ? "🎉 Sipariş Alındı!" : "🎉 Order Received!",
+        description: language === 'tr'
+          ? "Siparişiniz alındı. VP kodunuz 1-2 saat içinde hazırlanacak."
+          : "Your order has been received. VP code will be ready within 1-2 hours.",
       })
 
       // Update balance
@@ -282,37 +288,114 @@ export default function StorePage() {
               })}
             </div>
 
-            {/* Purchase History */}
+            {/* Purchase History - Satın Aldıklarım */}
             {recentPurchases.length > 0 && (
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Check className="h-5 w-5 text-green-500" />
-                    {language === 'tr' ? 'Son Alışverişler' : 'Recent Purchases'}
+                    <Package className="h-5 w-5 text-purple-500" />
+                    {language === 'tr' ? 'Satın Aldıklarım' : 'My Purchases'}
                   </CardTitle>
+                  <CardDescription>
+                    {language === 'tr' ? 'Son siparişleriniz ve durumları' : 'Your recent orders and status'}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-2">
-                    {recentPurchases.map((purchase) => (
-                      <div
-                        key={purchase.id}
-                        className="flex items-center justify-between py-2 px-4 bg-muted/30 rounded"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="text-2xl">💎</div>
-                          <div>
-                            <p className="font-semibold">{purchase.vpAmount.toLocaleString()} VP</p>
-                            <p className="text-xs text-muted-foreground">
-                              {new Date(purchase.createdAt).toLocaleDateString()}
-                            </p>
+                  <div className="space-y-4">
+                    {recentPurchases.map((purchase) => {
+                      const getStatusBadge = () => {
+                        switch (purchase.status) {
+                          case "PENDING":
+                            return (
+                              <Badge className="bg-yellow-500/20 text-yellow-500 border-yellow-500">
+                                <Clock className="h-3 w-3 mr-1" />
+                                {language === 'tr' ? 'Beklemede' : 'Pending'}
+                              </Badge>
+                            )
+                          case "PROCESSING":
+                            return (
+                              <Badge className="bg-blue-500/20 text-blue-500 border-blue-500">
+                                <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                                {language === 'tr' ? 'Hazırlanıyor' : 'Processing'}
+                              </Badge>
+                            )
+                          case "COMPLETED":
+                            return (
+                              <Badge className="bg-green-500/20 text-green-500 border-green-500">
+                                <Check className="h-3 w-3 mr-1" />
+                                {language === 'tr' ? 'Tamamlandı' : 'Completed'}
+                              </Badge>
+                            )
+                          case "FAILED":
+                            return (
+                              <Badge className="bg-red-500/20 text-red-500 border-red-500">
+                                <X className="h-3 w-3 mr-1" />
+                                {language === 'tr' ? 'Başarısız' : 'Failed'}
+                              </Badge>
+                            )
+                          default:
+                            return <Badge>{purchase.status}</Badge>
+                        }
+                      }
+
+                      return (
+                        <div
+                          key={purchase.id}
+                          className="p-4 bg-muted/30 rounded-lg border border-border/50"
+                        >
+                          <div className="flex items-start justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <div className="text-3xl">💎</div>
+                              <div>
+                                <p className="font-bold text-lg">{purchase.vpAmount.toLocaleString()} VP</p>
+                                <p className="text-xs text-muted-foreground">
+                                  {new Date(purchase.createdAt).toLocaleString()}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="flex items-center gap-1 text-yellow-500 mb-1">
+                                <Coins className="h-4 w-4" />
+                                <p className="font-semibold">{purchase.nPointsCost.toLocaleString()}</p>
+                              </div>
+                              {getStatusBadge()}
+                            </div>
                           </div>
+
+                          {/* VP Code - only show if completed */}
+                          {purchase.status === "COMPLETED" && purchase.vpCode && (
+                            <div className="mt-3 p-3 bg-green-500/10 border border-green-500/30 rounded">
+                              <div className="flex items-center gap-2 mb-2">
+                                <Check className="h-4 w-4 text-green-500" />
+                                <p className="text-sm font-semibold text-green-500">
+                                  {language === 'tr' ? 'VP Kodunuz' : 'Your VP Code'}
+                                </p>
+                              </div>
+                              <div className="font-mono text-lg font-bold text-foreground bg-background/50 p-2 rounded text-center">
+                                {purchase.vpCode}
+                              </div>
+                              {purchase.adminNote && (
+                                <p className="text-xs text-muted-foreground mt-2">
+                                  📝 {purchase.adminNote}
+                                </p>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Pending/Processing message */}
+                          {(purchase.status === "PENDING" || purchase.status === "PROCESSING") && (
+                            <div className="mt-3 p-3 bg-blue-500/10 border border-blue-500/30 rounded flex items-start gap-2">
+                              <AlertCircle className="h-4 w-4 text-blue-500 mt-0.5" />
+                              <p className="text-sm text-blue-500">
+                                {language === 'tr'
+                                  ? 'VP kodunuz hazırlanıyor. 1-2 saat içinde bu sayfada görünecektir.'
+                                  : 'Your VP code is being prepared. It will appear on this page within 1-2 hours.'}
+                              </p>
+                            </div>
+                          )}
                         </div>
-                        <div className="flex items-center gap-1 text-yellow-500">
-                          <Coins className="h-4 w-4" />
-                          <p className="font-semibold">{purchase.nPointsCost.toLocaleString()}</p>
-                        </div>
-                      </div>
-                    ))}
+                      )
+                    })}
                   </div>
                 </CardContent>
               </Card>

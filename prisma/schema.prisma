@@ -540,8 +540,9 @@ model StoreItem {
 }
 
 enum PurchaseStatus {
-  PENDING               // Beklemede
-  COMPLETED             // Tamamlandı
+  PENDING               // Beklemede (sipariş alındı, işleniyor)
+  PROCESSING            // İşleniyor (admin tarafından hazırlanıyor)
+  COMPLETED             // Tamamlandı (VP kodu gönderildi)
   FAILED                // Başarısız
   REFUNDED              // İade edildi
 }
@@ -553,8 +554,10 @@ model Purchase {
   status      PurchaseStatus @default(PENDING)
   nPointsCost Int            // Satın alma anındaki fiyat
   vpAmount    Int            // Alınan VP miktarı
+  vpCode      String?        // Admin tarafından gönderilen VP kodu
+  adminNote   String?        // Admin notu (isteğe bağlı)
   createdAt   DateTime       @default(now())
-  completedAt DateTime?
+  completedAt DateTime?      // Sipariş tamamlandığında
 
   // Relations
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)

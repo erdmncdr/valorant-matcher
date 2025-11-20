@@ -115,15 +115,14 @@ export async function POST(req: Request) {
         },
       })
 
-      // Create purchase record
+      // Create purchase record with PENDING status (manual delivery)
       const newPurchase = await tx.purchase.create({
         data: {
           userId: session.user.id,
           storeItemId: item.id,
-          status: 'COMPLETED',
+          status: 'PENDING', // Manual delivery - admin will send VP code
           nPointsCost: item.nPointsCost,
           vpAmount: item.vpAmount,
-          completedAt: new Date(),
         },
         include: {
           storeItem: true,
