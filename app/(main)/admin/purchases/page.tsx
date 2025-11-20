@@ -104,20 +104,27 @@ export default function AdminPurchasesPage() {
   const fetchPurchases = async () => {
     setIsLoading(true)
     try {
+      console.log("🔄 Fetching purchases from API...")
       const response = await fetch("/api/admin/purchases")
 
+      console.log("📡 Response status:", response.status)
+
       if (!response.ok) {
-        throw new Error("Failed to fetch purchases")
+        const errorData = await response.json()
+        console.error("❌ API Error:", errorData)
+        throw new Error(errorData.details || errorData.error || "Failed to fetch purchases")
       }
 
       const data = await response.json()
+      console.log("✅ Purchases received:", data.purchases?.length || 0)
+
       setPurchases(data.purchases || [])
       setFilteredPurchases(data.purchases || [])
     } catch (error: any) {
-      console.error("Failed to fetch purchases:", error)
+      console.error("❌ Failed to fetch purchases:", error)
       toast({
         title: t.adminPurchases.error,
-        description: t.adminPurchases.failedToLoad,
+        description: error.message || t.adminPurchases.failedToLoad,
         variant: "destructive",
       })
     } finally {
