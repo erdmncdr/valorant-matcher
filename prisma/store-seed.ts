@@ -81,13 +81,46 @@ async function seedStoreItems() {
   console.log('🛒 Seeding store items...')
 
   for (const item of storeItems) {
-    await prisma.storeItem.upsert({
-      where: {
-        nameEn: item.nameEn
-      },
-      update: item,
-      create: item,
+    // Find existing item by nameEn
+    const existing = await prisma.storeItem.findFirst({
+      where: { nameEn: item.nameEn },
     })
+
+    if (existing) {
+      // Update existing item
+      await prisma.storeItem.update({
+        where: { id: existing.id },
+        data: {
+          type: item.type as any,
+          nameTr: item.nameTr,
+          descriptionEn: item.descriptionEn,
+          descriptionTr: item.descriptionTr,
+          vpAmount: item.vpAmount,
+          nPointsCost: item.nPointsCost,
+          icon: item.icon,
+          isActive: item.isActive,
+          sortOrder: item.sortOrder,
+        },
+      })
+      console.log(`  ✓ Updated: ${item.nameEn}`)
+    } else {
+      // Create new item
+      await prisma.storeItem.create({
+        data: {
+          type: item.type as any,
+          nameEn: item.nameEn,
+          nameTr: item.nameTr,
+          descriptionEn: item.descriptionEn,
+          descriptionTr: item.descriptionTr,
+          vpAmount: item.vpAmount,
+          nPointsCost: item.nPointsCost,
+          icon: item.icon,
+          isActive: item.isActive,
+          sortOrder: item.sortOrder,
+        },
+      })
+      console.log(`  ✓ Created: ${item.nameEn}`)
+    }
   }
 
   console.log('✅ Store items seeded successfully!')

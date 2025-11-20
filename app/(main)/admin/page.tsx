@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
-import { Loader2, Shield, AlertTriangle, Users, ArrowRight, Activity, Flag } from "lucide-react"
+import { Loader2, Shield, AlertTriangle, Users, ArrowRight, Activity, Flag, Store, Coins } from "lucide-react"
 import { Navbar } from "@/components/layout/navbar"
 import { useLanguage } from "@/lib/i18n/language-context"
 
@@ -117,7 +117,7 @@ export default function AdminPage() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
           {/* Analytics Card */}
           <Card className="border-primary/20 hover:border-primary/40 transition-all cursor-pointer group">
             <Link href="/admin/analytics">
@@ -215,6 +215,66 @@ export default function AdminPage() {
                     <p className="text-sm text-muted-foreground mb-1">{t.admin.banned}</p>
                     <p className="text-2xl font-bold text-red-500">{stats.bannedUsers}</p>
                   </div>
+                </div>
+              </CardContent>
+            </Link>
+          </Card>
+
+          {/* Store Management Card */}
+          <Card className="border-primary/20 hover:border-primary/40 transition-all cursor-pointer group">
+            <Link href="/admin/store">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-3 rounded-lg bg-purple-500/10 group-hover:bg-purple-500/20 transition-colors">
+                      <Store className="h-6 w-6 text-purple-500" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-foreground">Store</CardTitle>
+                      <CardDescription>VP Bundles</CardDescription>
+                    </div>
+                  </div>
+                  <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-purple-500 group-hover:translate-x-1 transition-all" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">
+                    Manage VP bundles, pricing, and sales
+                  </p>
+                  <Badge className="bg-purple-500/20 text-purple-500 border-purple-500">
+                    Economy System
+                  </Badge>
+                </div>
+              </CardContent>
+            </Link>
+          </Card>
+
+          {/* N-Points Management Card */}
+          <Card className="border-primary/20 hover:border-primary/40 transition-all cursor-pointer group">
+            <Link href="/admin/npoints">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-3 rounded-lg bg-yellow-500/10 group-hover:bg-yellow-500/20 transition-colors">
+                      <Coins className="h-6 w-6 text-yellow-500" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-foreground">N-Points</CardTitle>
+                      <CardDescription>Currency Management</CardDescription>
+                    </div>
+                  </div>
+                  <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-yellow-500 group-hover:translate-x-1 transition-all" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">
+                    Grant/deduct N-Points, view transactions
+                  </p>
+                  <Badge className="bg-yellow-500/20 text-yellow-500 border-yellow-500">
+                    Financial Control
+                  </Badge>
                 </div>
               </CardContent>
             </Link>
