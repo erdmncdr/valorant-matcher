@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
 import { Loader2, Store, Edit, Trash2, Plus, TrendingUp, DollarSign } from "lucide-react"
 import { Navbar } from "@/components/layout/navbar"
+import { useLanguage } from "@/lib/i18n/language-context"
 import {
   Dialog,
   DialogContent,
@@ -45,6 +46,7 @@ export default function AdminStorePage() {
   const { status } = useSession()
   const router = useRouter()
   const { toast } = useToast()
+  const { t } = useLanguage()
   const [profile, setProfile] = useState<any>(null)
   const [items, setItems] = useState<StoreItem[]>([])
   const [stats, setStats] = useState({ totalPurchases: 0, totalRevenue: 0 })
@@ -141,8 +143,8 @@ export default function AdminStorePage() {
 
       if (response.ok) {
         toast({
-          title: "Success",
-          description: "Store item updated successfully",
+          title: t.adminStore.success,
+          description: t.adminStore.itemUpdated,
         })
         setShowEditDialog(false)
         fetchData()
@@ -151,8 +153,8 @@ export default function AdminStorePage() {
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to update store item",
+        title: t.adminStore.error,
+        description: t.adminStore.updateFailed,
         variant: "destructive",
       })
     }
@@ -171,15 +173,15 @@ export default function AdminStorePage() {
 
       if (response.ok) {
         toast({
-          title: "Success",
-          description: `Item ${item.isActive ? 'deactivated' : 'activated'}`,
+          title: t.adminStore.success,
+          description: item.isActive ? t.adminStore.itemDeactivated : t.adminStore.itemActivated,
         })
         fetchData()
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to toggle item status",
+        title: t.adminStore.error,
+        description: t.adminStore.toggleFailed,
         variant: "destructive",
       })
     }
@@ -202,9 +204,9 @@ export default function AdminStorePage() {
           <div>
             <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
               <Store className="h-8 w-8 text-primary" />
-              Store Management
+              {t.adminStore.title}
             </h1>
-            <p className="text-muted-foreground mt-2">Manage VP bundles and pricing</p>
+            <p className="text-muted-foreground mt-2">{t.adminStore.subtitle}</p>
           </div>
         </div>
 
@@ -214,12 +216,12 @@ export default function AdminStorePage() {
             <CardHeader>
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <TrendingUp className="h-4 w-4" />
-                Total Sales
+                {t.adminStore.totalSales}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{stats.totalPurchases}</div>
-              <p className="text-xs text-muted-foreground mt-1">All-time purchases</p>
+              <p className="text-xs text-muted-foreground mt-1">{t.adminStore.allTimePurchases}</p>
             </CardContent>
           </Card>
 
@@ -227,12 +229,12 @@ export default function AdminStorePage() {
             <CardHeader>
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <DollarSign className="h-4 w-4" />
-                Total Revenue
+                {t.adminStore.totalRevenue}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{stats.totalRevenue.toLocaleString()}</div>
-              <p className="text-xs text-muted-foreground mt-1">N-Points collected</p>
+              <p className="text-xs text-muted-foreground mt-1">{t.adminStore.nPointsCollected}</p>
             </CardContent>
           </Card>
 
@@ -240,12 +242,12 @@ export default function AdminStorePage() {
             <CardHeader>
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <Store className="h-4 w-4" />
-                Active Items
+                {t.adminStore.activeItems}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{items.filter(i => i.isActive).length}</div>
-              <p className="text-xs text-muted-foreground mt-1">Out of {items.length} total</p>
+              <p className="text-xs text-muted-foreground mt-1">{t.adminStore.outOfTotal} {items.length}</p>
             </CardContent>
           </Card>
         </div>
@@ -253,20 +255,20 @@ export default function AdminStorePage() {
         {/* Store Items Table */}
         <Card>
           <CardHeader>
-            <CardTitle>Store Items</CardTitle>
-            <CardDescription>Manage VP bundles and their pricing</CardDescription>
+            <CardTitle>{t.adminStore.storeItems}</CardTitle>
+            <CardDescription>{t.adminStore.manageVpBundles}</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>VP Amount</TableHead>
-                  <TableHead>N-Points Cost</TableHead>
-                  <TableHead>Sales</TableHead>
-                  <TableHead>Revenue</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>{t.adminStore.name}</TableHead>
+                  <TableHead>{t.adminStore.vpAmount}</TableHead>
+                  <TableHead>{t.adminStore.nPointsCost}</TableHead>
+                  <TableHead>{t.adminStore.sales}</TableHead>
+                  <TableHead>{t.adminStore.revenue}</TableHead>
+                  <TableHead>{t.adminStore.status}</TableHead>
+                  <TableHead>{t.adminStore.actions}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -279,7 +281,7 @@ export default function AdminStorePage() {
                     <TableCell>{item.totalRevenue.toLocaleString()}</TableCell>
                     <TableCell>
                       <Badge variant={item.isActive ? "default" : "secondary"}>
-                        {item.isActive ? "Active" : "Inactive"}
+                        {item.isActive ? t.adminStore.active : t.adminStore.inactive}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -296,7 +298,7 @@ export default function AdminStorePage() {
                           size="sm"
                           onClick={() => handleToggleActive(item)}
                         >
-                          {item.isActive ? "Deactivate" : "Activate"}
+                          {item.isActive ? t.adminStore.deactivate : t.adminStore.activate}
                         </Button>
                       </div>
                     </TableCell>
@@ -312,12 +314,12 @@ export default function AdminStorePage() {
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit Store Item</DialogTitle>
-            <DialogDescription>Update the store item details</DialogDescription>
+            <DialogTitle>{t.adminStore.editStoreItem}</DialogTitle>
+            <DialogDescription>{t.adminStore.updateDetails}</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="vpAmount">VP Amount</Label>
+              <Label htmlFor="vpAmount">{t.adminStore.vpAmount}</Label>
               <Input
                 id="vpAmount"
                 type="number"
@@ -326,7 +328,7 @@ export default function AdminStorePage() {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="nPointsCost">N-Points Cost</Label>
+              <Label htmlFor="nPointsCost">{t.adminStore.nPointsCost}</Label>
               <Input
                 id="nPointsCost"
                 type="number"
@@ -335,7 +337,7 @@ export default function AdminStorePage() {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="sortOrder">Sort Order</Label>
+              <Label htmlFor="sortOrder">{t.adminStore.sortOrder}</Label>
               <Input
                 id="sortOrder"
                 type="number"
@@ -346,9 +348,9 @@ export default function AdminStorePage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowEditDialog(false)}>
-              Cancel
+              {t.adminStore.cancel}
             </Button>
-            <Button onClick={handleSave}>Save Changes</Button>
+            <Button onClick={handleSave}>{t.adminStore.saveChanges}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
