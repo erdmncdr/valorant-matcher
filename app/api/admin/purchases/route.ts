@@ -21,9 +21,9 @@ export async function GET(req: NextRequest) {
       include: { playerProfile: true },
     })
 
-    console.log("👤 User found:", user?.email, "isAdmin:", user?.playerProfile?.isAdmin)
+    console.log("👤 User found:", user?.email, "isAdmin:", user?.isAdmin)
 
-    if (!user?.playerProfile?.isAdmin) {
+    if (!user?.isAdmin) {
       console.log("❌ User is not admin")
       return NextResponse.json({ error: "Admin access required" }, { status: 403 })
     }
