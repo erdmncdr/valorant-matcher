@@ -31,7 +31,7 @@ interface Purchase {
   user: {
     playerProfile: {
       nickname: string
-      tagLine: string
+      tagline: string
     }
   }
   storeItem: {
@@ -352,10 +352,33 @@ export default function AdminPurchasesPage() {
                   filteredPurchases.map((purchase) => (
                     <TableRow key={purchase.id}>
                       <TableCell className="font-medium">
-                        {new Date(purchase.createdAt).toLocaleString()}
+                        <div className="flex flex-col gap-1">
+                          <span className="text-sm">
+                            {new Date(purchase.createdAt).toLocaleDateString('tr-TR', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric'
+                            })}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {new Date(purchase.createdAt).toLocaleTimeString('tr-TR', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              second: '2-digit'
+                            })}
+                          </span>
+                          {purchase.completedAt && (
+                            <span className="text-xs text-green-500">
+                              ✓ {new Date(purchase.completedAt).toLocaleTimeString('tr-TR', {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </span>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell>
-                        {purchase.user.playerProfile.nickname}#{purchase.user.playerProfile.tagLine}
+                        {purchase.user.playerProfile.nickname}#{purchase.user.playerProfile.tagline}
                       </TableCell>
                       <TableCell>
                         {purchase.vpAmount} VP
@@ -421,7 +444,7 @@ export default function AdminPurchasesPage() {
                 <Label>{t.adminPurchases.orderDetails}</Label>
                 <div className="p-4 rounded-lg bg-muted/50 space-y-2">
                   <p className="text-sm">
-                    <strong>{t.adminPurchases.user}:</strong> {selectedPurchase.user.playerProfile.nickname}#{selectedPurchase.user.playerProfile.tagLine}
+                    <strong>{t.adminPurchases.user}:</strong> {selectedPurchase.user.playerProfile.nickname}#{selectedPurchase.user.playerProfile.tagline}
                   </p>
                   <p className="text-sm">
                     <strong>{t.adminPurchases.item}:</strong> {selectedPurchase.vpAmount} VP
