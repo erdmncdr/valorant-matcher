@@ -47,7 +47,7 @@ export default function AdminPurchasesPage() {
   const { t } = useLanguage()
   const [purchases, setPurchases] = useState<Purchase[]>([])
   const [filteredPurchases, setFilteredPurchases] = useState<Purchase[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [profile, setProfile] = useState<any>(null)
   const [selectedPurchase, setSelectedPurchase] = useState<Purchase | null>(null)
   const [showSendCodeDialog, setShowSendCodeDialog] = useState(false)
@@ -62,8 +62,7 @@ export default function AdminPurchasesPage() {
     }
 
     if (status === "authenticated") {
-      fetchProfile()
-      fetchPurchases()
+      initializePage()
     }
   }, [status, router])
 
@@ -75,12 +74,15 @@ export default function AdminPurchasesPage() {
     }
   }, [filterStatus, purchases])
 
-  const fetchProfile = async () => {
+  const initializePage = async () => {
     try {
+      // First check if user is admin
       const response = await fetch("/api/profile")
       const data = await response.json()
+
       if (data.profile) {
         setProfile(data.profile)
+
         if (!data.profile.isAdmin) {
           router.push("/")
           toast({
@@ -88,10 +90,14 @@ export default function AdminPurchasesPage() {
             description: t.adminPurchases.noAdminPermissions,
             variant: "destructive",
           })
+          return // Stop here if not admin
         }
+
+        // Only fetch purchases if user is admin
+        await fetchPurchases()
       }
     } catch (error) {
-      console.error("Failed to fetch profile:", error)
+      console.error("Failed to initialize page:", error)
     }
   }
 
@@ -99,10 +105,11 @@ export default function AdminPurchasesPage() {
     setIsLoading(true)
     try {
       const response = await fetch("/api/admin/purchases")
-      if (response.status === 403) {
-        router.push("/dashboard")
-        return
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch purchases")
       }
+
       const data = await response.json()
       setPurchases(data.purchases || [])
       setFilteredPurchases(data.purchases || [])
