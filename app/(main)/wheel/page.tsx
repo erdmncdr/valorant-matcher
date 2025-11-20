@@ -117,16 +117,33 @@ export default function WheelPage() {
         throw new Error(data.error || "Failed to spin")
       }
 
-      // Calculate target rotation based on prize (using probability-based angles)
+      // Calculate target rotation based on prize (using probability-based angles with minimum)
       const prizeIndex = prizes.findIndex(p => p.nPoints === data.prize.nPoints)
 
-      // Calculate cumulative angles based on probability
+      // Calculate normalized angles with minimum segment size (same as rendering)
+      const MIN_SEGMENT_ANGLE = 15
+      const totalMinAngle = prizes.filter(p => (p.probability / 100) * 360 < MIN_SEGMENT_ANGLE).length * MIN_SEGMENT_ANGLE
+      const remainingAngle = 360 - totalMinAngle
+      const largePrizes = prizes.filter(p => (p.probability / 100) * 360 >= MIN_SEGMENT_ANGLE)
+      const totalLargeProbability = largePrizes.reduce((sum, p) => sum + p.probability, 0)
+
+      // Calculate cumulative angles
       let cumulativeAngle = 0
       for (let i = 0; i < prizeIndex; i++) {
-        cumulativeAngle += (prizes[i].probability / 100) * 360
+        const naturalAngle = (prizes[i].probability / 100) * 360
+        if (naturalAngle < MIN_SEGMENT_ANGLE) {
+          cumulativeAngle += MIN_SEGMENT_ANGLE
+        } else {
+          cumulativeAngle += (prizes[i].probability / totalLargeProbability) * remainingAngle
+        }
       }
 
-      const segmentAngle = (prizes[prizeIndex].probability / 100) * 360
+      // Calculate this prize's segment angle
+      const naturalAngle = (prizes[prizeIndex].probability / 100) * 360
+      const segmentAngle = naturalAngle < MIN_SEGMENT_ANGLE
+        ? MIN_SEGMENT_ANGLE
+        : (prizes[prizeIndex].probability / totalLargeProbability) * remainingAngle
+
       const targetAngle = cumulativeAngle + segmentAngle / 2
 
       // Add multiple full rotations for effect (5-7 spins)
@@ -250,75 +267,99 @@ export default function WheelPage() {
                           transition: isSpinning ? 'transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99)' : 'none',
                         }}
                       >
-                        {prizes.map((prize, index) => {
-                          // Calculate segment angle based on probability
-                          const segmentAngle = (prize.probability / 100) * 360
+                        {(() => {
+                          // Calculate normalized angles with minimum segment size
+                          const MIN_SEGMENT_ANGLE = 15 // Minimum 15 degrees for visibility
+                          const totalMinAngle = prizes.filter(p => (p.probability / 100) * 360 < MIN_SEGMENT_ANGLE).length * MIN_SEGMENT_ANGLE
+                          const remainingAngle = 360 - totalMinAngle
 
-                          // Calculate start angle based on cumulative probabilities
-                          let cumulativeAngle = -90 // Start from top
-                          for (let i = 0; i < index; i++) {
-                            cumulativeAngle += (prizes[i].probability / 100) * 360
-                          }
+                          // Calculate adjusted probabilities for larger segments
+                          const largePrizes = prizes.filter(p => (p.probability / 100) * 360 >= MIN_SEGMENT_ANGLE)
+                          const totalLargeProbability = largePrizes.reduce((sum, p) => sum + p.probability, 0)
 
-                          const startAngle = cumulativeAngle
-                          const endAngle = startAngle + segmentAngle
+                          return prizes.map((prize, index) => {
+                            // Calculate segment angle with minimum constraint
+                            let segmentAngle
+                            const naturalAngle = (prize.probability / 100) * 360
 
-                          // Calculate path for pie slice
-                          const startRad = (startAngle * Math.PI) / 180
-                          const endRad = (endAngle * Math.PI) / 180
-                          const radius = 200
-                          const cx = 200
-                          const cy = 200
+                            if (naturalAngle < MIN_SEGMENT_ANGLE) {
+                              segmentAngle = MIN_SEGMENT_ANGLE
+                            } else {
+                              // Scale down larger segments proportionally
+                              segmentAngle = (prize.probability / totalLargeProbability) * remainingAngle
+                            }
 
-                          const x1 = cx + radius * Math.cos(startRad)
-                          const y1 = cy + radius * Math.sin(startRad)
-                          const x2 = cx + radius * Math.cos(endRad)
-                          const y2 = cy + radius * Math.sin(endRad)
+                            // Calculate start angle based on previous segments
+                            let cumulativeAngle = -90 // Start from top
+                            for (let i = 0; i < index; i++) {
+                              const prevNaturalAngle = (prizes[i].probability / 100) * 360
+                              if (prevNaturalAngle < MIN_SEGMENT_ANGLE) {
+                                cumulativeAngle += MIN_SEGMENT_ANGLE
+                              } else {
+                                cumulativeAngle += (prizes[i].probability / totalLargeProbability) * remainingAngle
+                              }
+                            }
 
-                          const largeArcFlag = segmentAngle > 180 ? 1 : 0
+                            const startAngle = cumulativeAngle
+                            const endAngle = startAngle + segmentAngle
 
-                          const pathData = [
-                            `M ${cx} ${cy}`,
-                            `L ${x1} ${y1}`,
-                            `A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`,
-                            'Z'
-                          ].join(' ')
+                            // Calculate path for pie slice
+                            const startRad = (startAngle * Math.PI) / 180
+                            const endRad = (endAngle * Math.PI) / 180
+                            const radius = 200
+                            const cx = 200
+                            const cy = 200
 
-                          // Calculate text position (middle of segment)
-                          const textAngle = startAngle + segmentAngle / 2
-                          const textRad = (textAngle * Math.PI) / 180
-                          const textRadius = 130
-                          const textX = cx + textRadius * Math.cos(textRad)
-                          const textY = cy + textRadius * Math.sin(textRad)
+                            const x1 = cx + radius * Math.cos(startRad)
+                            const y1 = cy + radius * Math.sin(startRad)
+                            const x2 = cx + radius * Math.cos(endRad)
+                            const y2 = cy + radius * Math.sin(endRad)
 
-                          // Dynamic font size based on segment size
-                          const fontSize = Math.max(12, Math.min(24, segmentAngle / 6))
+                            const largeArcFlag = segmentAngle > 180 ? 1 : 0
 
-                          return (
-                            <g key={index}>
-                              <path
-                                d={pathData}
-                                fill={prize.color}
-                                stroke="white"
-                                strokeWidth="2"
-                              />
-                              <text
-                                x={textX}
-                                y={textY}
-                                fill="white"
-                                fontSize={fontSize}
-                                fontWeight="bold"
-                                textAnchor="middle"
-                                dominantBaseline="middle"
-                                style={{
-                                  filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))',
-                                }}
-                              >
-                                {prize.nPoints}
-                              </text>
-                            </g>
-                          )
-                        })}
+                            const pathData = [
+                              `M ${cx} ${cy}`,
+                              `L ${x1} ${y1}`,
+                              `A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`,
+                              'Z'
+                            ].join(' ')
+
+                            // Calculate text position (middle of segment)
+                            const textAngle = startAngle + segmentAngle / 2
+                            const textRad = (textAngle * Math.PI) / 180
+                            const textRadius = 130
+                            const textX = cx + textRadius * Math.cos(textRad)
+                            const textY = cy + textRadius * Math.sin(textRad)
+
+                            // Dynamic font size based on segment size
+                            const fontSize = Math.max(14, Math.min(24, segmentAngle / 5))
+
+                            return (
+                              <g key={index}>
+                                <path
+                                  d={pathData}
+                                  fill={prize.color}
+                                  stroke="white"
+                                  strokeWidth="2"
+                                />
+                                <text
+                                  x={textX}
+                                  y={textY}
+                                  fill="white"
+                                  fontSize={fontSize}
+                                  fontWeight="bold"
+                                  textAnchor="middle"
+                                  dominantBaseline="middle"
+                                  style={{
+                                    filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))',
+                                  }}
+                                >
+                                  {prize.nPoints}
+                                </text>
+                              </g>
+                            )
+                          })
+                        })()}
 
                         {/* Center Circle */}
                         <circle
