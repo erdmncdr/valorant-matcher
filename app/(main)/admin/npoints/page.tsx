@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { Loader2, Coins, TrendingUp, TrendingDown, Users, Plus, Minus } from "lucide-react"
 import { Navbar } from "@/components/layout/navbar"
+import { useLanguage } from "@/lib/i18n/language-context"
 import {
   Dialog,
   DialogContent,
@@ -47,6 +48,7 @@ export default function AdminNPointsPage() {
   const { status } = useSession()
   const router = useRouter()
   const { toast } = useToast()
+  const { t } = useLanguage()
   const [profile, setProfile] = useState<any>(null)
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [stats, setStats] = useState({
