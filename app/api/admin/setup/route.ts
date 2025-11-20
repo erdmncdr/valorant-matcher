@@ -17,8 +17,8 @@ export async function POST(req: NextRequest) {
     }
 
     // Update user to admin
-    const profile = await prisma.playerProfile.update({
-      where: { userId: session.user.id },
+    const user = await prisma.user.update({
+      where: { id: session.user.id },
       data: { isAdmin: true },
     })
 
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       success: true,
       message: "You are now an admin! Please delete this endpoint from code.",
       email: session.user.email,
-      isAdmin: profile.isAdmin,
+      isAdmin: user.isAdmin,
     })
   } catch (error: any) {
     console.error("Failed to make admin:", error)

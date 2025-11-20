@@ -19,7 +19,7 @@ export async function POST(
       include: { playerProfile: true },
     })
 
-    if (!user?.playerProfile?.isAdmin) {
+    if (!user?.isAdmin) {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 })
     }
 
