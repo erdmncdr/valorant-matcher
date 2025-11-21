@@ -8,30 +8,49 @@ import { addNPoints, deductNPoints } from "@/lib/npoints"
 const PREMIUM_LOOTBOX_COST = 100 // N-Points cost to open
 
 const PREMIUM_REWARDS = [
-  { nPoints: 50, probability: 25, color: '#94a3b8' },    // Common - 25%
-  { nPoints: 75, probability: 20, color: '#3b82f6' },    // Common - 20%
-  { nPoints: 100, probability: 18, color: '#10b981' },   // Uncommon - 18%
-  { nPoints: 150, probability: 15, color: '#8b5cf6' },   // Uncommon - 15%
-  { nPoints: 200, probability: 10, color: '#f59e0b' },   // Rare - 10%
-  { nPoints: 250, probability: 6, color: '#ef4444' },    // Rare - 6%
-  { nPoints: 300, probability: 3, color: '#ec4899' },    // Epic - 3%
-  { nPoints: 400, probability: 2, color: '#eab308' },    // Epic - 2%
-  { nPoints: 500, probability: 1, color: '#fbbf24' },    // Legendary - 1%
+  // Mavi (Common) - 50% toplam
+  { nPoints: 10, probability: 25, color: '#3b82f6', rarity: 'common' },
+  { nPoints: 25, probability: 15, color: '#3b82f6', rarity: 'common' },
+  { nPoints: 50, probability: 10, color: '#3b82f6', rarity: 'common' },
+
+  // Yeşil (Uncommon) - 30% toplam
+  { nPoints: 75, probability: 12, color: '#10b981', rarity: 'uncommon' },
+  { nPoints: 100, probability: 10, color: '#10b981', rarity: 'uncommon' },
+  { nPoints: 125, probability: 8, color: '#10b981', rarity: 'uncommon' },
+
+  // Pembe (Rare) - 10% toplam
+  { nPoints: 150, probability: 6, color: '#ec4899', rarity: 'rare' },
+  { nPoints: 200, probability: 4, color: '#ec4899', rarity: 'rare' },
+
+  // Mor (Epic) - 6% toplam
+  { nPoints: 250, probability: 4, color: '#8b5cf6', rarity: 'epic' },
+  { nPoints: 500, probability: 2, color: '#8b5cf6', rarity: 'epic' },
+
+  // Kırmızı (Legendary) - 3% toplam
+  { nPoints: 750, probability: 2, color: '#ef4444', rarity: 'legendary' },
+  { nPoints: 1000, probability: 1, color: '#ef4444', rarity: 'legendary' },
+
+  // Sarı (Mythic/Efsanevi) - 1% (çok nadir)
+  { nPoints: 10000, probability: 1, color: '#fbbf24', rarity: 'mythic' },
 ]
 
-function selectReward(): { nPoints: number; color: string } {
+function selectReward(): { nPoints: number; color: string; rarity: string } {
   const random = Math.random() * 100
   let cumulative = 0
 
   for (const reward of PREMIUM_REWARDS) {
     cumulative += reward.probability
     if (random <= cumulative) {
-      return { nPoints: reward.nPoints, color: reward.color }
+      return {
+        nPoints: reward.nPoints,
+        color: reward.color,
+        rarity: reward.rarity
+      }
     }
   }
 
   // Fallback to lowest reward
-  return { nPoints: 50, color: '#94a3b8' }
+  return { nPoints: 10, color: '#3b82f6', rarity: 'common' }
 }
 
 // GET /api/premium-lootbox - Get premium lootbox info

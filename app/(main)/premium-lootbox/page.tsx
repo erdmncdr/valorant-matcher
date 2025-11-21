@@ -13,11 +13,13 @@ import { OnlineUsers } from "@/components/online-users"
 import { usePresence } from "@/hooks/use-presence"
 import { useToast } from "@/hooks/use-toast"
 import { useBalance } from "@/lib/balance-context"
+import confetti from "canvas-confetti"
 
 interface Reward {
   nPoints: number
   probability: number
   color: string
+  rarity?: string
 }
 
 interface LootboxHistory {
@@ -176,10 +178,53 @@ export default function PremiumLootboxPage() {
         setShowAnimation(false)
         setAnimationItems([]) // Clear animation items
 
-        toast({
-          title: "🎁 Congratulations!",
-          description: `You won ${result.reward.nPoints} N-Points! (Net: ${result.netGain > 0 ? '+' : ''}${result.netGain})`,
-        })
+        // Check if Mythic (10000 N-Points) was won - special celebration!
+        const isMythic = result.reward.nPoints >= 10000
+
+        if (isMythic) {
+          // LEGENDARY MYTHIC WIN - Epic confetti celebration!
+          const duration = 5000
+          const animationEnd = Date.now() + duration
+          const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 }
+
+          function randomInRange(min: number, max: number) {
+            return Math.random() * (max - min) + min
+          }
+
+          const interval: any = setInterval(() => {
+            const timeLeft = animationEnd - Date.now()
+
+            if (timeLeft <= 0) {
+              return clearInterval(interval)
+            }
+
+            const particleCount = 100 * (timeLeft / duration)
+
+            // Fire confetti from multiple angles with gold colors
+            confetti({
+              ...defaults,
+              particleCount,
+              origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+              colors: ['#fbbf24', '#f59e0b', '#eab308', '#FFD700', '#FFA500'],
+            })
+            confetti({
+              ...defaults,
+              particleCount,
+              origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+              colors: ['#fbbf24', '#f59e0b', '#eab308', '#FFD700', '#FFA500'],
+            })
+          }, 250)
+
+          toast({
+            title: "🌟 EFSANEVI ÖDÜL! 🌟",
+            description: `MUHTEŞEM! ${result.reward.nPoints.toLocaleString()} N-Points kazandınız! (Net: ${result.netGain > 0 ? '+' : ''}${result.netGain.toLocaleString()})`,
+          })
+        } else {
+          toast({
+            title: "🎁 Congratulations!",
+            description: `You won ${result.reward.nPoints.toLocaleString()} N-Points! (Net: ${result.netGain > 0 ? '+' : ''}${result.netGain})`,
+          })
+        }
 
         // Refresh data
         fetchData()
@@ -310,21 +355,30 @@ export default function PremiumLootboxPage() {
                         className="absolute top-0 left-0 h-full flex items-center gap-2 px-4"
                         style={{ willChange: 'transform' }}
                       >
-                        {animationItems.map((reward, index) => (
-                          <div
-                            key={index}
-                            className="flex-shrink-0 w-[110px] h-[110px] rounded-lg border-2 flex flex-col items-center justify-center"
-                            style={{
-                              borderColor: reward.color,
-                              backgroundColor: `${reward.color}20`,
-                            }}
-                          >
-                            <Coins className="h-8 w-8 mb-2" style={{ color: reward.color }} />
-                            <p className="text-xl font-bold" style={{ color: reward.color }}>
-                              {reward.nPoints}
-                            </p>
-                          </div>
-                        ))}
+                        {animationItems.map((reward, index) => {
+                          const isMythic = reward.nPoints >= 10000
+                          return (
+                            <div
+                              key={index}
+                              className={`flex-shrink-0 w-[110px] h-[110px] rounded-lg border-2 flex flex-col items-center justify-center ${
+                                isMythic ? 'animate-pulse shadow-lg shadow-yellow-500/50' : ''
+                              }`}
+                              style={{
+                                borderColor: reward.color,
+                                backgroundColor: `${reward.color}20`,
+                                ...(isMythic && {
+                                  boxShadow: `0 0 20px ${reward.color}, 0 0 40px ${reward.color}`,
+                                  borderWidth: '3px',
+                                }),
+                              }}
+                            >
+                              <Coins className={`h-8 w-8 mb-2 ${isMythic ? 'animate-bounce' : ''}`} style={{ color: reward.color }} />
+                              <p className={`text-xl font-bold ${isMythic ? 'text-2xl' : ''}`} style={{ color: reward.color }}>
+                                {reward.nPoints >= 1000 ? `${(reward.nPoints / 1000).toFixed(0)}K` : reward.nPoints}
+                              </p>
+                            </div>
+                          )
+                        })}
                       </div>
                     )}
 
