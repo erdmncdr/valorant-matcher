@@ -297,7 +297,24 @@ export default function AdminNPointsPage() {
                       </span>
                     </TableCell>
                     <TableCell className="max-w-xs truncate">{tx.description}</TableCell>
-                    <TableCell>{new Date(tx.createdAt).toLocaleDateString()}</TableCell>
+                    <TableCell>
+                      <div className="flex flex-col gap-1">
+                        <span className="text-sm">
+                          {new Date(tx.createdAt).toLocaleDateString('tr-TR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                          })}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {new Date(tx.createdAt).toLocaleTimeString('tr-TR', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit'
+                          })}
+                        </span>
+                      </div>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
