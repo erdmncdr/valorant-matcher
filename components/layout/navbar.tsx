@@ -16,6 +16,7 @@ import { LogOut, User, LayoutDashboard, ChevronDown, Languages, Shield, Trophy, 
 import { useLanguage } from "@/lib/i18n/language-context"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { NotificationBell } from "@/components/notifications/notification-bell"
+import { useBalance } from "@/lib/balance-context"
 
 interface NavbarProps {
   profile?: {
@@ -29,6 +30,7 @@ interface NavbarProps {
 
 export function Navbar({ profile, currentPage }: NavbarProps) {
   const { t, language, setLanguage } = useLanguage()
+  const { balance } = useBalance()
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
@@ -126,7 +128,7 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
           <div className="flex items-center space-x-2">
             {/* N-Points Balance */}
             {profile?.nPoints !== undefined && (
-              <Link href="/store">
+              <Link href="/wallet">
                 <Button
                   variant="outline"
                   size="sm"
@@ -134,7 +136,7 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
                 >
                   <Coins className="h-4 w-4 text-yellow-500" />
                   <span className="font-semibold text-base text-yellow-500">
-                    {profile.nPoints.toLocaleString()}
+                    {balance.toLocaleString()}
                   </span>
                 </Button>
               </Link>

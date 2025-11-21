@@ -12,6 +12,7 @@ import { useLanguage } from "@/lib/i18n/language-context"
 import { OnlineUsers } from "@/components/online-users"
 import { usePresence } from "@/hooks/use-presence"
 import { useToast } from "@/hooks/use-toast"
+import { useBalance } from "@/lib/balance-context"
 
 interface Reward {
   nPoints: number
@@ -31,6 +32,7 @@ export default function LootboxPage() {
   const router = useRouter()
   const { language } = useLanguage()
   const { toast } = useToast()
+  const { setBalance } = useBalance()
   const [profile, setProfile] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isOpening, setIsOpening] = useState(false)
@@ -102,6 +104,7 @@ export default function LootboxPage() {
       setTimeout(() => {
         setWonReward(data.reward.nPoints)
         setNPointsBalance(data.newBalance)
+        setBalance(data.newBalance) // Update global balance
         setIsOpening(false)
         setCanOpen(false)
         setShowAnimation(false)
