@@ -76,11 +76,11 @@ export async function GET(req: Request) {
 
     const nPointsBalance = user?.playerProfile?.nPoints || 0
 
-    // Get recent premium lootbox openings (last 20)
+    // Get recent premium lootbox openings (last 10)
     const lootboxHistory = await prisma.premiumLootbox.findMany({
       where: { userId: session.user.id },
       orderBy: { createdAt: 'desc' },
-      take: 20,
+      take: 10,
     })
 
     // Get total stats

@@ -416,20 +416,11 @@ export default function PremiumLootboxPage() {
 
                   {/* Open Button */}
                   <div className="flex flex-col items-center gap-4 w-full max-w-md">
-                    {/* Debug Info */}
-                    {process.env.NODE_ENV === 'development' && (
-                      <div className="text-xs text-muted-foreground">
-                        Debug: canOpen={String(data?.canOpen)}, balance={data?.nPointsBalance}, cost={data?.cost}
-                      </div>
-                    )}
                     <Button
                       variant="valorant"
                       size="lg"
                       className="w-full text-xl py-6"
-                      onClick={() => {
-                        console.log("Button clicked:", { canOpen: data?.canOpen, balance: data?.nPointsBalance, cost: data?.cost, isOpening })
-                        handleOpen()
-                      }}
+                      onClick={handleOpen}
                       disabled={!data?.canOpen || isOpening}
                     >
                       {isOpening ? (
@@ -449,12 +440,6 @@ export default function PremiumLootboxPage() {
                         </>
                       )}
                     </Button>
-
-                    <p className="text-sm text-muted-foreground text-center">
-                      {language === 'tr'
-                        ? `💰 Maliyet: ${data?.cost || 0} N-Points | Ödüller: 50-500 N-Points`
-                        : `💰 Cost: ${data?.cost || 0} N-Points | Rewards: 50-500 N-Points`}
-                    </p>
                   </div>
                 </div>
               </CardContent>
