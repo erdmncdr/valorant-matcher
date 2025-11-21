@@ -54,6 +54,7 @@ export default function PremiumLootboxPage() {
   const [data, setData] = useState<PremiumLootboxData | null>(null)
   const [wonReward, setWonReward] = useState<number | null>(null)
   const [showAnimation, setShowAnimation] = useState(false)
+  const [animationItems, setAnimationItems] = useState<Reward[]>([])
   const stripRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -139,6 +140,9 @@ export default function PremiumLootboxPage() {
         }
       }
 
+      // Save items to state so they can be rendered
+      setAnimationItems(items)
+
       // Calculate scroll distance to center the winning item
       const itemWidth = 120 // Width of each item in pixels
       const stripWidth = totalItems * itemWidth
@@ -146,21 +150,23 @@ export default function PremiumLootboxPage() {
       const offset = (stripWidth / 2) - (containerWidth / 2) - (itemWidth / 2)
 
       // Animate to winning item
-      if (stripRef.current) {
-        stripRef.current.style.transition = 'none'
-        stripRef.current.style.transform = 'translateX(0px)'
+      setTimeout(() => {
+        if (stripRef.current) {
+          stripRef.current.style.transition = 'none'
+          stripRef.current.style.transform = 'translateX(0px)'
 
-        // Force reflow
-        void stripRef.current.offsetHeight
+          // Force reflow
+          void stripRef.current.offsetHeight
 
-        // Start animation after a brief delay
-        setTimeout(() => {
-          if (stripRef.current) {
-            stripRef.current.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)'
-            stripRef.current.style.transform = `translateX(-${winningIndex * itemWidth}px)`
-          }
-        }, 100)
-      }
+          // Start animation after a brief delay
+          setTimeout(() => {
+            if (stripRef.current) {
+              stripRef.current.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)'
+              stripRef.current.style.transform = `translateX(-${winningIndex * itemWidth}px)`
+            }
+          }, 100)
+        }
+      }, 100)
 
       // Wait for animation to complete
       setTimeout(() => {
@@ -168,6 +174,7 @@ export default function PremiumLootboxPage() {
         setBalance(result.newBalance)
         setIsOpening(false)
         setShowAnimation(false)
+        setAnimationItems([]) // Clear animation items
 
         toast({
           title: "🎁 Congratulations!",
@@ -185,6 +192,7 @@ export default function PremiumLootboxPage() {
       })
       setIsOpening(false)
       setShowAnimation(false)
+      setAnimationItems([]) // Clear animation items on error
     }
   }
 
@@ -296,30 +304,27 @@ export default function PremiumLootboxPage() {
                     <div className="absolute top-0 left-1/2 -translate-x-[2px] h-full w-1 bg-yellow-500/50 z-10" />
 
                     {/* Scrolling Strip */}
-                    {showAnimation && data?.rewards && (
+                    {showAnimation && animationItems.length > 0 && (
                       <div
                         ref={stripRef}
                         className="absolute top-0 left-0 h-full flex items-center gap-2 px-4"
                         style={{ willChange: 'transform' }}
                       >
-                        {Array.from({ length: 50 }).map((_, index) => {
-                          const reward = data.rewards[Math.floor(Math.random() * data.rewards.length)]
-                          return (
-                            <div
-                              key={index}
-                              className="flex-shrink-0 w-[110px] h-[110px] rounded-lg border-2 flex flex-col items-center justify-center"
-                              style={{
-                                borderColor: reward.color,
-                                backgroundColor: `${reward.color}20`,
-                              }}
-                            >
-                              <Coins className="h-8 w-8 mb-2" style={{ color: reward.color }} />
-                              <p className="text-xl font-bold" style={{ color: reward.color }}>
-                                {reward.nPoints}
-                              </p>
-                            </div>
-                          )
-                        })}
+                        {animationItems.map((reward, index) => (
+                          <div
+                            key={index}
+                            className="flex-shrink-0 w-[110px] h-[110px] rounded-lg border-2 flex flex-col items-center justify-center"
+                            style={{
+                              borderColor: reward.color,
+                              backgroundColor: `${reward.color}20`,
+                            }}
+                          >
+                            <Coins className="h-8 w-8 mb-2" style={{ color: reward.color }} />
+                            <p className="text-xl font-bold" style={{ color: reward.color }}>
+                              {reward.nPoints}
+                            </p>
+                          </div>
+                        ))}
                       </div>
                     )}
 
