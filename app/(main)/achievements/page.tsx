@@ -5,8 +5,6 @@ import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress"
 import { Loader2, Lock, Trophy, Star, Sparkles, Zap } from "lucide-react"
 import { Navbar } from "@/components/layout/navbar"
@@ -86,7 +84,6 @@ export default function AchievementsPage() {
   const [profile, setProfile] = useState<any>(null)
   const [achievements, setAchievements] = useState<Achievement[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [selectedCategory, setSelectedCategory] = useState("all")
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -133,14 +130,26 @@ export default function AchievementsPage() {
     )
   }
 
-  // Achievements already come with progress from API
-  const filteredAchievements = selectedCategory === "all"
-    ? achievements
-    : achievements.filter(a => a.category.toLowerCase() === selectedCategory)
+  // Group achievements by category and sort by rarity within each category
+  const achievementsByCategory = achievements.reduce((acc, achievement) => {
+    const category = achievement.category.toLowerCase()
+    if (!acc[category]) {
+      acc[category] = []
+    }
+    acc[category].push(achievement)
+    return acc
+  }, {} as Record<string, Achievement[]>)
+
+  // Sort achievements within each category by rarity (reputation bonus descending)
+  Object.keys(achievementsByCategory).forEach(category => {
+    achievementsByCategory[category].sort((a, b) => b.reputationBonus - a.reputationBonus)
+  })
 
   const unlockedCount = achievements.filter(a => a.isUnlocked).length
   const totalCount = achievements.length
   const completionRate = totalCount > 0 ? Math.round((unlockedCount / totalCount) * 100) : 0
+
+  const categoryOrder = ['general', 'matchmaking', 'social', 'skill', 'reputation']
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-valorant-darker via-valorant-dark to-background">
@@ -188,105 +197,105 @@ export default function AchievementsPage() {
               </Card>
             </div>
 
-            {/* Category Tabs */}
-            <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="space-y-6">
-              <TabsList className="grid grid-cols-6 w-full">
-                <TabsTrigger value="all">{t.achievements?.categories.all}</TabsTrigger>
-                <TabsTrigger value="general">{t.achievements?.categories.general}</TabsTrigger>
-                <TabsTrigger value="matchmaking">{t.achievements?.categories.matchmaking}</TabsTrigger>
-                <TabsTrigger value="social">{t.achievements?.categories.social}</TabsTrigger>
-                <TabsTrigger value="skill">{t.achievements?.categories.skill}</TabsTrigger>
-                <TabsTrigger value="reputation">{t.achievements?.categories.reputation}</TabsTrigger>
-              </TabsList>
+            {/* Achievements by Category */}
+            <div className="space-y-8">
+              {categoryOrder.map(category => {
+                const categoryAchievements = achievementsByCategory[category] || []
+                if (categoryAchievements.length === 0) return null
 
-              <TabsContent value={selectedCategory} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {filteredAchievements.map((achievement) => {
-                    const rarity = getAchievementRarity(achievement.reputationBonus)
-                    const styles = getRarityStyles(rarity, achievement.isUnlocked)
-                    const name = language === 'tr' ? achievement.nameTr : achievement.nameEn
-                    const description = language === 'tr' ? achievement.descriptionTr : achievement.descriptionEn
-                    const progressPercent = (achievement.progress / achievement.requiredCount) * 100
+                return (
+                  <div key={category} className="space-y-4">
+                    {/* Category Header */}
+                    <div className="flex items-center gap-3 border-b border-border pb-2">
+                      <h2 className="text-2xl font-bold text-foreground">
+                        {t.achievements?.categories[category]}
+                      </h2>
+                      <Badge variant="outline" className="text-xs">
+                        {categoryAchievements.filter(a => a.isUnlocked).length}/{categoryAchievements.length}
+                      </Badge>
+                    </div>
 
-                    return (
-                      <Card
-                        key={achievement.id}
-                        className={`relative overflow-hidden transition-all duration-300 ${styles.card} ${
-                          achievement.isUnlocked ? `${styles.glow} shadow-lg` : 'opacity-70'
-                        }`}
-                      >
-                        {/* Gradient Background */}
-                        <div className={`absolute inset-0 bg-gradient-to-br ${styles.gradient} opacity-30`} />
+                    {/* Achievements Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                      {categoryAchievements.map((achievement) => {
+                        const rarity = getAchievementRarity(achievement.reputationBonus)
+                        const styles = getRarityStyles(rarity, achievement.isUnlocked)
+                        const name = language === 'tr' ? achievement.nameTr : achievement.nameEn
+                        const description = language === 'tr' ? achievement.descriptionTr : achievement.descriptionEn
+                        const progressPercent = (achievement.progress / achievement.requiredCount) * 100
 
-                        <CardHeader className="relative pb-3">
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="flex items-center gap-3">
-                              <div className={`text-4xl relative ${achievement.isUnlocked ? '' : 'grayscale opacity-50'}`}>
-                                {achievement.icon}
-                                {!achievement.isUnlocked && (
-                                  <div className="absolute inset-0 flex items-center justify-center">
-                                    <Lock className="h-6 w-6 text-foreground drop-shadow-lg" />
+                        return (
+                          <Card
+                            key={achievement.id}
+                            className={`relative overflow-hidden transition-all duration-300 ${styles.card} ${
+                              achievement.isUnlocked ? `${styles.glow} shadow-lg` : 'opacity-70'
+                            }`}
+                          >
+                            {/* Gradient Background */}
+                            <div className={`absolute inset-0 bg-gradient-to-br ${styles.gradient} opacity-30`} />
+
+                            <CardHeader className="relative pb-3">
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="flex items-center gap-3">
+                                  <div className={`text-4xl relative ${achievement.isUnlocked ? '' : 'grayscale opacity-50'}`}>
+                                    {achievement.icon}
+                                    {!achievement.isUnlocked && (
+                                      <div className="absolute inset-0 flex items-center justify-center">
+                                        <Lock className="h-6 w-6 text-foreground drop-shadow-lg" />
+                                      </div>
+                                    )}
                                   </div>
-                                )}
+                                  <div className="flex-1">
+                                    <CardTitle className="text-lg flex items-center gap-2">
+                                      {name}
+                                      {achievement.isUnlocked && (
+                                        <span className="text-green-500">✓</span>
+                                      )}
+                                    </CardTitle>
+                                    <p className="text-sm text-muted-foreground mt-1">{description}</p>
+                                  </div>
+                                </div>
                               </div>
-                              <div className="flex-1">
-                                <CardTitle className="text-lg flex items-center gap-2">
-                                  {name}
-                                  {achievement.isUnlocked && (
-                                    <span className="text-green-500">✓</span>
-                                  )}
-                                </CardTitle>
-                                <p className="text-sm text-muted-foreground mt-1">{description}</p>
+                            </CardHeader>
+
+                            <CardContent className="relative space-y-3">
+                              {/* Rarity Badge */}
+                              <div className="flex items-center justify-between">
+                                <Badge className={`${styles.badge} flex items-center gap-1`}>
+                                  {styles.icon}
+                                  {t.achievements?.rarity[rarity]}
+                                </Badge>
+                                <Badge variant="outline" className="border-yellow-500/50 text-yellow-500">
+                                  +{achievement.reputationBonus} {t.achievements?.reputationBonus}
+                                </Badge>
                               </div>
-                            </div>
-                          </div>
-                        </CardHeader>
 
-                        <CardContent className="relative space-y-3">
-                          {/* Rarity Badge */}
-                          <div className="flex items-center justify-between">
-                            <Badge className={`${styles.badge} flex items-center gap-1`}>
-                              {styles.icon}
-                              {t.achievements?.rarity[rarity]}
-                            </Badge>
-                            <Badge variant="outline" className="border-yellow-500/50 text-yellow-500">
-                              +{achievement.reputationBonus} {t.achievements?.reputationBonus}
-                            </Badge>
-                          </div>
+                              {/* Progress Bar */}
+                              {!achievement.isUnlocked && achievement.requiredCount > 1 && (
+                                <div className="space-y-1">
+                                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                                    <span>{t.achievements?.progress}</span>
+                                    <span>{achievement.progress}/{achievement.requiredCount}</span>
+                                  </div>
+                                  <Progress value={progressPercent} className="h-2" />
+                                </div>
+                              )}
 
-                          {/* Progress Bar */}
-                          {!achievement.isUnlocked && achievement.requiredCount > 1 && (
-                            <div className="space-y-1">
-                              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                                <span>{t.achievements?.progress}</span>
-                                <span>{achievement.progress}/{achievement.requiredCount}</span>
-                              </div>
-                              <Progress value={progressPercent} className="h-2" />
-                            </div>
-                          )}
-
-                          {/* Unlocked Date */}
-                          {achievement.isUnlocked && achievement.unlockedAt && (
-                            <p className="text-xs text-muted-foreground">
-                              {t.achievements?.unlockedOn}: {new Date(achievement.unlockedAt).toLocaleDateString()}
-                            </p>
-                          )}
-                        </CardContent>
-                      </Card>
-                    )
-                  })}
-                </div>
-
-                {filteredAchievements.length === 0 && (
-                  <Card className="border-dashed">
-                    <CardContent className="py-12 text-center">
-                      <Trophy className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                      <p className="text-muted-foreground">Bu kategoride başarım bulunamadı</p>
-                    </CardContent>
-                  </Card>
-                )}
-              </TabsContent>
-            </Tabs>
+                              {/* Unlocked Date */}
+                              {achievement.isUnlocked && achievement.unlockedAt && (
+                                <p className="text-xs text-muted-foreground">
+                                  {t.achievements?.unlockedOn}: {new Date(achievement.unlockedAt).toLocaleDateString()}
+                                </p>
+                              )}
+                            </CardContent>
+                          </Card>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
           </div>
 
           {/* Online Users Sidebar */}
