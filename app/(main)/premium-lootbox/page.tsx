@@ -146,10 +146,19 @@ export default function PremiumLootboxPage() {
       setAnimationItems(items)
 
       // Calculate scroll distance to center the winning item
-      const itemWidth = 120 // Width of each item in pixels
-      const stripWidth = totalItems * itemWidth
-      const containerWidth = 600 // Width of visible container
-      const offset = (stripWidth / 2) - (containerWidth / 2) - (itemWidth / 2)
+      const actualItemWidth = 110 // CSS w-[110px]
+      const gapWidth = 8 // CSS gap-2 = 0.5rem = 8px
+      const itemSpacing = actualItemWidth + gapWidth // Total space per item = 118px
+      const stripPadding = 16 // CSS px-4 = 1rem = 16px
+      const containerWidth = 600 // max-w-[600px]
+      const containerCenter = containerWidth / 2 // Center at 300px
+
+      // Calculate position of winning item's center in the strip
+      const winningItemLeftEdge = stripPadding + (winningIndex * itemSpacing)
+      const winningItemCenter = winningItemLeftEdge + (actualItemWidth / 2)
+
+      // How much to shift the strip to center the winning item
+      const shiftAmount = winningItemCenter - containerCenter
 
       // Animate to winning item
       setTimeout(() => {
@@ -164,7 +173,7 @@ export default function PremiumLootboxPage() {
           setTimeout(() => {
             if (stripRef.current) {
               stripRef.current.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)'
-              stripRef.current.style.transform = `translateX(-${winningIndex * itemWidth}px)`
+              stripRef.current.style.transform = `translateX(-${shiftAmount}px)`
             }
           }, 100)
         }
