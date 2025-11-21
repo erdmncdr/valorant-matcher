@@ -115,6 +115,14 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
                   🎁 {language === 'tr' ? 'Kutu' : 'Lootbox'}
                 </Button>
               </Link>
+              <Link href="/premium-lootbox">
+                <Button
+                  variant="ghost"
+                  className={currentPage === 'premium-lootbox' ? 'text-primary' : 'text-foreground'}
+                >
+                  💎 {language === 'tr' ? 'Premium' : 'Premium'}
+                </Button>
+              </Link>
               <Link href="/wallet">
                 <Button
                   variant="ghost"
