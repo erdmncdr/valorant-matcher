@@ -50,14 +50,14 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
     }`}>
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-4">
             <Link href="/listings" className="flex items-center space-x-2">
               <div className="h-8 w-8 rounded bg-primary flex items-center justify-center">
                 <span className="text-primary-foreground font-bold text-xl">N1</span>
               </div>
               <span className="text-foreground font-bold text-xl">{t.nav.logo}</span>
             </Link>
-            <div className="hidden md:flex items-center space-x-4">
+            <div className="hidden md:flex items-center space-x-2">
               <Link href="/listings">
                 <Button
                   variant="ghost"
