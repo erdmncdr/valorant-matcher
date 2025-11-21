@@ -53,6 +53,7 @@ model User {
   purchases             Purchase[]
   wheelSpins            WheelSpin[]
   leaderboardRewards    LeaderboardReward[]
+  dailyLootboxes        DailyLootbox[]
 
   @@map("users")
 }
@@ -490,6 +491,7 @@ enum TransactionType {
   EARN_ACHIEVEMENT      // Başarım tamamlama
   EARN_LEADERBOARD      // Leaderboard ödülü
   EARN_WHEEL            // Şans çarkı
+  EARN_LOOTBOX          // Günlük kutu
   EARN_DAILY            // Günlük giriş bonusu
   SPEND_STORE           // Mağazadan satın alma
   SPEND_WHEEL           // Çark çevirme
@@ -603,4 +605,17 @@ model LeaderboardReward {
   @@unique([userId, period, periodEnd])
   @@index([period, periodEnd])
   @@map("leaderboard_rewards")
+}
+
+model DailyLootbox {
+  id          String   @id @default(cuid())
+  userId      String
+  nPointsWon  Int      // Kutundan kazanılan N-Points
+  createdAt   DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("daily_lootboxes")
 }
