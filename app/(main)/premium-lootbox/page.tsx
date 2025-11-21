@@ -207,8 +207,8 @@ export default function PremiumLootboxPage() {
                   </h1>
                   <p className="text-muted-foreground">
                     {language === 'tr'
-                      ? `${data.cost} N-Points harcayarak premium kutu aç ve büyük ödüller kazan!`
-                      : `Spend ${data.cost} N-Points to open premium lootbox and win big rewards!`}
+                      ? `${data?.cost || 100} N-Points harcayarak premium kutu aç ve büyük ödüller kazan!`
+                      : `Spend ${data?.cost || 100} N-Points to open premium lootbox and win big rewards!`}
                   </p>
                 </div>
               </div>
@@ -225,7 +225,7 @@ export default function PremiumLootboxPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-2xl font-bold text-yellow-500">
-                    {data.nPointsBalance.toLocaleString()}
+                    {(data?.nPointsBalance || 0).toLocaleString()}
                   </p>
                 </CardContent>
               </Card>
@@ -239,7 +239,7 @@ export default function PremiumLootboxPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-2xl font-bold text-blue-500">
-                    {data.stats.totalOpened}
+                    {data?.stats?.totalOpened || 0}
                   </p>
                 </CardContent>
               </Card>
@@ -253,21 +253,21 @@ export default function PremiumLootboxPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-2xl font-bold text-red-500">
-                    {data.stats.totalSpent.toLocaleString()}
+                    {(data?.stats?.totalSpent || 0).toLocaleString()}
                   </p>
                 </CardContent>
               </Card>
 
-              <Card className={data.stats.netProfit >= 0 ? "border-green-500/30" : "border-red-500/30"}>
+              <Card className={(data?.stats?.netProfit || 0) >= 0 ? "border-green-500/30" : "border-red-500/30"}>
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium flex items-center gap-2">
-                    <TrendingUp className={`h-4 w-4 ${data.stats.netProfit >= 0 ? 'text-green-500' : 'text-red-500'}`} />
+                    <TrendingUp className={`h-4 w-4 ${(data?.stats?.netProfit || 0) >= 0 ? 'text-green-500' : 'text-red-500'}`} />
                     {language === 'tr' ? 'Net Kar' : 'Net Profit'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className={`text-2xl font-bold ${data.stats.netProfit >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                    {data.stats.netProfit > 0 ? '+' : ''}{data.stats.netProfit.toLocaleString()}
+                  <p className={`text-2xl font-bold ${(data?.stats?.netProfit || 0) >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                    {(data?.stats?.netProfit || 0) > 0 ? '+' : ''}{(data?.stats?.netProfit || 0).toLocaleString()}
                   </p>
                 </CardContent>
               </Card>
@@ -345,17 +345,17 @@ export default function PremiumLootboxPage() {
                       size="lg"
                       className="w-full text-xl py-6"
                       onClick={handleOpen}
-                      disabled={!data.canOpen || isOpening}
+                      disabled={!data?.canOpen || isOpening}
                     >
                       {isOpening ? (
                         <>
                           <Loader2 className="mr-2 h-6 w-6 animate-spin" />
                           {language === 'tr' ? 'Açılıyor...' : 'Opening...'}
                         </>
-                      ) : data.canOpen ? (
+                      ) : data?.canOpen ? (
                         <>
                           <Gift className="mr-2 h-6 w-6" />
-                          {language === 'tr' ? `Kutu Aç (${data.cost} N-Points)` : `Open Lootbox (${data.cost} N-Points)`}
+                          {language === 'tr' ? `Kutu Aç (${data?.cost || 0} N-Points)` : `Open Lootbox (${data?.cost || 0} N-Points)`}
                         </>
                       ) : (
                         <>
@@ -367,8 +367,8 @@ export default function PremiumLootboxPage() {
 
                     <p className="text-sm text-muted-foreground text-center">
                       {language === 'tr'
-                        ? `💰 Maliyet: ${data.cost} N-Points | Ödüller: 50-500 N-Points`
-                        : `💰 Cost: ${data.cost} N-Points | Rewards: 50-500 N-Points`}
+                        ? `💰 Maliyet: ${data?.cost || 0} N-Points | Ödüller: 50-500 N-Points`
+                        : `💰 Cost: ${data?.cost || 0} N-Points | Rewards: 50-500 N-Points`}
                     </p>
                   </div>
                 </div>
@@ -385,7 +385,7 @@ export default function PremiumLootboxPage() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                  {data.rewards.map((reward, index) => (
+                  {data?.rewards?.map((reward, index) => (
                     <div
                       key={index}
                       className="p-4 rounded-lg text-center border-2"
@@ -407,7 +407,7 @@ export default function PremiumLootboxPage() {
             </Card>
 
             {/* Opening History */}
-            {data.lootboxHistory.length > 0 && (
+            {(data?.lootboxHistory?.length || 0) > 0 && (
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -417,7 +417,7 @@ export default function PremiumLootboxPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    {data.lootboxHistory.map((item) => {
+                    {data?.lootboxHistory?.map((item) => {
                       const netGain = item.nPointsWon - item.costPaid
                       return (
                         <div
