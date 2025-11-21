@@ -11,6 +11,7 @@ import { Navbar } from "@/components/layout/navbar"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { OnlineUsers } from "@/components/online-users"
 import { usePresence } from "@/hooks/use-presence"
+import { useBalance } from "@/lib/balance-context"
 import {
   Dialog,
   DialogContent,
@@ -51,6 +52,7 @@ export default function StorePage() {
   const router = useRouter()
   const { t, language } = useLanguage()
   const { toast } = useToast()
+  const { setBalance } = useBalance()
   const [profile, setProfile] = useState<any>(null)
   const [items, setItems] = useState<StoreItem[]>([])
   const [nPointsBalance, setNPointsBalance] = useState(0)
@@ -141,6 +143,7 @@ export default function StorePage() {
 
       // Update balance
       setNPointsBalance(data.newBalance)
+      setBalance(data.newBalance) // Update global balance
 
       // Refresh data
       fetchData()

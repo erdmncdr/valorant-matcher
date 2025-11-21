@@ -11,6 +11,7 @@ import { Loader2, Target, Trophy, Zap, Award, Clock, Gift } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { usePresence } from "@/hooks/use-presence"
 import { useLanguage } from "@/lib/i18n/language-context"
+import { useBalance } from "@/lib/balance-context"
 import confetti from "canvas-confetti"
 import {
   Dialog,
@@ -34,6 +35,7 @@ export default function AimTrainerPage() {
   const router = useRouter()
   const { toast } = useToast()
   const { t } = useLanguage()
+  const { refreshBalance } = useBalance()
 
   const [profile, setProfile] = useState<any>(null)
   const [gameState, setGameState] = useState<"menu" | "playing" | "finished">("menu")
@@ -366,6 +368,11 @@ export default function AimTrainerPage() {
           title: "Skor Kaydedildi",
           description: `${currentScore} puan - ${accuracy.toFixed(1)}% isabet`,
         })
+      }
+
+      // Refresh balance to reflect earned N-Points
+      if (data.nPointsAdded > 0) {
+        await refreshBalance()
       }
 
       fetchStats()

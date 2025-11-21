@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Loader2, RotateCw, Sparkles, Clock, Trophy, Coins } from "lucide-react"
 import { Navbar } from "@/components/layout/navbar"
 import { useLanguage } from "@/lib/i18n/language-context"
+import { useBalance } from "@/lib/balance-context"
 import { OnlineUsers } from "@/components/online-users"
 import { usePresence } from "@/hooks/use-presence"
 import { useToast } from "@/hooks/use-toast"
@@ -31,6 +32,7 @@ export default function WheelPage() {
   const router = useRouter()
   const { language } = useLanguage()
   const { toast } = useToast()
+  const { setBalance } = useBalance()
   const [profile, setProfile] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSpinning, setIsSpinning] = useState(false)
@@ -151,6 +153,7 @@ export default function WheelPage() {
       setTimeout(() => {
         setWonPrize(data.prize.nPoints)
         setNPointsBalance(data.newBalance)
+        setBalance(data.newBalance) // Update global balance
         setIsSpinning(false)
         setCanSpin(false)
 

@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { SessionProvider } from "@/components/providers/session-provider";
 import { LanguageProvider } from "@/lib/i18n/language-context";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { BalanceProvider } from "@/lib/balance-context";
 
 export const metadata: Metadata = {
   title: "NeedOne - Valorant 5th Player Matchmaking",
@@ -26,8 +27,10 @@ export default function RootLayout({
         >
           <SessionProvider>
             <LanguageProvider>
-              {children}
-              <Toaster />
+              <BalanceProvider>
+                {children}
+                <Toaster />
+              </BalanceProvider>
             </LanguageProvider>
           </SessionProvider>
         </ThemeProvider>
