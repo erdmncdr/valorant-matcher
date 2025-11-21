@@ -78,11 +78,19 @@ export default function PremiumLootboxPage() {
       const profileData = await profileRes.json()
       const lootboxData = await lootboxRes.json()
 
+      console.log("Premium Lootbox Data:", lootboxData)
+
       if (profileData.profile) {
         setProfile(profileData.profile)
       }
 
       if (lootboxData) {
+        console.log("Setting lootbox data:", {
+          cost: lootboxData.cost,
+          canOpen: lootboxData.canOpen,
+          balance: lootboxData.nPointsBalance,
+          rewardsCount: lootboxData.rewards?.length
+        })
         setData(lootboxData)
       }
     } catch (error) {
@@ -126,7 +134,7 @@ export default function PremiumLootboxPage() {
           })
         } else {
           // Random items for the rest
-          const randomReward = data.rewards[Math.floor(Math.random() * data.rewards.length)]
+          const randomReward = data?.rewards?.[Math.floor(Math.random() * (data?.rewards?.length || 1))] || { nPoints: 50, color: '#94a3b8', probability: 0 }
           items.push(randomReward)
         }
       }
@@ -288,7 +296,7 @@ export default function PremiumLootboxPage() {
                     <div className="absolute top-0 left-1/2 -translate-x-[2px] h-full w-1 bg-yellow-500/50 z-10" />
 
                     {/* Scrolling Strip */}
-                    {showAnimation && (
+                    {showAnimation && data?.rewards && (
                       <div
                         ref={stripRef}
                         className="absolute top-0 left-0 h-full flex items-center gap-2 px-4"
@@ -340,11 +348,20 @@ export default function PremiumLootboxPage() {
 
                   {/* Open Button */}
                   <div className="flex flex-col items-center gap-4 w-full max-w-md">
+                    {/* Debug Info */}
+                    {process.env.NODE_ENV === 'development' && (
+                      <div className="text-xs text-muted-foreground">
+                        Debug: canOpen={String(data?.canOpen)}, balance={data?.nPointsBalance}, cost={data?.cost}
+                      </div>
+                    )}
                     <Button
                       variant="valorant"
                       size="lg"
                       className="w-full text-xl py-6"
-                      onClick={handleOpen}
+                      onClick={() => {
+                        console.log("Button clicked:", { canOpen: data?.canOpen, balance: data?.nPointsBalance, cost: data?.cost, isOpening })
+                        handleOpen()
+                      }}
                       disabled={!data?.canOpen || isOpening}
                     >
                       {isOpening ? (
