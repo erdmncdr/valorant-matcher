@@ -80,14 +80,6 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
                   {t.nav.myListings}
                 </Button>
               </Link>
-              <Link href="/aim-trainer">
-                <Button
-                  variant="ghost"
-                  className={currentPage === 'aim-trainer' ? 'text-primary' : 'text-foreground'}
-                >
-                  🎯 Aim Trainer
-                </Button>
-              </Link>
               <Link href="/store">
                 <Button
                   variant="ghost"
@@ -95,6 +87,14 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
                 >
                   <ShoppingCart className="h-4 w-4 mr-2" />
                   {language === 'tr' ? 'Mağaza' : 'Store'}
+                </Button>
+              </Link>
+              <Link href="/aim-trainer">
+                <Button
+                  variant="ghost"
+                  className={currentPage === 'aim-trainer' ? 'text-primary' : 'text-foreground'}
+                >
+                  🎯 Aim Trainer
                 </Button>
               </Link>
               <Link href="/wheel">
@@ -123,15 +123,15 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
                 </Button>
               </Link>
             )}
-            {/* Language Switcher - More Visible */}
+            {/* Language Switcher - Minimal */}
             <Button
-              variant="outline"
-              size="sm"
+              variant="ghost"
+              size="icon"
               onClick={() => setLanguage(language === 'tr' ? 'en' : 'tr')}
-              className="border-accent/50 hover:border-accent hover:bg-accent/10 flex items-center gap-1.5 px-3"
+              className="h-9 w-9"
+              title={language === 'tr' ? 'Switch to English' : 'Türkçe\'ye geç'}
             >
-              <Languages className="h-4 w-4" />
-              <span className="font-semibold text-base">{language === 'tr' ? '🇹🇷 TR' : '🇬🇧 EN'}</span>
+              <span className="text-xl">{language === 'tr' ? '🇹🇷' : '🇬🇧'}</span>
             </Button>
 
             {/* Theme Toggle */}
