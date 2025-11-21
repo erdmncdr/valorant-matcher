@@ -123,14 +123,6 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
                   💎 {language === 'tr' ? 'Premium' : 'Premium'}
                 </Button>
               </Link>
-              <Link href="/wallet">
-                <Button
-                  variant="ghost"
-                  className={currentPage === 'wallet' ? 'text-primary' : 'text-foreground'}
-                >
-                  💰 {language === 'tr' ? 'Cüzdan' : 'Wallet'}
-                </Button>
-              </Link>
             </div>
           </div>
           <div className="flex items-center space-x-2">
