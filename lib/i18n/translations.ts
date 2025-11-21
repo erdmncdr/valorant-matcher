@@ -12,7 +12,7 @@ export const translations = {
       sortByActivity: "Son Görülme",
       sortByReputation: "İtibar Puanı",
       noOnlineUsers: "Şu anda kimse online değil",
-      leaderboard: "İtibar Sıralaması",
+      leaderboard: "Sıralama",
     },
 
     // Home Page
@@ -343,7 +343,7 @@ export const translations = {
 
     // Leaderboard
     leaderboard: {
-      title: "İtibar Sıralaması",
+      title: "Sıralama",
       subtitle: "En yüksek itibar puanlı oyuncular",
       topPlayers: "En İyi Oyuncular",
       noPlayers: "Henüz sıralamada oyuncu yok",
@@ -713,7 +713,7 @@ export const translations = {
       sortByActivity: "Last Seen",
       sortByReputation: "Reputation Score",
       noOnlineUsers: "No one is online right now",
-      leaderboard: "Leaderboard",
+      leaderboard: "Ranking",
     },
 
     // Home Page
@@ -1044,10 +1044,10 @@ export const translations = {
 
     // Leaderboard
     leaderboard: {
-      title: "Leaderboard",
+      title: "Ranking",
       subtitle: "Top players by reputation score",
       topPlayers: "Top Players",
-      noPlayers: "No players in the leaderboard yet",
+      noPlayers: "No players in the ranking yet",
       reputation: "Reputation",
     },
 

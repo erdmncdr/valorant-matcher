@@ -112,7 +112,7 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
                   variant="ghost"
                   className={currentPage === 'lootbox' ? 'text-primary' : 'text-foreground'}
                 >
-                  🎁 {language === 'tr' ? 'Kutu' : 'Lootbox'}
+                  🎁 {language === 'tr' ? 'Günlük Kutu' : 'Daily Lootbox'}
                 </Button>
               </Link>
               <Link href="/premium-lootbox">
@@ -120,15 +120,7 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
                   variant="ghost"
                   className={currentPage === 'premium-lootbox' ? 'text-primary' : 'text-foreground'}
                 >
-                  💎 {language === 'tr' ? 'Premium' : 'Premium'}
-                </Button>
-              </Link>
-              <Link href="/wallet">
-                <Button
-                  variant="ghost"
-                  className={currentPage === 'wallet' ? 'text-primary' : 'text-foreground'}
-                >
-                  💰 {language === 'tr' ? 'Cüzdan' : 'Wallet'}
+                  💎 {language === 'tr' ? 'Premium Kutu' : 'Premium Lootbox'}
                 </Button>
               </Link>
             </div>
