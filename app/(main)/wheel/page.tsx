@@ -143,8 +143,9 @@ export default function WheelPage() {
       const targetAngle = cumulativeAngle + segmentAngle / 2
 
       // Add multiple full rotations for effect (5-7 spins)
+      // Note: Wheel renders with -90 degree offset (starts from top), so add 90 to compensate
       const fullRotations = 5 + Math.random() * 2
-      const finalRotation = fullRotations * 360 + (360 - targetAngle)
+      const finalRotation = fullRotations * 360 + (450 - targetAngle)
 
       // Animate wheel
       setRotation(finalRotation)
