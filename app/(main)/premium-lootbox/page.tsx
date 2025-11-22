@@ -172,7 +172,7 @@ export default function PremiumLootboxPage() {
           // Start animation after a brief delay
           setTimeout(() => {
             if (stripRef.current) {
-              stripRef.current.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)'
+              stripRef.current.style.transition = 'transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99)'
               stripRef.current.style.transform = `translateX(-${shiftAmount}px)`
             }
           }, 100)
@@ -237,7 +237,7 @@ export default function PremiumLootboxPage() {
 
         // Refresh data
         fetchData()
-      }, 4500) // 4.5 second animation + delay
+      }, 5500) // 5.5 second animation + delay
     } catch (error: any) {
       toast({
         title: "Failed to Open",
