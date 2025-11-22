@@ -3,6 +3,19 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 
+// Helper function to get the end of current week (Sunday 23:59:59)
+function getWeekEndDate(): Date {
+  const now = new Date()
+  const dayOfWeek = now.getDay() // 0 = Sunday, 1 = Monday, etc.
+  const daysUntilSunday = dayOfWeek === 0 ? 0 : 7 - dayOfWeek
+
+  const weekEnd = new Date(now)
+  weekEnd.setDate(now.getDate() + daysUntilSunday)
+  weekEnd.setHours(23, 59, 59, 999)
+
+  return weekEnd
+}
+
 // GET leaderboard - top players by reputation score
 export async function GET(req: Request) {
   try {
@@ -44,7 +57,14 @@ export async function GET(req: Request) {
       take: limit,
     })
 
-    return NextResponse.json({ topPlayers, count: topPlayers.length }, { status: 200 })
+    // Calculate week end date for countdown
+    const weekEndDate = getWeekEndDate()
+
+    return NextResponse.json({
+      topPlayers,
+      count: topPlayers.length,
+      weekEndDate: weekEndDate.toISOString(),
+    }, { status: 200 })
   } catch (error) {
     console.error("Error fetching leaderboard:", error)
     return NextResponse.json(
