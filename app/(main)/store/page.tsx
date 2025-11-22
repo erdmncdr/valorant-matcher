@@ -12,6 +12,7 @@ import { useLanguage } from "@/lib/i18n/language-context"
 import { OnlineUsers } from "@/components/online-users"
 import { usePresence } from "@/hooks/use-presence"
 import { useBalance } from "@/lib/balance-context"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Dialog,
   DialogContent,
@@ -61,6 +62,7 @@ export default function StorePage() {
   const [selectedItem, setSelectedItem] = useState<StoreItem | null>(null)
   const [isPurchasing, setIsPurchasing] = useState(false)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
+  const [termsAccepted, setTermsAccepted] = useState(false)
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -113,6 +115,7 @@ export default function StorePage() {
 
   const handlePurchaseClick = (item: StoreItem) => {
     setSelectedItem(item)
+    setTermsAccepted(false) // Reset checkbox when opening dialog
     setShowConfirmDialog(true)
   }
 
@@ -449,6 +452,24 @@ export default function StorePage() {
                   </span> N-Points
                 </p>
               </div>
+
+              {/* Terms Checkbox */}
+              <div className="flex items-start gap-3 mt-4 p-3 bg-muted/50 rounded-lg border border-border">
+                <Checkbox
+                  id="terms"
+                  checked={termsAccepted}
+                  onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
+                  className="mt-0.5"
+                />
+                <label
+                  htmlFor="terms"
+                  className="text-sm text-muted-foreground cursor-pointer leading-relaxed"
+                >
+                  {language === 'tr'
+                    ? 'Satın alma koşullarını okudum ve kabul ediyorum. VP kodunun 1-2 saat içinde hazırlanacağını ve iade yapılamayacağını anlıyorum.'
+                    : 'I have read and accept the purchase terms. I understand that the VP code will be prepared within 1-2 hours and refunds are not available.'}
+                </label>
+              </div>
             </div>
           )}
 
@@ -463,7 +484,7 @@ export default function StorePage() {
             <Button
               variant="valorant"
               onClick={handleConfirmPurchase}
-              disabled={isPurchasing}
+              disabled={isPurchasing || !termsAccepted}
             >
               {isPurchasing ? (
                 <>
