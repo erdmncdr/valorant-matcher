@@ -53,7 +53,7 @@ export async function POST(req: Request) {
       })
     }
 
-    // Get top 3 players by reputation score
+    // Get top 10 players by reputation score
     const topPlayers = await prisma.playerProfile.findMany({
       where: {
         user: {
@@ -72,7 +72,7 @@ export async function POST(req: Request) {
       orderBy: {
         reputationScore: 'desc',
       },
-      take: 3,
+      take: 10,
     })
 
     if (topPlayers.length === 0) {
@@ -85,11 +85,13 @@ export async function POST(req: Request) {
     const rewards = getLeaderboardRewards()
     const rewardedPlayers = []
 
-    // Distribute rewards to top 3
-    for (let i = 0; i < topPlayers.length && i < 3; i++) {
+    // Distribute rewards to top 10
+    for (let i = 0; i < topPlayers.length && i < 10; i++) {
       const player = topPlayers[i]
-      const rank = i + 1 as 1 | 2 | 3
+      const rank = i + 1
       const nPointsWon = rewards[rank]
+
+      if (!nPointsWon) continue // Skip if no reward defined for this rank
 
       try {
         // Create reward in transaction

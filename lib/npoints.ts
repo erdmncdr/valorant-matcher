@@ -191,13 +191,20 @@ export function calculateAimTrainerReward(score: number, accuracy: number): numb
 }
 
 /**
- * Get leaderboard rewards for top 3 players
- * @returns Reward amounts for 1st, 2nd, 3rd place
+ * Get leaderboard rewards for top 10 players
+ * @returns Reward amounts for each rank position
  */
-export function getLeaderboardRewards() {
+export function getLeaderboardRewards(): Record<number, number> {
   return {
-    1: 1000, // 1st place: 1000 N-Points
-    2: 500,  // 2nd place: 500 N-Points
-    3: 250,  // 3rd place: 250 N-Points
+    1: 100,  // 1st place: 100 N-Points
+    2: 50,   // 2nd place: 50 N-Points
+    3: 25,   // 3rd place: 25 N-Points
+    4: 10,   // 4th place: 10 N-Points
+    5: 10,   // 5th place: 10 N-Points
+    6: 10,   // 6th place: 10 N-Points
+    7: 10,   // 7th place: 10 N-Points
+    8: 10,   // 8th place: 10 N-Points
+    9: 10,   // 9th place: 10 N-Points
+    10: 10,  // 10th place: 10 N-Points
   }
 }

@@ -87,9 +87,10 @@ export default function LeaderboardPage() {
   }
 
   const getRankColor = (index: number) => {
-    if (index === 0) return "from-yellow-500/20 to-yellow-600/20 border-yellow-500/30"
-    if (index === 1) return "from-gray-400/20 to-gray-500/20 border-gray-400/30"
-    if (index === 2) return "from-amber-600/20 to-amber-700/20 border-amber-600/30"
+    if (index === 0) return "from-yellow-500/30 via-orange-500/20 to-yellow-600/30 border-yellow-500/50 shadow-lg shadow-yellow-500/20 ring-1 ring-yellow-500/30"
+    if (index === 1) return "from-slate-400/25 via-slate-300/15 to-slate-500/25 border-slate-400/40 shadow-md shadow-slate-400/10"
+    if (index === 2) return "from-amber-600/25 via-amber-500/15 to-amber-700/25 border-amber-600/40 shadow-md shadow-amber-600/10"
+    if (index < 10) return "from-blue-500/10 to-blue-600/10 border-blue-500/20"
     return "from-valorant-dark/30 to-valorant-dark/30 border-white/10"
   }
 
@@ -127,47 +128,86 @@ export default function LeaderboardPage() {
               </p>
             </div>
 
-            {/* Daily Rewards Info */}
-            <Card className="border-yellow-500/30 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 mb-6">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
+            {/* Daily Rewards Info - Premium Design */}
+            <Card className="border-yellow-500/50 bg-gradient-to-r from-yellow-500/20 via-orange-500/15 to-red-500/10 mb-6 shadow-lg shadow-yellow-500/10 overflow-hidden relative">
+              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxjaXJjbGUgY3g9IjIwIiBjeT0iMjAiIHI9IjEiIGZpbGw9InJnYmEoMjUwLDIwNCwwLDAuMSkiLz48L2c+PC9zdmc+')] opacity-50" />
+              <CardContent className="pt-6 relative">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <Trophy className="h-8 w-8 text-yellow-500" />
+                    <div className="relative">
+                      <Trophy className="h-10 w-10 text-yellow-500 animate-pulse" />
+                      <div className="absolute -inset-1 bg-yellow-500/20 rounded-full blur-md" />
+                    </div>
                     <div>
-                      <h3 className="font-bold text-lg text-foreground">
+                      <h3 className="font-bold text-xl text-foreground bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
                         {t.language === 'tr' ? 'Günlük Ödüller!' : 'Daily Rewards!'}
                       </h3>
                       <p className="text-sm text-muted-foreground">
                         {t.language === 'tr'
-                          ? 'İlk 3 sırada bitir ve N-Points kazan!'
-                          : 'Finish in top 3 and earn N-Points!'}
+                          ? 'İlk 10 sırada bitir ve N-Points kazan!'
+                          : 'Finish in top 10 and earn N-Points!'}
                       </p>
                     </div>
                   </div>
-                  <div className="flex gap-4">
-                    <div className="text-center">
-                      <div className="flex items-center gap-1 justify-center mb-1">
-                        <Crown className="h-5 w-5 text-yellow-500" />
-                        <Coins className="h-4 w-4 text-yellow-500" />
+                  <div className="flex gap-3 md:gap-6">
+                    {/* 1st Place - Most Glamorous */}
+                    <div className="text-center p-3 rounded-xl bg-gradient-to-b from-yellow-500/30 to-yellow-600/10 border border-yellow-500/50 shadow-lg shadow-yellow-500/20 relative overflow-hidden group hover:scale-105 transition-transform">
+                      <div className="absolute inset-0 bg-gradient-to-t from-yellow-500/10 to-transparent" />
+                      <div className="relative">
+                        <div className="flex items-center gap-1 justify-center mb-2">
+                          <Crown className="h-7 w-7 text-yellow-400 drop-shadow-lg" />
+                        </div>
+                        <p className="text-3xl font-black text-yellow-400 drop-shadow-lg">100</p>
+                        <div className="flex items-center justify-center gap-1 mt-1">
+                          <Coins className="h-4 w-4 text-yellow-500" />
+                          <p className="text-xs font-bold text-yellow-500">N-Points</p>
+                        </div>
+                        <p className="text-xs text-yellow-300 mt-1 font-semibold">1st</p>
                       </div>
-                      <p className="text-2xl font-bold text-yellow-500">1,000</p>
-                      <p className="text-xs text-muted-foreground">1st</p>
                     </div>
-                    <div className="text-center">
-                      <div className="flex items-center gap-1 justify-center mb-1">
-                        <Medal className="h-4 w-4 text-gray-400" />
-                        <Coins className="h-4 w-4 text-gray-400" />
+                    {/* 2nd Place */}
+                    <div className="text-center p-3 rounded-xl bg-gradient-to-b from-slate-400/30 to-slate-500/10 border border-slate-400/50 shadow-lg shadow-slate-400/10 relative overflow-hidden group hover:scale-105 transition-transform">
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-400/10 to-transparent" />
+                      <div className="relative">
+                        <div className="flex items-center gap-1 justify-center mb-2">
+                          <Medal className="h-6 w-6 text-slate-300 drop-shadow-lg" />
+                        </div>
+                        <p className="text-2xl font-bold text-slate-300">50</p>
+                        <div className="flex items-center justify-center gap-1 mt-1">
+                          <Coins className="h-3 w-3 text-slate-400" />
+                          <p className="text-xs text-slate-400">N-Points</p>
+                        </div>
+                        <p className="text-xs text-slate-400 mt-1 font-semibold">2nd</p>
                       </div>
-                      <p className="text-xl font-bold text-gray-400">500</p>
-                      <p className="text-xs text-muted-foreground">2nd</p>
                     </div>
-                    <div className="text-center">
-                      <div className="flex items-center gap-1 justify-center mb-1">
-                        <Medal className="h-4 w-4 text-amber-600" />
-                        <Coins className="h-4 w-4 text-amber-600" />
+                    {/* 3rd Place */}
+                    <div className="text-center p-3 rounded-xl bg-gradient-to-b from-amber-600/30 to-amber-700/10 border border-amber-600/50 shadow-lg shadow-amber-600/10 relative overflow-hidden group hover:scale-105 transition-transform">
+                      <div className="absolute inset-0 bg-gradient-to-t from-amber-600/10 to-transparent" />
+                      <div className="relative">
+                        <div className="flex items-center gap-1 justify-center mb-2">
+                          <Medal className="h-5 w-5 text-amber-500 drop-shadow-lg" />
+                        </div>
+                        <p className="text-xl font-bold text-amber-500">25</p>
+                        <div className="flex items-center justify-center gap-1 mt-1">
+                          <Coins className="h-3 w-3 text-amber-600" />
+                          <p className="text-xs text-amber-600">N-Points</p>
+                        </div>
+                        <p className="text-xs text-amber-500 mt-1 font-semibold">3rd</p>
                       </div>
-                      <p className="text-xl font-bold text-amber-600">250</p>
-                      <p className="text-xs text-muted-foreground">3rd</p>
+                    </div>
+                    {/* Top 10 */}
+                    <div className="text-center p-3 rounded-xl bg-gradient-to-b from-blue-500/20 to-blue-600/10 border border-blue-500/30 relative overflow-hidden group hover:scale-105 transition-transform">
+                      <div className="relative">
+                        <div className="flex items-center gap-1 justify-center mb-2">
+                          <Star className="h-5 w-5 text-blue-400" />
+                        </div>
+                        <p className="text-lg font-bold text-blue-400">10</p>
+                        <div className="flex items-center justify-center gap-1 mt-1">
+                          <Coins className="h-3 w-3 text-blue-500" />
+                          <p className="text-xs text-blue-500">N-Points</p>
+                        </div>
+                        <p className="text-xs text-blue-400 mt-1">4-10th</p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -268,10 +308,18 @@ export default function LeaderboardPage() {
                                 {t.leaderboard?.reputation || "İtibar"}
                               </span>
                               {/* Daily Reward Badge */}
-                              {index < 3 && (
-                                <Badge className="mt-2 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-yellow-500/50 text-yellow-500 text-xs">
+                              {index < 10 && (
+                                <Badge className={`mt-2 text-xs ${
+                                  index === 0
+                                    ? 'bg-gradient-to-r from-yellow-500/30 to-orange-500/30 border-yellow-500/60 text-yellow-400 shadow-lg shadow-yellow-500/20 animate-pulse'
+                                    : index === 1
+                                    ? 'bg-gradient-to-r from-slate-400/20 to-slate-500/20 border-slate-400/50 text-slate-300'
+                                    : index === 2
+                                    ? 'bg-gradient-to-r from-amber-500/20 to-amber-600/20 border-amber-500/50 text-amber-500'
+                                    : 'bg-gradient-to-r from-blue-500/20 to-blue-600/20 border-blue-500/50 text-blue-400'
+                                }`}>
                                   <Coins className="h-3 w-3 mr-1" />
-                                  {index === 0 ? '+1,000' : index === 1 ? '+500' : '+250'}
+                                  {index === 0 ? '+100' : index === 1 ? '+50' : index === 2 ? '+25' : '+10'}
                                 </Badge>
                               )}
                             </div>
