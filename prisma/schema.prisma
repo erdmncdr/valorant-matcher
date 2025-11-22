@@ -55,6 +55,7 @@ model User {
   leaderboardRewards    LeaderboardReward[]
   dailyLootboxes        DailyLootbox[]
   premiumLootboxes      PremiumLootbox[]
+  referredProfiles      PlayerProfile[]          @relation("ReferrerUser") // Profiles referred by this user
 
   @@map("users")
 }
@@ -160,9 +161,16 @@ model PlayerProfile {
   reputationScore Int           @default(0) // Calculated from ratings
   nPoints         Int           @default(0) // N-Points virtual currency
 
+  // Referral System
+  referralCode    String        @unique @default(cuid()) // Unique referral code
+  referralBalance Int           @default(0) // Piggy bank for referral earnings
+  referredByUserId String?      // User who referred this player
+  referredByUser  User?         @relation("ReferrerUser", fields: [referredByUserId], references: [id], onDelete: SetNull)
+
   // Relations
-  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  playerAgents PlayerAgent[]
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  playerAgents      PlayerAgent[]
+  referralEarnings  ReferralEarning[]  // Earnings from referred users
 
   @@map("player_profiles")
 }
@@ -495,6 +503,8 @@ enum TransactionType {
   EARN_LOOTBOX          // Günlük kutu
   EARN_PREMIUM_LOOTBOX  // Premium kutu ödülü
   EARN_DAILY            // Günlük giriş bonusu
+  EARN_REFERRAL_BONUS   // Referans kodu ile kayıt bonusu
+  EARN_REFERRAL_WITHDRAW // Referans kumbarasından çekim
   SPEND_STORE           // Mağazadan satın alma
   SPEND_WHEEL           // Çark çevirme
   SPEND_PREMIUM_LOOTBOX // Premium kutu açma
@@ -635,4 +645,26 @@ model PremiumLootbox {
 
   @@index([userId, createdAt])
   @@map("premium_lootboxes")
+}
+
+// ============================================
+// REFERRAL SYSTEM
+// ============================================
+
+model ReferralEarning {
+  id              String        @id @default(cuid())
+  referrerProfileId String      // Profile of the referrer who earned
+  referredUserId  String        // User whose action generated the earning
+  sourceAmount    Int           // Original NP amount earned by referred user
+  earnedAmount    Int           // 5% of sourceAmount
+  transactionType TransactionType // Type of transaction that generated this earning
+  description     String?       // Description of the earning
+  createdAt       DateTime      @default(now())
+
+  // Relations
+  referrerProfile PlayerProfile @relation(fields: [referrerProfileId], references: [id], onDelete: Cascade)
+
+  @@index([referrerProfileId, createdAt])
+  @@index([referredUserId, createdAt])
+  @@map("referral_earnings")
 }

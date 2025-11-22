@@ -1,13 +1,18 @@
 import { prisma } from "./prisma"
 import { TransactionType } from "@prisma/client"
 
+// Referral commission rate (5%)
+const REFERRAL_COMMISSION_RATE = 0.05
+
 /**
  * Add N-Points to a user's balance
+ * Also handles referral commission if the user was referred by someone
  * @param userId - User ID
  * @param amount - Amount to add (positive number)
  * @param type - Transaction type
  * @param description - Optional description
  * @param reference - Optional reference ID (e.g., purchase ID, wheel spin ID)
+ * @param skipReferralCommission - Skip referral commission (e.g., for referral bonus itself)
  * @returns Updated balance
  */
 export async function addNPoints(
@@ -15,7 +20,8 @@ export async function addNPoints(
   amount: number,
   type: TransactionType,
   description?: string,
-  reference?: string
+  reference?: string,
+  skipReferralCommission: boolean = false
 ) {
   if (amount <= 0) {
     throw new Error("Amount must be positive")
@@ -28,6 +34,13 @@ export async function addNPoints(
       data: {
         nPoints: {
           increment: amount,
+        },
+      },
+      include: {
+        referredByUser: {
+          include: {
+            playerProfile: true,
+          },
         },
       },
     })
@@ -44,10 +57,74 @@ export async function addNPoints(
     })
 
     console.log(`✅ Added ${amount} N-Points to user ${userId} (${type})`)
+
+    // Handle referral commission if applicable
+    if (!skipReferralCommission && profile.referredByUserId && profile.referredByUser?.playerProfile) {
+      await addReferralCommission(
+        profile.referredByUser.playerProfile.id,
+        userId,
+        amount,
+        type,
+        description
+      )
+    }
+
     return profile.nPoints
   } catch (error) {
     console.error("Error adding N-Points:", error)
     throw error
+  }
+}
+
+/**
+ * Add referral commission to referrer's piggy bank
+ * @param referrerProfileId - Profile ID of the referrer
+ * @param referredUserId - User ID of the referred user who earned NP
+ * @param sourceAmount - Original amount earned by referred user
+ * @param transactionType - Type of transaction that generated this earning
+ * @param description - Description of the original transaction
+ */
+async function addReferralCommission(
+  referrerProfileId: string,
+  referredUserId: string,
+  sourceAmount: number,
+  transactionType: TransactionType,
+  description?: string
+) {
+  // Calculate 5% commission (minimum 1 NP if there's any commission)
+  const commission = Math.floor(sourceAmount * REFERRAL_COMMISSION_RATE)
+
+  if (commission <= 0) {
+    return // No commission for very small amounts
+  }
+
+  try {
+    // Update referrer's piggy bank balance
+    await prisma.playerProfile.update({
+      where: { id: referrerProfileId },
+      data: {
+        referralBalance: {
+          increment: commission,
+        },
+      },
+    })
+
+    // Create referral earning record
+    await prisma.referralEarning.create({
+      data: {
+        referrerProfileId,
+        referredUserId,
+        sourceAmount,
+        earnedAmount: commission,
+        transactionType,
+        description: description || `${transactionType} commission`,
+      },
+    })
+
+    console.log(`💰 Added ${commission} NP referral commission to profile ${referrerProfileId}`)
+  } catch (error) {
+    console.error("Error adding referral commission:", error)
+    // Don't throw - referral commission failure shouldn't affect the main transaction
   }
 }
 

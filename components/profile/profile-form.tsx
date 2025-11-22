@@ -11,7 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
-import { Loader2, X } from "lucide-react"
+import { Loader2, X, Gift } from "lucide-react"
 import {
   getValorantRanks,
   getPlayerRoles,
@@ -55,6 +55,10 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
   const [selectedAgents, setSelectedAgents] = useState<Array<{ agentName: string; priority: string }>>(
     initialData?.playerAgents || []
   )
+
+  // Referral code (only for new profiles)
+  const [referralCode, setReferralCode] = useState("")
+  const isNewProfile = !initialData
 
   const handleLanguageToggle = (lang: string) => {
     setFormData(prev => ({
@@ -119,6 +123,7 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
         body: JSON.stringify({
           ...formData,
           agents: selectedAgents,
+          ...(isNewProfile && referralCode ? { referralCode } : {}),
         }),
       })
 
@@ -128,10 +133,20 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
         throw new Error(data.error || "Failed to save profile")
       }
 
-      toast({
-        title: t.common.success,
-        description: t.profileEdit.profileUpdateSuccess,
-      })
+      // Show appropriate toast message
+      if (data.referralBonusApplied) {
+        toast({
+          title: "🎉 " + (t.language === 'tr' ? 'Hoş Geldin!' : 'Welcome!'),
+          description: t.language === 'tr'
+            ? `Profilin oluşturuldu ve referans bonusu olarak ${data.referralBonus} NP kazandın!`
+            : `Profile created and you earned ${data.referralBonus} NP referral bonus!`,
+        })
+      } else {
+        toast({
+          title: t.common.success,
+          description: t.profileEdit.profileUpdateSuccess,
+        })
+      }
 
       if (onSuccess) {
         onSuccess()
@@ -403,6 +418,31 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
           </div>
         </CardContent>
       </Card>
+
+      {/* Referral Code - Only for new profiles */}
+      {isNewProfile && (
+        <Card className="border-purple-500/30 bg-gradient-to-br from-purple-500/5 to-pink-500/5">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Gift className="h-5 w-5 text-purple-500" />
+              {t.language === 'tr' ? 'Referans Kodu (Opsiyonel)' : 'Referral Code (Optional)'}
+            </CardTitle>
+            <CardDescription>
+              {t.language === 'tr'
+                ? 'Bir arkadaşının referans kodu varsa buraya gir ve 100 NP bonus kazan!'
+                : 'Enter a friend\'s referral code to earn 100 NP bonus!'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Input
+              value={referralCode}
+              onChange={(e) => setReferralCode(e.target.value)}
+              placeholder={t.language === 'tr' ? 'Referans kodunu gir...' : 'Enter referral code...'}
+              className="font-mono"
+            />
+          </CardContent>
+        </Card>
+      )}
 
       <Button
         type="submit"
