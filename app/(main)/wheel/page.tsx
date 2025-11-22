@@ -129,7 +129,7 @@ export default function WheelPage() {
       const scaledProbs = prizes.map(p => Math.pow(p.probability, SCALE_POWER))
       const totalScaled = scaledProbs.reduce((sum, val) => sum + val, 0)
 
-      // Calculate cumulative angles
+      // Calculate cumulative angles (same as rendering, starting from 0)
       let cumulativeAngle = 0
       for (let i = 0; i < prizeIndex; i++) {
         const prevVisualProb = scaledProbs[i] / totalScaled
@@ -140,11 +140,16 @@ export default function WheelPage() {
       const visualProbability = scaledProbs[prizeIndex] / totalScaled
       const segmentAngle = Math.max(MIN_VISUAL_SIZE, visualProbability * 360)
 
+      // targetAngle is the offset from start (0), prize center is at this offset
       const targetAngle = cumulativeAngle + segmentAngle / 2
 
-      // Calculate the target position on wheel (0-360)
-      // Wheel renders with -90 degree offset, so target position is (450 - targetAngle) % 360
-      const targetPosition = ((450 - targetAngle) % 360 + 360) % 360
+      // The wheel is rendered with segments starting at -90 degrees (top)
+      // The pointer is fixed at the top (270 degrees in standard coords)
+      // After rotating R degrees clockwise, pointer points at wheel position (270 - R) mod 360
+      // Prize is at wheel position: 270 + targetAngle (since it starts at 270 and offsets by targetAngle)
+      // We need: (270 - R) = (270 + targetAngle) mod 360
+      // So: R = -targetAngle mod 360 = (360 - targetAngle) mod 360
+      const targetPosition = ((360 - targetAngle) % 360 + 360) % 360
 
       // Get current wheel position (normalized to 0-360)
       const currentPosition = ((rotation % 360) + 360) % 360
