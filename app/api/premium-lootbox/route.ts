@@ -8,8 +8,8 @@ import { addNPoints, deductNPoints } from "@/lib/npoints"
 const PREMIUM_LOOTBOX_COST = 100 // N-Points cost to open
 
 const PREMIUM_REWARDS = [
-  // Mavi (Common) - 50% toplam
-  { nPoints: 10, probability: 25, color: '#3b82f6', rarity: 'common' },
+  // Mavi (Common) - 50.9% toplam
+  { nPoints: 10, probability: 25.9, color: '#3b82f6', rarity: 'common' },
   { nPoints: 25, probability: 15, color: '#3b82f6', rarity: 'common' },
   { nPoints: 50, probability: 10, color: '#3b82f6', rarity: 'common' },
 
@@ -30,8 +30,8 @@ const PREMIUM_REWARDS = [
   { nPoints: 750, probability: 2, color: '#ef4444', rarity: 'legendary' },
   { nPoints: 1000, probability: 1, color: '#ef4444', rarity: 'legendary' },
 
-  // Sarı (Mythic/Efsanevi) - 1% (çok nadir)
-  { nPoints: 10000, probability: 1, color: '#fbbf24', rarity: 'mythic' },
+  // Sarı (Mythic/Efsanevi) - 0.1% (çok çok nadir)
+  { nPoints: 10000, probability: 0.1, color: '#fbbf24', rarity: 'mythic' },
 ]
 
 function selectReward(): { nPoints: number; color: string; rarity: string } {
