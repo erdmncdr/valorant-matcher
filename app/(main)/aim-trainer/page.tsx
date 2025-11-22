@@ -19,6 +19,113 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { Flame, Skull, Smile } from "lucide-react"
+
+type GameDifficulty = 'easy' | 'medium' | 'hardcore'
+
+interface DifficultyConfig {
+  name: string
+  nameEn: string
+  icon: React.ReactNode
+  color: string
+  bgColor: string
+  borderColor: string
+  description: string
+  descriptionEn: string
+  // Game settings
+  gameDuration: number
+  initialSpawnInterval: number
+  minSpawnInterval: number
+  spawnIntervalDecrement: number
+  maxTargets: number
+  targetSizeMin: number
+  targetSizeMax: number
+  fastTargetSizeMin: number
+  fastTargetSizeMax: number
+  normalLifetime: number
+  fastLifetime: number
+  fastChance: number
+  normalPoints: number
+  fastPoints: number
+  // Hardcore specific
+  shrinkTargets?: boolean
+}
+
+const DIFFICULTY_CONFIGS: Record<GameDifficulty, DifficultyConfig> = {
+  easy: {
+    name: 'Kolay',
+    nameEn: 'Easy',
+    icon: <Smile className="h-5 w-5" />,
+    color: 'text-green-500',
+    bgColor: 'from-green-500/20 to-green-600/10',
+    borderColor: 'border-green-500/50',
+    description: 'Büyük hedefler, uzun süre',
+    descriptionEn: 'Large targets, long duration',
+    gameDuration: 30,
+    initialSpawnInterval: 1500,
+    minSpawnInterval: 1000,
+    spawnIntervalDecrement: 80,
+    maxTargets: 3,
+    targetSizeMin: 70,
+    targetSizeMax: 90,
+    fastTargetSizeMin: 55,
+    fastTargetSizeMax: 70,
+    normalLifetime: 3000,
+    fastLifetime: 2000,
+    fastChance: 0.2,
+    normalPoints: 1,
+    fastPoints: 2,
+  },
+  medium: {
+    name: 'Orta',
+    nameEn: 'Medium',
+    icon: <Flame className="h-5 w-5" />,
+    color: 'text-yellow-500',
+    bgColor: 'from-yellow-500/20 to-orange-500/10',
+    borderColor: 'border-yellow-500/50',
+    description: 'Dengeli zorluk',
+    descriptionEn: 'Balanced difficulty',
+    gameDuration: 30,
+    initialSpawnInterval: 1200,
+    minSpawnInterval: 600,
+    spawnIntervalDecrement: 100,
+    maxTargets: 4,
+    targetSizeMin: 55,
+    targetSizeMax: 75,
+    fastTargetSizeMin: 40,
+    fastTargetSizeMax: 50,
+    normalLifetime: 2000,
+    fastLifetime: 1000,
+    fastChance: 0.3,
+    normalPoints: 1,
+    fastPoints: 2,
+  },
+  hardcore: {
+    name: 'Hardcore',
+    nameEn: 'Hardcore',
+    icon: <Skull className="h-5 w-5" />,
+    color: 'text-red-500',
+    bgColor: 'from-red-500/20 to-red-900/20',
+    borderColor: 'border-red-500/50',
+    description: 'Küçük hedefler, çok hızlı!',
+    descriptionEn: 'Tiny targets, very fast!',
+    gameDuration: 30,
+    initialSpawnInterval: 700,
+    minSpawnInterval: 300,
+    spawnIntervalDecrement: 50,
+    maxTargets: 6,
+    targetSizeMin: 30,
+    targetSizeMax: 40,
+    fastTargetSizeMin: 20,
+    fastTargetSizeMax: 28,
+    normalLifetime: 800,
+    fastLifetime: 500,
+    fastChance: 0.5,
+    normalPoints: 2,
+    fastPoints: 5,
+    shrinkTargets: true,
+  },
+}
 
 interface Target {
   id: number
@@ -27,8 +134,9 @@ interface Target {
   size: number
   points: number
   timeoutId: NodeJS.Timeout
-  isFast: boolean // Fast targets are harder and worth more points
-  lifetime: number // How long the target stays on screen (ms)
+  isFast: boolean
+  lifetime: number
+  createdAt: number // For shrinking animation in hardcore
 }
 
 export default function AimTrainerPage() {
@@ -41,6 +149,7 @@ export default function AimTrainerPage() {
 
   const [profile, setProfile] = useState<any>(null)
   const [gameState, setGameState] = useState<"menu" | "playing" | "finished">("menu")
+  const [difficulty, setDifficulty] = useState<GameDifficulty>('medium')
   const [score, setScore] = useState(0)
   const [targetsHit, setTargetsHit] = useState(0)
   const [targetsMissed, setTargetsMissed] = useState(0)
@@ -56,11 +165,15 @@ export default function AimTrainerPage() {
   const [rewardAmount, setRewardAmount] = useState(0)
   const [countdown, setCountdown] = useState<string>("")
 
+  const config = DIFFICULTY_CONFIGS[difficulty]
+
   const gameAreaRef = useRef<HTMLDivElement>(null)
   const gameIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const targetIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const shrinkIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const hasSavedRef = useRef(false)
   const finalScoreRef = useRef({ score: 0, hit: 0, missed: 0 })
+  const [, forceUpdate] = useState(0) // For hardcore shrink animation
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -78,8 +191,30 @@ export default function AimTrainerPage() {
     return () => {
       if (gameIntervalRef.current) clearInterval(gameIntervalRef.current)
       if (targetIntervalRef.current) clearInterval(targetIntervalRef.current)
+      if (shrinkIntervalRef.current) clearInterval(shrinkIntervalRef.current)
     }
   }, [])
+
+  // Force re-render for hardcore mode shrink animation
+  useEffect(() => {
+    if (gameState === "playing" && difficulty === 'hardcore') {
+      shrinkIntervalRef.current = setInterval(() => {
+        forceUpdate(prev => prev + 1)
+      }, 50) // Update every 50ms for smooth shrinking
+    } else {
+      if (shrinkIntervalRef.current) {
+        clearInterval(shrinkIntervalRef.current)
+        shrinkIntervalRef.current = null
+      }
+    }
+
+    return () => {
+      if (shrinkIntervalRef.current) {
+        clearInterval(shrinkIntervalRef.current)
+        shrinkIntervalRef.current = null
+      }
+    }
+  }, [gameState, difficulty])
 
   // Update spawn interval during gameplay
   useEffect(() => {
@@ -180,33 +315,31 @@ export default function AimTrainerPage() {
   const spawnTarget = () => {
     if (!gameAreaRef.current) return
 
-    // Limit maximum targets on screen
-    const maxTargets = 4
+    const currentConfig = DIFFICULTY_CONFIGS[difficulty]
+
     setTargets(prev => {
-      if (prev.length >= maxTargets) {
+      if (prev.length >= currentConfig.maxTargets) {
         return prev // Don't spawn more if we already have max targets
       }
 
       const area = gameAreaRef.current!.getBoundingClientRect()
 
-      // Decide if this is a fast target (30% chance) - worth more points but disappears faster
-      const isFast = Math.random() < 0.3
+      // Decide if this is a fast target based on difficulty config
+      const isFast = Math.random() < currentConfig.fastChance
 
-      // Target sizes
+      // Target sizes based on config
       let size: number
       let points: number
       let lifetime: number
 
       if (isFast) {
-        // Fast targets: smaller, disappear quickly, worth 2 points
-        size = 40 + Math.random() * 10 // 40-50px
-        points = 2
-        lifetime = 1000 // 1 second
+        size = currentConfig.fastTargetSizeMin + Math.random() * (currentConfig.fastTargetSizeMax - currentConfig.fastTargetSizeMin)
+        points = currentConfig.fastPoints
+        lifetime = currentConfig.fastLifetime
       } else {
-        // Normal targets: larger, stay longer, worth 1 point
-        size = 55 + Math.random() * 20 // 55-75px
-        points = 1
-        lifetime = 2000 // 2 seconds
+        size = currentConfig.targetSizeMin + Math.random() * (currentConfig.targetSizeMax - currentConfig.targetSizeMin)
+        points = currentConfig.normalPoints
+        lifetime = currentConfig.normalLifetime
       }
 
       // Try to find a non-overlapping position
@@ -215,7 +348,7 @@ export default function AimTrainerPage() {
       let foundPosition = false
 
       for (let attempt = 0; attempt < 15; attempt++) {
-        x = Math.random() * (area.width - size - 20) + 10 // Keep 10px margin from edges
+        x = Math.random() * (area.width - size - 20) + 10
         y = Math.random() * (area.height - size - 20) + 10
 
         if (!checkOverlap(x, y, size, prev)) {
@@ -224,12 +357,12 @@ export default function AimTrainerPage() {
         }
       }
 
-      // If no valid position found, skip spawning this target
       if (!foundPosition) {
         return prev
       }
 
       const targetId = Date.now() + Math.random()
+      const createdAt = Date.now()
 
       // Remove target after its lifetime if not clicked
       const timeoutId = setTimeout(() => {
@@ -256,6 +389,7 @@ export default function AimTrainerPage() {
         timeoutId,
         isFast,
         lifetime,
+        createdAt,
       }
 
       return [...prev, target]
@@ -263,13 +397,15 @@ export default function AimTrainerPage() {
   }
 
   const startGame = () => {
+    const currentConfig = DIFFICULTY_CONFIGS[difficulty]
+
     setGameState("playing")
     setScore(0)
     setTargetsHit(0)
     setTargetsMissed(0)
-    setTimeLeft(30)
+    setTimeLeft(currentConfig.gameDuration)
     setTargets([])
-    setSpawnInterval(1200) // Start slower
+    setSpawnInterval(currentConfig.initialSpawnInterval)
     hasSavedRef.current = false
     finalScoreRef.current = { score: 0, hit: 0, missed: 0 }
 
@@ -284,7 +420,7 @@ export default function AimTrainerPage() {
         // Increase difficulty every 5 seconds (spawn faster)
         const newTime = prev - 1
         if (newTime % 5 === 0 && newTime > 0) {
-          setSpawnInterval(current => Math.max(600, current - 100)) // Minimum 600ms
+          setSpawnInterval(current => Math.max(currentConfig.minSpawnInterval, current - currentConfig.spawnIntervalDecrement))
         }
 
         return newTime
@@ -294,7 +430,7 @@ export default function AimTrainerPage() {
     // Spawn targets - will be re-created when interval changes
     targetIntervalRef.current = setInterval(() => {
       spawnTarget()
-    }, 1200)
+    }, currentConfig.initialSpawnInterval)
   }
 
   const endGame = () => {
@@ -466,7 +602,15 @@ export default function AimTrainerPage() {
             <Card className="border-primary/20">
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle>Oyun Alanı</CardTitle>
+                  <div className="flex items-center gap-3">
+                    <CardTitle>Oyun Alanı</CardTitle>
+                    {gameState === "playing" && (
+                      <Badge className={`${config.bgColor} ${config.color} ${config.borderColor}`}>
+                        {config.icon}
+                        <span className="ml-1">{t.language === 'tr' ? config.name : config.nameEn}</span>
+                      </Badge>
+                    )}
+                  </div>
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
                       <Trophy className="h-5 w-5 text-yellow-500" />
@@ -484,9 +628,49 @@ export default function AimTrainerPage() {
                   <div className="h-[500px] flex flex-col items-center justify-center gap-6">
                     <div className="text-center">
                       <h3 className="text-3xl font-bold text-foreground mb-2">{t.aimTrainer.getReady}</h3>
-                      <p className="text-muted-foreground mb-6">
+                      <p className="text-muted-foreground mb-4">
                         {t.aimTrainer.howToPlayDesc}
                       </p>
+
+                      {/* Difficulty Selection */}
+                      <div className="mb-6">
+                        <p className="text-sm text-muted-foreground mb-3">
+                          {t.language === 'tr' ? 'Zorluk Seç:' : 'Select Difficulty:'}
+                        </p>
+                        <div className="flex gap-3 justify-center">
+                          {(Object.keys(DIFFICULTY_CONFIGS) as GameDifficulty[]).map((diff) => {
+                            const diffConfig = DIFFICULTY_CONFIGS[diff]
+                            const isSelected = difficulty === diff
+                            return (
+                              <button
+                                key={diff}
+                                onClick={() => setDifficulty(diff)}
+                                className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
+                                  isSelected
+                                    ? `bg-gradient-to-br ${diffConfig.bgColor} ${diffConfig.borderColor} scale-105 shadow-lg`
+                                    : 'bg-muted/20 border-muted/30 hover:border-muted/50 hover:bg-muted/30'
+                                }`}
+                              >
+                                <div className={`${isSelected ? diffConfig.color : 'text-muted-foreground'}`}>
+                                  {diffConfig.icon}
+                                </div>
+                                <span className={`font-bold ${isSelected ? diffConfig.color : 'text-foreground'}`}>
+                                  {t.language === 'tr' ? diffConfig.name : diffConfig.nameEn}
+                                </span>
+                                <span className="text-xs text-muted-foreground">
+                                  {t.language === 'tr' ? diffConfig.description : diffConfig.descriptionEn}
+                                </span>
+                                {diff === 'hardcore' && (
+                                  <Badge className="bg-red-500/20 text-red-400 border-red-500/50 text-xs animate-pulse">
+                                    {t.language === 'tr' ? '⚠️ AŞIRI ZOR' : '⚠️ EXTREME'}
+                                  </Badge>
+                                )}
+                              </button>
+                            )
+                          })}
+                        </div>
+                      </div>
+
                       <div className="space-y-2 mb-6">
                         <p className="text-sm text-muted-foreground">• {t.aimTrainer.dailyRewardDesc}</p>
                         {!canClaimReward && countdown && (
@@ -518,53 +702,91 @@ export default function AimTrainerPage() {
 
                 {gameState === "playing" && (
                   <div className="relative h-[500px]">
-                    {/* Game area with white breathing border */}
+                    {/* Game area with difficulty-based border */}
                     <div
                       ref={gameAreaRef}
-                      className="h-full rounded-lg relative cursor-crosshair overflow-hidden aim-trainer-bg border-2 border-white/30"
+                      className={`h-full rounded-lg relative cursor-crosshair overflow-hidden aim-trainer-bg border-2 ${
+                        difficulty === 'hardcore' ? 'border-red-500/50' : 'border-white/30'
+                      }`}
                       style={{
-                        animation: 'border-breathing 2.5s ease-in-out infinite',
+                        animation: difficulty === 'hardcore'
+                          ? 'border-breathing 1s ease-in-out infinite'
+                          : 'border-breathing 2.5s ease-in-out infinite',
                       }}
                     >
-                      {targets.map(target => (
-                        <button
-                          key={target.id}
-                          onClick={(e) => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            hitTarget(target.id)
-                          }}
-                          onMouseDown={(e) => {
-                            e.preventDefault()
-                            hitTarget(target.id)
-                          }}
-                          className={`absolute rounded-full cursor-pointer transition-transform select-none focus:outline-none ${
-                            target.isFast
-                              ? 'bg-gradient-to-br from-yellow-400 to-orange-500 animate-pulse'
-                              : 'bg-gradient-to-br from-red-500 to-red-700'
-                          }`}
-                          style={{
-                            left: target.x,
-                            top: target.y,
-                            width: target.size,
-                            height: target.size,
-                            boxShadow: target.isFast
-                              ? "0 0 25px rgba(255, 200, 0, 0.7)"
-                              : "0 0 20px rgba(255, 0, 0, 0.5)",
-                          }}
-                        >
-                          <div className="w-full h-full flex items-center justify-center pointer-events-none">
-                            <div className={`rounded-full ${target.isFast ? 'w-2 h-2 bg-white' : 'w-3 h-3 bg-white/80'}`} />
-                          </div>
-                          {/* Show points indicator for fast targets */}
-                          {target.isFast && (
-                            <span className="absolute -top-1 -right-1 bg-yellow-500 text-black text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center pointer-events-none">
-                              2
-                            </span>
-                          )}
-                        </button>
-                      ))}
+                      {targets.map(target => {
+                        // Calculate shrink progress for hardcore mode
+                        const elapsed = Date.now() - target.createdAt
+                        const progress = Math.min(elapsed / target.lifetime, 1)
+                        const shrinkScale = difficulty === 'hardcore' ? 1 - (progress * 0.4) : 1
+
+                        return (
+                          <button
+                            key={target.id}
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                              hitTarget(target.id)
+                            }}
+                            onMouseDown={(e) => {
+                              e.preventDefault()
+                              hitTarget(target.id)
+                            }}
+                            className={`absolute rounded-full cursor-pointer select-none focus:outline-none ${
+                              difficulty === 'hardcore'
+                                ? 'bg-gradient-to-br from-red-600 to-red-900 animate-pulse'
+                                : target.isFast
+                                ? 'bg-gradient-to-br from-yellow-400 to-orange-500 animate-pulse'
+                                : 'bg-gradient-to-br from-red-500 to-red-700'
+                            }`}
+                            style={{
+                              left: target.x,
+                              top: target.y,
+                              width: target.size * shrinkScale,
+                              height: target.size * shrinkScale,
+                              transform: `translate(${(target.size - target.size * shrinkScale) / 2}px, ${(target.size - target.size * shrinkScale) / 2}px)`,
+                              transition: 'width 0.1s, height 0.1s',
+                              boxShadow: difficulty === 'hardcore'
+                                ? "0 0 30px rgba(255, 0, 0, 0.8), inset 0 0 10px rgba(0,0,0,0.3)"
+                                : target.isFast
+                                ? "0 0 25px rgba(255, 200, 0, 0.7)"
+                                : "0 0 20px rgba(255, 0, 0, 0.5)",
+                            }}
+                          >
+                            <div className="w-full h-full flex items-center justify-center pointer-events-none">
+                              <div className={`rounded-full ${
+                                difficulty === 'hardcore'
+                                  ? 'w-1 h-1 bg-white'
+                                  : target.isFast ? 'w-2 h-2 bg-white' : 'w-3 h-3 bg-white/80'
+                              }`} />
+                            </div>
+                            {/* Show points indicator */}
+                            {(target.isFast || difficulty === 'hardcore' || target.points > 1) && (
+                              <span className={`absolute -top-1 -right-1 text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center pointer-events-none ${
+                                difficulty === 'hardcore'
+                                  ? 'bg-red-500 text-white'
+                                  : 'bg-yellow-500 text-black'
+                              }`}>
+                                {target.points}
+                              </span>
+                            )}
+                          </button>
+                        )
+                      })}
                     </div>
+
+                    {/* Hardcore Mode Warning Overlay */}
+                    {difficulty === 'hardcore' && timeLeft > 27 && (
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <div className="bg-red-500/20 border border-red-500/50 rounded-lg px-6 py-3 animate-pulse">
+                          <span className="text-red-500 font-bold text-xl flex items-center gap-2">
+                            <Skull className="h-6 w-6" />
+                            HARDCORE MODE
+                            <Skull className="h-6 w-6" />
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
