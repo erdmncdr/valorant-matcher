@@ -166,17 +166,40 @@ export default function LeaderboardPage() {
               </p>
             </div>
 
+            {/* Weekly Countdown Timer - Prominent Design */}
+            {timeRemaining && (
+              <Card className="border-red-500/50 bg-gradient-to-r from-red-500/20 via-red-600/15 to-orange-500/10 mb-6 shadow-lg shadow-red-500/20 overflow-hidden relative">
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-red-500/10 via-transparent to-transparent" />
+                <CardContent className="py-4 relative">
+                  <div className="flex items-center justify-center gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="relative">
+                        <Clock className="h-8 w-8 text-red-400 animate-pulse" />
+                        <div className="absolute -inset-1 bg-red-500/30 rounded-full blur-md animate-ping" />
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xs text-red-300 font-medium mb-1">
+                          {t.language === 'tr' ? 'HAFTA SONU YAKLAŞIYOR' : 'WEEK ENDING SOON'}
+                        </p>
+                        <div className="flex items-center gap-2 bg-black/30 px-6 py-2 rounded-lg border border-red-500/40">
+                          <span className="text-3xl font-black text-red-400 tracking-wider animate-pulse">
+                            {timeRemaining}
+                          </span>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {t.language === 'tr' ? 'Ödüller için kalan süre' : 'Time until rewards'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Weekly Rewards Info - Premium Design */}
             <Card className="border-yellow-500/50 bg-gradient-to-r from-yellow-500/20 via-orange-500/15 to-red-500/10 mb-6 shadow-lg shadow-yellow-500/10 overflow-hidden relative">
               <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxjaXJjbGUgY3g9IjIwIiBjeT0iMjAiIHI9IjEiIGZpbGw9InJnYmEoMjUwLDIwNCwwLDAuMSkiLz48L2c+PC9zdmc+')] opacity-50" />
               <CardContent className="pt-6 relative">
-                {/* Countdown Timer */}
-                {timeRemaining && (
-                  <div className="absolute top-3 right-3 flex items-center gap-2 px-3 py-1.5 bg-red-500/20 border border-red-500/50 rounded-full">
-                    <Clock className="h-4 w-4 text-red-400 animate-pulse" />
-                    <span className="text-sm font-bold text-red-400">{timeRemaining}</span>
-                  </div>
-                )}
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
                     <div className="relative">
