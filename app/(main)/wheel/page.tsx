@@ -26,6 +26,31 @@ interface SpinHistory {
   createdAt: Date
 }
 
+// Constants for wheel segment calculation
+const SCALE_POWER = 0.6
+const MIN_VISUAL_SIZE = 8 // Minimum visual size in degrees
+
+// Helper function to calculate normalized segment angles that sum to exactly 360
+function calculateNormalizedAngles(prizes: Prize[]): number[] {
+  if (prizes.length === 0) return []
+
+  // Calculate scaled probabilities
+  const scaledProbs = prizes.map(p => Math.pow(p.probability, SCALE_POWER))
+  const totalScaled = scaledProbs.reduce((sum, val) => sum + val, 0)
+
+  // Calculate raw angles with MIN_VISUAL_SIZE constraint
+  const rawAngles = scaledProbs.map(sp => {
+    const visualProbability = sp / totalScaled
+    return Math.max(MIN_VISUAL_SIZE, visualProbability * 360)
+  })
+
+  // Calculate total and normalize to exactly 360 degrees
+  const rawTotal = rawAngles.reduce((sum, angle) => sum + angle, 0)
+  const normalizedAngles = rawAngles.map(angle => (angle / rawTotal) * 360)
+
+  return normalizedAngles
+}
+
 export default function WheelPage() {
   usePresence()
   const { status } = useSession()
@@ -119,44 +144,35 @@ export default function WheelPage() {
         throw new Error(data.error || "Failed to spin")
       }
 
-      // Calculate target rotation based on prize (using same power scaling as rendering)
+      // Calculate target rotation based on prize using NORMALIZED angles
       const prizeIndex = prizes.findIndex(p => p.nPoints === data.prize.nPoints)
 
-      // Use same scaling as rendering
-      const SCALE_POWER = 0.6
-      const MIN_VISUAL_SIZE = 8
+      // Get normalized angles that sum to exactly 360 degrees
+      const normalizedAngles = calculateNormalizedAngles(prizes)
 
-      const scaledProbs = prizes.map(p => Math.pow(p.probability, SCALE_POWER))
-      const totalScaled = scaledProbs.reduce((sum, val) => sum + val, 0)
-
-      // Calculate cumulative angles (same as rendering, starting from 0)
+      // Calculate cumulative angle to the CENTER of the target segment
       let cumulativeAngle = 0
       for (let i = 0; i < prizeIndex; i++) {
-        const prevVisualProb = scaledProbs[i] / totalScaled
-        cumulativeAngle += Math.max(MIN_VISUAL_SIZE, prevVisualProb * 360)
+        cumulativeAngle += normalizedAngles[i]
       }
 
-      // Calculate this prize's segment angle
-      const visualProbability = scaledProbs[prizeIndex] / totalScaled
-      const segmentAngle = Math.max(MIN_VISUAL_SIZE, visualProbability * 360)
-
-      // targetAngle is the offset from start (0), prize center is at this offset
+      // targetAngle is the offset from start (top), pointing to segment center
+      const segmentAngle = normalizedAngles[prizeIndex]
       const targetAngle = cumulativeAngle + segmentAngle / 2
 
-      // The wheel is rendered with segments starting at -90 degrees (top)
-      // The pointer is fixed at the top (270 degrees in standard coords)
-      // After rotating R degrees clockwise, pointer points at wheel position (270 - R) mod 360
-      // Prize is at wheel position: 270 + targetAngle (since it starts at 270 and offsets by targetAngle)
-      // We need: (270 - R) = (270 + targetAngle) mod 360
-      // So: R = -targetAngle mod 360 = (360 - targetAngle) mod 360
-      const targetPosition = ((360 - targetAngle) % 360 + 360) % 360
+      // The wheel is rendered with segments starting at top (-90 degrees in SVG)
+      // When we rotate the wheel by R degrees clockwise, the pointer (fixed at top)
+      // points at what was at angle (360 - R) from the top
+      // We want the pointer to point at targetAngle, so: 360 - R = targetAngle
+      // Therefore: R = 360 - targetAngle
+      const targetRotation = ((360 - targetAngle) % 360 + 360) % 360
 
       // Get current wheel position (normalized to 0-360)
       const currentPosition = ((rotation % 360) + 360) % 360
 
       // Calculate how much more we need to rotate to reach target
       // Always rotate forward (positive direction)
-      let additionalRotation = targetPosition - currentPosition
+      let additionalRotation = targetRotation - currentPosition
       if (additionalRotation <= 0) {
         additionalRotation += 360 // Ensure we always rotate forward
       }
@@ -284,25 +300,18 @@ export default function WheelPage() {
                         }}
                       >
                         {(() => {
-                          // Use power scaling to make small probabilities more visible while keeping differences
-                          // Power of 0.6 makes small values bigger but maintains relative differences
-                          const SCALE_POWER = 0.6
-                          const MIN_VISUAL_SIZE = 8 // Minimum visual size in degrees
-
-                          // Calculate scaled probabilities for visual representation
-                          const scaledProbs = prizes.map(p => Math.pow(p.probability, SCALE_POWER))
-                          const totalScaled = scaledProbs.reduce((sum, val) => sum + val, 0)
+                          // Get normalized angles that sum to exactly 360 degrees
+                          // This ensures the wheel segments match the rotation calculation
+                          const normalizedAngles = calculateNormalizedAngles(prizes)
 
                           return prizes.map((prize, index) => {
-                            // Calculate segment angle based on scaled probability
-                            const visualProbability = scaledProbs[index] / totalScaled
-                            let segmentAngle = Math.max(MIN_VISUAL_SIZE, visualProbability * 360)
+                            // Get segment angle from normalized calculation
+                            const segmentAngle = normalizedAngles[index] || 0
 
                             // Calculate start angle based on previous segments
                             let cumulativeAngle = -90 // Start from top
                             for (let i = 0; i < index; i++) {
-                              const prevVisualProb = scaledProbs[i] / totalScaled
-                              cumulativeAngle += Math.max(MIN_VISUAL_SIZE, prevVisualProb * 360)
+                              cumulativeAngle += normalizedAngles[i]
                             }
 
                             const startAngle = cumulativeAngle
