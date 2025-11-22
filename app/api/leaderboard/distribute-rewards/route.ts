@@ -17,9 +17,13 @@ function getWeekStartDate(): Date {
 
 /**
  * POST /api/leaderboard/distribute-rewards
- * Distributes weekly rewards to top 10 players
+ * Distributes weekly rewards to top 10 players and resets all reputation scores
  *
  * This endpoint should be called by a cron job once per week (every Monday)
+ * It performs two operations:
+ * 1. Awards N-Points to top 10 players based on their reputation scores
+ * 2. Resets ALL reputation scores to 0 for the new week
+ *
  * You can set up a cron job using services like:
  * - Vercel Cron Jobs: https://vercel.com/docs/cron-jobs
  * - GitHub Actions
@@ -150,11 +154,21 @@ export async function POST(req: Request) {
       }
     }
 
+    // Reset all reputation scores for next week's leaderboard
+    const resetResult = await prisma.playerProfile.updateMany({
+      data: {
+        reputationScore: 0,
+      },
+    })
+
+    console.log(`🔄 Reset reputation scores for ${resetResult.count} players`)
+
     return NextResponse.json({
       success: true,
-      message: `Distributed weekly rewards to ${rewardedPlayers.length} players`,
+      message: `Distributed weekly rewards to ${rewardedPlayers.length} players and reset ${resetResult.count} reputation scores`,
       weekStart: weekStart.toISOString(),
       playersRewarded: rewardedPlayers.length,
+      reputationScoresReset: resetResult.count,
       rewards: rewardedPlayers,
     })
   } catch (error) {

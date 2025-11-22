@@ -27,6 +27,8 @@ interface Target {
   size: number
   points: number
   timeoutId: NodeJS.Timeout
+  isFast: boolean // Fast targets are harder and worth more points
+  lifetime: number // How long the target stays on screen (ms)
 }
 
 export default function AimTrainerPage() {
@@ -160,58 +162,104 @@ export default function AimTrainerPage() {
     }
   }, [gameState])
 
+  // Check if a new target would overlap with existing targets
+  const checkOverlap = (x: number, y: number, size: number, existingTargets: Target[]): boolean => {
+    const padding = 20 // Minimum gap between targets
+    for (const target of existingTargets) {
+      const dx = (x + size / 2) - (target.x + target.size / 2)
+      const dy = (y + size / 2) - (target.y + target.size / 2)
+      const distance = Math.sqrt(dx * dx + dy * dy)
+      const minDistance = (size / 2) + (target.size / 2) + padding
+      if (distance < minDistance) {
+        return true // Overlap detected
+      }
+    }
+    return false
+  }
+
   const spawnTarget = () => {
     if (!gameAreaRef.current) return
 
-    const area = gameAreaRef.current.getBoundingClientRect()
+    // Limit maximum targets on screen
+    const maxTargets = 4
+    setTargets(prev => {
+      if (prev.length >= maxTargets) {
+        return prev // Don't spawn more if we already have max targets
+      }
 
-    // Weighted random target sizes
-    const rand = Math.random()
-    let size: number
-    let points: number
+      const area = gameAreaRef.current!.getBoundingClientRect()
 
-    if (rand < 0.6) {
-      // 60% chance - Small targets (35-45px) - Fast disappearing, worth more points
-      size = 35 + Math.random() * 10
-      points = 8
-    } else if (rand < 0.9) {
-      // 30% chance - Medium targets (50-65px)
-      size = 50 + Math.random() * 15
-      points = 4
-    } else {
-      // 10% chance - Large targets (70-85px)
-      size = 70 + Math.random() * 15
-      points = 4
-    }
+      // Decide if this is a fast target (30% chance) - worth more points but disappears faster
+      const isFast = Math.random() < 0.3
 
-    const targetId = Date.now() + Math.random()
+      // Target sizes
+      let size: number
+      let points: number
+      let lifetime: number
 
-    // Remove target after 1.5 seconds if not clicked
-    const timeoutId = setTimeout(() => {
-      setTargets(prev => {
-        const stillExists = prev.find(t => t.id === targetId)
-        if (stillExists) {
-          setTargetsMissed(prevMissed => {
-            const newMissed = prevMissed + 1
-            finalScoreRef.current.missed = newMissed
-            return newMissed
-          })
-          return prev.filter(t => t.id !== targetId)
+      if (isFast) {
+        // Fast targets: smaller, disappear quickly, worth 2 points
+        size = 40 + Math.random() * 10 // 40-50px
+        points = 2
+        lifetime = 1000 // 1 second
+      } else {
+        // Normal targets: larger, stay longer, worth 1 point
+        size = 55 + Math.random() * 20 // 55-75px
+        points = 1
+        lifetime = 2000 // 2 seconds
+      }
+
+      // Try to find a non-overlapping position
+      let x: number = 0
+      let y: number = 0
+      let foundPosition = false
+
+      for (let attempt = 0; attempt < 15; attempt++) {
+        x = Math.random() * (area.width - size - 20) + 10 // Keep 10px margin from edges
+        y = Math.random() * (area.height - size - 20) + 10
+
+        if (!checkOverlap(x, y, size, prev)) {
+          foundPosition = true
+          break
         }
+      }
+
+      // If no valid position found, skip spawning this target
+      if (!foundPosition) {
         return prev
-      })
-    }, 1500)
+      }
 
-    const target: Target = {
-      id: targetId,
-      x: Math.random() * (area.width - size),
-      y: Math.random() * (area.height - size),
-      size,
-      points,
-      timeoutId,
-    }
+      const targetId = Date.now() + Math.random()
 
-    setTargets(prev => [...prev, target])
+      // Remove target after its lifetime if not clicked
+      const timeoutId = setTimeout(() => {
+        setTargets(prevTargets => {
+          const stillExists = prevTargets.find(t => t.id === targetId)
+          if (stillExists) {
+            setTargetsMissed(prevMissed => {
+              const newMissed = prevMissed + 1
+              finalScoreRef.current.missed = newMissed
+              return newMissed
+            })
+            return prevTargets.filter(t => t.id !== targetId)
+          }
+          return prevTargets
+        })
+      }, lifetime)
+
+      const target: Target = {
+        id: targetId,
+        x,
+        y,
+        size,
+        points,
+        timeoutId,
+        isFast,
+        lifetime,
+      }
+
+      return [...prev, target]
+    })
   }
 
   const startGame = () => {
@@ -221,7 +269,7 @@ export default function AimTrainerPage() {
     setTargetsMissed(0)
     setTimeLeft(30)
     setTargets([])
-    setSpawnInterval(800)
+    setSpawnInterval(1200) // Start slower
     hasSavedRef.current = false
     finalScoreRef.current = { score: 0, hit: 0, missed: 0 }
 
@@ -233,10 +281,10 @@ export default function AimTrainerPage() {
           return 0
         }
 
-        // Increase difficulty every 5 seconds
+        // Increase difficulty every 5 seconds (spawn faster)
         const newTime = prev - 1
         if (newTime % 5 === 0 && newTime > 0) {
-          setSpawnInterval(current => Math.max(400, current - 80)) // Minimum 400ms
+          setSpawnInterval(current => Math.max(600, current - 100)) // Minimum 600ms
         }
 
         return newTime
@@ -246,7 +294,7 @@ export default function AimTrainerPage() {
     // Spawn targets - will be re-created when interval changes
     targetIntervalRef.current = setInterval(() => {
       spawnTarget()
-    }, 800)
+    }, 1200)
   }
 
   const endGame = () => {
@@ -479,22 +527,42 @@ export default function AimTrainerPage() {
                       }}
                     >
                       {targets.map(target => (
-                        <div
+                        <button
                           key={target.id}
-                          onClick={() => hitTarget(target.id)}
-                          className="absolute bg-primary rounded-full cursor-pointer hover:scale-110 transition-transform animate-pulse"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            hitTarget(target.id)
+                          }}
+                          onMouseDown={(e) => {
+                            e.preventDefault()
+                            hitTarget(target.id)
+                          }}
+                          className={`absolute rounded-full cursor-pointer transition-transform select-none focus:outline-none ${
+                            target.isFast
+                              ? 'bg-gradient-to-br from-yellow-400 to-orange-500 animate-pulse'
+                              : 'bg-gradient-to-br from-red-500 to-red-700'
+                          }`}
                           style={{
                             left: target.x,
                             top: target.y,
                             width: target.size,
                             height: target.size,
-                            boxShadow: "0 0 20px rgba(255, 0, 0, 0.5)",
+                            boxShadow: target.isFast
+                              ? "0 0 25px rgba(255, 200, 0, 0.7)"
+                              : "0 0 20px rgba(255, 0, 0, 0.5)",
                           }}
                         >
-                          <div className="w-full h-full flex items-center justify-center">
-                            <div className="w-2 h-2 bg-white rounded-full" />
+                          <div className="w-full h-full flex items-center justify-center pointer-events-none">
+                            <div className={`rounded-full ${target.isFast ? 'w-2 h-2 bg-white' : 'w-3 h-3 bg-white/80'}`} />
                           </div>
-                        </div>
+                          {/* Show points indicator for fast targets */}
+                          {target.isFast && (
+                            <span className="absolute -top-1 -right-1 bg-yellow-500 text-black text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center pointer-events-none">
+                              2
+                            </span>
+                          )}
+                        </button>
                       ))}
                     </div>
                   </div>
