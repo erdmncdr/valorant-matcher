@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { LogOut, User, LayoutDashboard, ChevronDown, Languages, Shield, Trophy, ShoppingCart, Coins } from "lucide-react"
+import { LogOut, User, LayoutDashboard, ChevronDown, Languages, Shield, Trophy, ShoppingCart, Coins, Users } from "lucide-react"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { NotificationBell } from "@/components/notifications/notification-bell"
@@ -193,6 +193,12 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
                     <DropdownMenuItem className="cursor-pointer">
                       <Trophy className="mr-2 h-4 w-4" />
                       {t.achievements?.title || "Achievements"}
+                    </DropdownMenuItem>
+                  </Link>
+                  <Link href="/referral">
+                    <DropdownMenuItem className="cursor-pointer">
+                      <Users className="mr-2 h-4 w-4" />
+                      {language === 'tr' ? 'Referans' : 'Referral'}
                     </DropdownMenuItem>
                   </Link>
                   <Link href="/profile/edit">

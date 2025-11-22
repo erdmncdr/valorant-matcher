@@ -4,6 +4,9 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 import { ValorantRank, PlayerRole, Seriousness } from "@/lib/types"
+import { addNPoints } from "@/lib/npoints"
+
+const REFERRAL_BONUS = 100 // 100 NP for new users who use a referral code
 
 const profileSchema = z.object({
   nickname: z.string().min(2).max(20),
@@ -21,6 +24,7 @@ const profileSchema = z.object({
     agentName: z.string(),
     priority: z.enum(["main", "secondary"]),
   })).min(1).max(10),
+  referralCode: z.string().optional(), // Optional referral code for new users
 })
 
 // GET current user's profile
@@ -115,6 +119,21 @@ export async function POST(req: Request) {
 
       return NextResponse.json({ profile: updatedProfile })
     } else {
+      // Check for referral code if provided
+      let referredByUserId: string | null = null
+      let referrerNickname: string | null = null
+
+      if (data.referralCode) {
+        const referrerProfile = await prisma.playerProfile.findUnique({
+          where: { referralCode: data.referralCode },
+        })
+
+        if (referrerProfile && referrerProfile.userId !== session.user.id) {
+          referredByUserId = referrerProfile.userId
+          referrerNickname = referrerProfile.nickname
+        }
+      }
+
       // Create new profile
       const newProfile = await prisma.playerProfile.create({
         data: {
@@ -130,6 +149,7 @@ export async function POST(req: Request) {
           seriousness: data.seriousness,
           typicalPlaytime: data.typicalPlaytime,
           bio: data.bio,
+          referredByUserId: referredByUserId,
           playerAgents: {
             create: data.agents,
           },
@@ -139,7 +159,28 @@ export async function POST(req: Request) {
         },
       })
 
-      return NextResponse.json({ profile: newProfile }, { status: 201 })
+      // If there was a valid referral, give the new user their bonus
+      if (referredByUserId) {
+        try {
+          await addNPoints(
+            session.user.id,
+            REFERRAL_BONUS,
+            "EARN_REFERRAL_BONUS",
+            `Referans kodu bonusu (${referrerNickname} tarafından davet edildi)`,
+            undefined,
+            true // Skip referral commission for the bonus itself
+          )
+        } catch (error) {
+          console.error("Failed to add referral bonus:", error)
+        }
+      }
+
+      return NextResponse.json({
+        profile: newProfile,
+        referralBonusApplied: !!referredByUserId,
+        referralBonus: referredByUserId ? REFERRAL_BONUS : 0,
+        referrerNickname,
+      }, { status: 201 })
     }
   } catch (error: any) {
     if (error instanceof z.ZodError) {
