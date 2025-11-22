@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Loader2, Gift, Sparkles, Trophy, Coins, TrendingUp, TrendingDown } from "lucide-react"
+import { Loader2, Gift, Sparkles, Trophy, Coins, TrendingUp } from "lucide-react"
 import { Navbar } from "@/components/layout/navbar"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { OnlineUsers } from "@/components/online-users"
@@ -226,12 +226,12 @@ export default function PremiumLootboxPage() {
 
           toast({
             title: "🌟 EFSANEVI ÖDÜL! 🌟",
-            description: `MUHTEŞEM! ${result.reward.nPoints.toLocaleString()} N-Points kazandınız! (Net: ${result.netGain > 0 ? '+' : ''}${result.netGain.toLocaleString()})`,
+            description: `MUHTEŞEM! ${result.reward.nPoints.toLocaleString()} N-Points kazandınız!`,
           })
         } else {
           toast({
-            title: "🎁 Congratulations!",
-            description: `You won ${result.reward.nPoints.toLocaleString()} N-Points! (Net: ${result.netGain > 0 ? '+' : ''}${result.netGain})`,
+            title: "🎁 Tebrikler!",
+            description: `${result.reward.nPoints.toLocaleString()} N-Points kazandınız!`,
           })
         }
 
@@ -285,7 +285,7 @@ export default function PremiumLootboxPage() {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div className="grid grid-cols-3 gap-4 mb-6">
               <Card className="border-yellow-500/30">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium flex items-center gap-2">
@@ -314,30 +314,16 @@ export default function PremiumLootboxPage() {
                 </CardContent>
               </Card>
 
-              <Card className="border-red-500/30">
+              <Card className="border-green-500/30">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium flex items-center gap-2">
-                    <TrendingDown className="h-4 w-4 text-red-500" />
-                    {language === 'tr' ? 'Harcanan' : 'Spent'}
+                    <TrendingUp className="h-4 w-4 text-green-500" />
+                    {language === 'tr' ? 'Kazanılan' : 'Won'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-2xl font-bold text-red-500">
-                    {(data?.stats?.totalSpent || 0).toLocaleString()}
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className={(data?.stats?.netProfit || 0) >= 0 ? "border-green-500/30" : "border-red-500/30"}>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium flex items-center gap-2">
-                    <TrendingUp className={`h-4 w-4 ${(data?.stats?.netProfit || 0) >= 0 ? 'text-green-500' : 'text-red-500'}`} />
-                    {language === 'tr' ? 'Net Kar' : 'Net Profit'}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className={`text-2xl font-bold ${(data?.stats?.netProfit || 0) >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                    {(data?.stats?.netProfit || 0) > 0 ? '+' : ''}{(data?.stats?.netProfit || 0).toLocaleString()}
+                  <p className="text-2xl font-bold text-green-500">
+                    {(data?.stats?.totalWon || 0).toLocaleString()}
                   </p>
                 </CardContent>
               </Card>
@@ -487,32 +473,29 @@ export default function PremiumLootboxPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    {data?.lootboxHistory?.map((item) => {
-                      const netGain = item.nPointsWon - item.costPaid
+                    {data?.lootboxHistory?.slice(0, 10).map((item) => {
+                      const getRewardColor = (points: number) => {
+                        if (points >= 10000) return 'text-yellow-400 bg-yellow-500/20 border-yellow-500/50'
+                        if (points >= 750) return 'text-red-500 bg-red-500/20 border-red-500/50'
+                        if (points >= 250) return 'text-purple-500 bg-purple-500/20 border-purple-500/50'
+                        if (points >= 150) return 'text-pink-500 bg-pink-500/20 border-pink-500/50'
+                        if (points >= 75) return 'text-green-500 bg-green-500/20 border-green-500/50'
+                        return 'text-blue-500 bg-blue-500/20 border-blue-500/50'
+                      }
                       return (
                         <div
                           key={item.id}
-                          className="flex items-center justify-between py-2 px-4 bg-muted/30 rounded"
+                          className={`flex items-center justify-between py-3 px-4 rounded-lg border ${getRewardColor(item.nPointsWon)}`}
                         >
                           <div className="flex items-center gap-3">
-                            <Gift className="h-5 w-5 text-yellow-500" />
-                            <div>
-                              <p className="font-semibold text-yellow-500">
-                                {item.nPointsWon} N-Points
-                              </p>
-                              <p className="text-xs text-muted-foreground">
-                                {new Date(item.createdAt).toLocaleString()}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <p className={`text-sm font-bold ${netGain >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                              {netGain > 0 ? '+' : ''}{netGain}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              -{item.costPaid}
+                            <Gift className="h-5 w-5" />
+                            <p className="font-bold text-lg">
+                              +{item.nPointsWon} N-Points
                             </p>
                           </div>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(item.createdAt).toLocaleString()}
+                          </p>
                         </div>
                       )
                     })}
