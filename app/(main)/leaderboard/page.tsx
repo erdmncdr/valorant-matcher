@@ -7,7 +7,7 @@ import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { Loader2, Trophy, Star, Medal, Crown, Coins } from "lucide-react"
+import { Loader2, Trophy, Star, Medal, Crown, Coins, Clock } from "lucide-react"
 import { getRankBadgeClass } from "@/lib/constants"
 import { ValorantRank } from "@/lib/types"
 import { Navbar } from "@/components/layout/navbar"
@@ -40,6 +40,8 @@ export default function LeaderboardPage() {
   const [profile, setProfile] = useState<any>(null)
   const [topPlayers, setTopPlayers] = useState<TopPlayer[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [weekEndDate, setWeekEndDate] = useState<Date | null>(null)
+  const [timeRemaining, setTimeRemaining] = useState<string>("")
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -71,6 +73,9 @@ export default function LeaderboardPage() {
       const data = await response.json()
       if (response.ok) {
         setTopPlayers(data.topPlayers || [])
+        if (data.weekEndDate) {
+          setWeekEndDate(new Date(data.weekEndDate))
+        }
       }
     } catch (error) {
       console.error("Failed to fetch leaderboard:", error)
@@ -78,6 +83,39 @@ export default function LeaderboardPage() {
       setIsLoading(false)
     }
   }
+
+  // Countdown timer effect
+  useEffect(() => {
+    if (!weekEndDate) return
+
+    const updateCountdown = () => {
+      const now = new Date()
+      const diff = weekEndDate.getTime() - now.getTime()
+
+      if (diff <= 0) {
+        setTimeRemaining(t.language === 'tr' ? 'Süre doldu!' : 'Time expired!')
+        return
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000)
+
+      if (days > 0) {
+        setTimeRemaining(`${days}g ${hours}s ${minutes}dk`)
+      } else if (hours > 0) {
+        setTimeRemaining(`${hours}s ${minutes}dk ${seconds}sn`)
+      } else {
+        setTimeRemaining(`${minutes}dk ${seconds}sn`)
+      }
+    }
+
+    updateCountdown()
+    const interval = setInterval(updateCountdown, 1000)
+
+    return () => clearInterval(interval)
+  }, [weekEndDate, t.language])
 
   const getRankIcon = (index: number) => {
     if (index === 0) return <Crown className="h-6 w-6 text-yellow-500" />
@@ -128,10 +166,17 @@ export default function LeaderboardPage() {
               </p>
             </div>
 
-            {/* Daily Rewards Info - Premium Design */}
+            {/* Weekly Rewards Info - Premium Design */}
             <Card className="border-yellow-500/50 bg-gradient-to-r from-yellow-500/20 via-orange-500/15 to-red-500/10 mb-6 shadow-lg shadow-yellow-500/10 overflow-hidden relative">
               <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxjaXJjbGUgY3g9IjIwIiBjeT0iMjAiIHI9IjEiIGZpbGw9InJnYmEoMjUwLDIwNCwwLDAuMSkiLz48L2c+PC9zdmc+')] opacity-50" />
               <CardContent className="pt-6 relative">
+                {/* Countdown Timer */}
+                {timeRemaining && (
+                  <div className="absolute top-3 right-3 flex items-center gap-2 px-3 py-1.5 bg-red-500/20 border border-red-500/50 rounded-full">
+                    <Clock className="h-4 w-4 text-red-400 animate-pulse" />
+                    <span className="text-sm font-bold text-red-400">{timeRemaining}</span>
+                  </div>
+                )}
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
                     <div className="relative">
@@ -140,7 +185,7 @@ export default function LeaderboardPage() {
                     </div>
                     <div>
                       <h3 className="font-bold text-xl text-foreground bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-                        {t.language === 'tr' ? 'Günlük Ödüller!' : 'Daily Rewards!'}
+                        {t.language === 'tr' ? 'Haftalık Ödüller!' : 'Weekly Rewards!'}
                       </h3>
                       <p className="text-sm text-muted-foreground">
                         {t.language === 'tr'

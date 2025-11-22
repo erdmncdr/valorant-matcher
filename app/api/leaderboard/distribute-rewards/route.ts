@@ -2,17 +2,34 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { addNPoints, getLeaderboardRewards } from "@/lib/npoints"
 
+// Helper function to get the start of current week (Monday 00:00:00)
+function getWeekStartDate(): Date {
+  const now = new Date()
+  const dayOfWeek = now.getDay() // 0 = Sunday, 1 = Monday, etc.
+  const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1
+
+  const weekStart = new Date(now)
+  weekStart.setDate(now.getDate() - daysToMonday)
+  weekStart.setHours(0, 0, 0, 0)
+
+  return weekStart
+}
+
 /**
  * POST /api/leaderboard/distribute-rewards
- * Distributes daily rewards to top 3 players
+ * Distributes weekly rewards to top 10 players and resets all reputation scores
  *
- * This endpoint should be called by a cron job once per day
+ * This endpoint should be called by a cron job once per week (every Monday)
+ * It performs two operations:
+ * 1. Awards N-Points to top 10 players based on their reputation scores
+ * 2. Resets ALL reputation scores to 0 for the new week
+ *
  * You can set up a cron job using services like:
  * - Vercel Cron Jobs: https://vercel.com/docs/cron-jobs
  * - GitHub Actions
  * - External cron service (cron-job.org, etc.)
  *
- * Example cron expression for daily at midnight UTC: 0 0 * * *
+ * Example cron expression for every Monday at midnight UTC: 0 0 * * 1
  */
 export async function POST(req: Request) {
   try {
@@ -27,28 +44,22 @@ export async function POST(req: Request) {
       )
     }
 
-    // Get today's date (start of day)
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
+    // Get current week start (Monday)
+    const weekStart = getWeekStartDate()
 
-    // Get yesterday's date (end of day)
-    const yesterday = new Date(today)
-    yesterday.setDate(yesterday.getDate() - 1)
-    yesterday.setHours(23, 59, 59, 999)
-
-    // Check if rewards were already distributed today
+    // Check if rewards were already distributed this week
     const existingRewards = await prisma.leaderboardReward.findFirst({
       where: {
-        period: 'DAILY',
+        period: 'WEEKLY',
         periodEnd: {
-          gte: today,
+          gte: weekStart,
         },
       },
     })
 
     if (existingRewards) {
       return NextResponse.json({
-        message: "Rewards already distributed today",
+        message: "Rewards already distributed this week",
         alreadyDistributed: true,
       })
     }
@@ -112,7 +123,7 @@ export async function POST(req: Request) {
               userId: player.userId,
               amount: nPointsWon,
               type: 'EARN_LEADERBOARD',
-              description: `Daily Leaderboard Reward - Rank #${rank}`,
+              description: `Weekly Leaderboard Reward - Rank #${rank}`,
             },
           })
 
@@ -120,10 +131,10 @@ export async function POST(req: Request) {
           await tx.leaderboardReward.create({
             data: {
               userId: player.userId,
-              period: 'DAILY',
+              period: 'WEEKLY',
               rank,
               nPointsWon,
-              periodEnd: today,
+              periodEnd: weekStart,
             },
           })
         })
@@ -143,11 +154,21 @@ export async function POST(req: Request) {
       }
     }
 
+    // Reset all reputation scores for next week's leaderboard
+    const resetResult = await prisma.playerProfile.updateMany({
+      data: {
+        reputationScore: 0,
+      },
+    })
+
+    console.log(`🔄 Reset reputation scores for ${resetResult.count} players`)
+
     return NextResponse.json({
       success: true,
-      message: `Distributed rewards to ${rewardedPlayers.length} players`,
-      date: today.toISOString(),
+      message: `Distributed weekly rewards to ${rewardedPlayers.length} players and reset ${resetResult.count} reputation scores`,
+      weekStart: weekStart.toISOString(),
       playersRewarded: rewardedPlayers.length,
+      reputationScoresReset: resetResult.count,
       rewards: rewardedPlayers,
     })
   } catch (error) {
@@ -161,14 +182,14 @@ export async function POST(req: Request) {
 
 /**
  * GET /api/leaderboard/distribute-rewards
- * Returns information about the last reward distribution
+ * Returns information about the last weekly reward distribution
  */
 export async function GET(req: Request) {
   try {
     // Get most recent reward distribution
     const lastRewards = await prisma.leaderboardReward.findMany({
       where: {
-        period: 'DAILY',
+        period: 'WEEKLY',
       },
       include: {
         user: {
