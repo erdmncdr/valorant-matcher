@@ -6,6 +6,7 @@ import { addNPoints } from "@/lib/npoints"
 import { z } from "zod"
 
 const REFERRAL_BONUS = 100 // 100 NP for new users who use a referral code
+const MAX_BONUS_REFERRALS = 5 // Only first 5 referrals get the bonus
 
 const applySchema = z.object({
   referralCode: z.string().min(1, "Referral code is required"),
@@ -66,6 +67,13 @@ export async function POST(req: Request) {
       )
     }
 
+    // Check how many people have already used this referral code
+    const existingReferralsCount = await prisma.playerProfile.count({
+      where: {
+        referredByUserId: referrerProfile.userId,
+      },
+    })
+
     // Apply the referral code
     await prisma.playerProfile.update({
       where: { id: userProfile.id },
@@ -74,20 +82,27 @@ export async function POST(req: Request) {
       },
     })
 
-    // Give the new user their referral bonus (skip referral commission for this)
-    await addNPoints(
-      session.user.id,
-      REFERRAL_BONUS,
-      "EARN_REFERRAL_BONUS",
-      `Referans kodu bonusu (${referrerProfile.nickname} tarafından davet edildi)`,
-      undefined,
-      true // Skip referral commission for the bonus itself
-    )
+    // Only give bonus if this is one of the first 5 referrals
+    const getsBonus = existingReferralsCount < MAX_BONUS_REFERRALS
+
+    if (getsBonus) {
+      // Give the new user their referral bonus (skip referral commission for this)
+      await addNPoints(
+        session.user.id,
+        REFERRAL_BONUS,
+        "EARN_REFERRAL_BONUS",
+        `Referans kodu bonusu (${referrerProfile.nickname} tarafından davet edildi)`,
+        undefined,
+        true // Skip referral commission for the bonus itself
+      )
+    }
 
     return NextResponse.json({
       success: true,
-      bonus: REFERRAL_BONUS,
+      bonus: getsBonus ? REFERRAL_BONUS : 0,
       referrerNickname: referrerProfile.nickname,
+      getsBonus,
+      referralPosition: existingReferralsCount + 1,
     })
   } catch (error: any) {
     if (error instanceof z.ZodError) {

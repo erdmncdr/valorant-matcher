@@ -141,6 +141,14 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
             ? `Profilin oluşturuldu ve referans bonusu olarak ${data.referralBonus} NP kazandın!`
             : `Profile created and you earned ${data.referralBonus} NP referral bonus!`,
         })
+      } else if (data.referrerNickname && !data.referralBonusApplied) {
+        // Referral code was used but no bonus (over 5 limit)
+        toast({
+          title: t.language === 'tr' ? 'Profil Oluşturuldu!' : 'Profile Created!',
+          description: t.language === 'tr'
+            ? `${data.referrerNickname} tarafından davet edildiniz. Bonus slotları dolmuş ama onun kazançlarından %5 alacak!`
+            : `Referred by ${data.referrerNickname}. Bonus slots are full but they'll earn 5% from your earnings!`,
+        })
       } else {
         toast({
           title: t.common.success,
@@ -429,8 +437,8 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
             </CardTitle>
             <CardDescription>
               {t.language === 'tr'
-                ? 'Bir arkadaşının referans kodu varsa buraya gir ve 100 NP bonus kazan!'
-                : 'Enter a friend\'s referral code to earn 100 NP bonus!'}
+                ? 'Bir arkadaşının referans kodu varsa buraya gir. İlk 5 kişi 100 NP bonus kazanır!'
+                : 'Enter a friend\'s referral code. First 5 people earn 100 NP bonus!'}
             </CardDescription>
           </CardHeader>
           <CardContent>

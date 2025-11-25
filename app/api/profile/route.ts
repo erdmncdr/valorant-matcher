@@ -7,6 +7,7 @@ import { ValorantRank, PlayerRole, Seriousness } from "@/lib/types"
 import { addNPoints } from "@/lib/npoints"
 
 const REFERRAL_BONUS = 100 // 100 NP for new users who use a referral code
+const MAX_BONUS_REFERRALS = 5 // Only first 5 referrals get the bonus
 
 const profileSchema = z.object({
   nickname: z.string().min(2).max(20),
@@ -122,6 +123,8 @@ export async function POST(req: Request) {
       // Check for referral code if provided
       let referredByUserId: string | null = null
       let referrerNickname: string | null = null
+      let getsBonus = false
+      let existingReferralsCount = 0
 
       if (data.referralCode) {
         const referrerProfile = await prisma.playerProfile.findUnique({
@@ -131,6 +134,16 @@ export async function POST(req: Request) {
         if (referrerProfile && referrerProfile.userId !== session.user.id) {
           referredByUserId = referrerProfile.userId
           referrerNickname = referrerProfile.nickname
+
+          // Check how many people have already used this referral code
+          existingReferralsCount = await prisma.playerProfile.count({
+            where: {
+              referredByUserId: referrerProfile.userId,
+            },
+          })
+
+          // Only first 5 referrals get the bonus
+          getsBonus = existingReferralsCount < MAX_BONUS_REFERRALS
         }
       }
 
@@ -159,8 +172,8 @@ export async function POST(req: Request) {
         },
       })
 
-      // If there was a valid referral, give the new user their bonus
-      if (referredByUserId) {
+      // If there was a valid referral AND user is in first 5, give the bonus
+      if (referredByUserId && getsBonus) {
         try {
           await addNPoints(
             session.user.id,
@@ -177,9 +190,10 @@ export async function POST(req: Request) {
 
       return NextResponse.json({
         profile: newProfile,
-        referralBonusApplied: !!referredByUserId,
-        referralBonus: referredByUserId ? REFERRAL_BONUS : 0,
+        referralBonusApplied: getsBonus,
+        referralBonus: getsBonus ? REFERRAL_BONUS : 0,
         referrerNickname,
+        referralPosition: referredByUserId ? existingReferralsCount + 1 : undefined,
       }, { status: 201 })
     }
   } catch (error: any) {
