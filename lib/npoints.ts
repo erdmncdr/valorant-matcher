@@ -4,6 +4,10 @@ import { TransactionType } from "@prisma/client"
 // Referral commission rate (5%)
 const REFERRAL_COMMISSION_RATE = 0.05
 
+// Referral reward for referrer (50 NP for first 5 referrals)
+const REFERRER_BONUS = 50
+const MAX_REFERRER_BONUS_COUNT = 5
+
 /**
  * Add N-Points to a user's balance
  * Also handles referral commission if the user was referred by someone
@@ -150,6 +154,49 @@ async function addReferralCommission(
   } catch (error) {
     console.error("Error adding referral commission:", error)
     // Don't throw - referral commission failure shouldn't affect the main transaction
+  }
+}
+
+/**
+ * Give referrer bonus when someone uses their referral code
+ * Only gives 50 NP bonus for the first 5 referrals
+ * @param referrerUserId - User ID of the referrer
+ * @param referredUserNickname - Nickname of the user who used the referral code
+ * @returns Whether bonus was given
+ */
+export async function giveReferrerBonus(
+  referrerUserId: string,
+  referredUserNickname: string
+): Promise<boolean> {
+  try {
+    // Check how many referrals this referrer has
+    const referralCount = await prisma.playerProfile.count({
+      where: {
+        referredByUserId: referrerUserId,
+      },
+    })
+
+    // Only give bonus for first 5 referrals
+    if (referralCount > MAX_REFERRER_BONUS_COUNT) {
+      console.log(`⚠️ Referrer ${referrerUserId} has ${referralCount} referrals, no 50 NP bonus (limit: ${MAX_REFERRER_BONUS_COUNT})`)
+      return false
+    }
+
+    // Give 50 NP bonus to referrer
+    await addNPoints(
+      referrerUserId,
+      REFERRER_BONUS,
+      "EARN_REFERRAL_REWARD",
+      `Referans ödülü: ${referredUserNickname} senin kodunu kullandı!`,
+      undefined,
+      true // Skip referral commission for this bonus
+    )
+
+    console.log(`🎁 Gave ${REFERRER_BONUS} NP referrer bonus to ${referrerUserId} (${referralCount}/${MAX_REFERRER_BONUS_COUNT})`)
+    return true
+  } catch (error) {
+    console.error("Error giving referrer bonus:", error)
+    return false
   }
 }
 

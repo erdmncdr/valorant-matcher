@@ -182,12 +182,20 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
                     </DropdownMenuItem>
                   </Link>
                   {profile.isAdmin && (
-                    <Link href="/admin">
-                      <DropdownMenuItem className="cursor-pointer">
-                        <Shield className="mr-2 h-4 w-4" />
-                        Admin Panel
-                      </DropdownMenuItem>
-                    </Link>
+                    <>
+                      <Link href="/admin">
+                        <DropdownMenuItem className="cursor-pointer">
+                          <Shield className="mr-2 h-4 w-4" />
+                          Admin Panel
+                        </DropdownMenuItem>
+                      </Link>
+                      <Link href="/admin/referrals">
+                        <DropdownMenuItem className="cursor-pointer">
+                          <Users className="mr-2 h-4 w-4" />
+                          Admin - Referanslar
+                        </DropdownMenuItem>
+                      </Link>
+                    </>
                   )}
                   <Link href="/achievements">
                     <DropdownMenuItem className="cursor-pointer">

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import { addNPoints } from "@/lib/npoints"
+import { addNPoints, giveReferrerBonus } from "@/lib/npoints"
 import { z } from "zod"
 
 const REFERRAL_BONUS = 100 // 100 NP for new users who use a referral code
@@ -84,6 +84,9 @@ export async function POST(req: Request) {
       undefined,
       true // Skip referral commission for the bonus itself
     )
+
+    // Give 50 NP to referrer (only for first 5 referrals)
+    await giveReferrerBonus(referrerProfile.userId, userProfile.nickname)
 
     return NextResponse.json({
       success: true,

@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 import { ValorantRank, PlayerRole, Seriousness } from "@/lib/types"
-import { addNPoints } from "@/lib/npoints"
+import { addNPoints, giveReferrerBonus } from "@/lib/npoints"
 
 const REFERRAL_BONUS = 100 // 100 NP for new users who use a referral code
 const MAX_BONUS_REFERRALS = 5 // Only first 5 referrals get the bonus
@@ -163,6 +163,7 @@ export async function POST(req: Request) {
       // If there was a valid referral, ALWAYS give the bonus to new user
       if (referredByUserId) {
         try {
+          // Give 100 NP to new user
           await addNPoints(
             session.user.id,
             REFERRAL_BONUS,
@@ -171,8 +172,11 @@ export async function POST(req: Request) {
             undefined,
             true // Skip referral commission for the bonus itself
           )
+
+          // Give 50 NP to referrer (only for first 5 referrals)
+          await giveReferrerBonus(referredByUserId, data.nickname)
         } catch (error) {
-          console.error("Failed to add referral bonus:", error)
+          console.error("Failed to add referral bonuses:", error)
         }
       }
 
