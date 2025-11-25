@@ -294,12 +294,12 @@ export default function ReferralPage() {
                 </CardTitle>
                 <CardDescription>
                   {language === "tr"
-                    ? "Bu kodu arkadaşlarınla paylaş. Onlar 100 NP bonus alır, sen de kazançlarının %5'ini!"
-                    : "Share this code with friends. They get 100 NP bonus, you earn 5% of their earnings!"}
+                    ? "Bu kodu arkadaşlarınla paylaş. Herkes 100 NP bonus alır, sen de ilk 5 kişiden kazançlarının %5'ini alırsın!"
+                    : "Share this code with friends. Everyone gets 100 NP bonus, you earn 5% from your first 5 referrals!"}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex gap-3">
+                <div className="flex gap-3 mb-3">
                   <div className="flex-1 relative">
                     <Input
                       value={referralData?.referralCode || ""}
@@ -325,6 +325,29 @@ export default function ReferralPage() {
                     )}
                   </Button>
                 </div>
+                {/* Bonus Slots Remaining */}
+                {referralData && (
+                  <div className="flex items-center justify-center gap-2 p-3 bg-muted/30 rounded-lg">
+                    <Gift className="h-4 w-4 text-yellow-500" />
+                    <span className="text-sm">
+                      {language === "tr" ? (
+                        <>
+                          <span className="font-bold text-yellow-500">
+                            {Math.max(0, 5 - referralData.referredUsersCount)}/5
+                          </span>
+                          {" bonus slotu kaldı"}
+                        </>
+                      ) : (
+                        <>
+                          <span className="font-bold text-yellow-500">
+                            {Math.max(0, 5 - referralData.referredUsersCount)}/5
+                          </span>
+                          {" bonus slots remaining"}
+                        </>
+                      )}
+                    </span>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -387,7 +410,7 @@ export default function ReferralPage() {
                   <CardDescription>
                     {language === "tr"
                       ? "Bir arkadaşının referans kodunu gir ve 100 NP bonus kazan!"
-                      : "Enter a friend's referral code and earn 100 NP bonus!"}
+                      : "Enter a friend's referral code and get 100 NP bonus!"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -557,8 +580,8 @@ export default function ReferralPage() {
                     </h3>
                     <p className="text-sm text-muted-foreground">
                       {language === "tr"
-                        ? "Arkadaşının kazandığı her NP'nin %5'i senin!"
-                        : "You earn 5% of everything your friend earns!"}
+                        ? "İlk 5 arkadaşının kazandığı her NP'nin %5'i senin!"
+                        : "You earn 5% from your first 5 friends' earnings!"}
                     </p>
                   </div>
                 </div>

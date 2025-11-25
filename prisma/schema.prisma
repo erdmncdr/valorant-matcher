@@ -503,7 +503,8 @@ enum TransactionType {
   EARN_LOOTBOX          // Günlük kutu
   EARN_PREMIUM_LOOTBOX  // Premium kutu ödülü
   EARN_DAILY            // Günlük giriş bonusu
-  EARN_REFERRAL_BONUS   // Referans kodu ile kayıt bonusu
+  EARN_REFERRAL_BONUS   // Referans kodu ile kayıt bonusu (yeni kullanıcıya)
+  EARN_REFERRAL_REWARD  // Referans ödülü (ilk 5 kişi için 50 NP)
   EARN_REFERRAL_WITHDRAW // Referans kumbarasından çekim
   SPEND_STORE           // Mağazadan satın alma
   SPEND_WHEEL           // Çark çevirme

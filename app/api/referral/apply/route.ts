@@ -2,10 +2,11 @@ import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import { addNPoints } from "@/lib/npoints"
+import { addNPoints, giveReferrerBonus } from "@/lib/npoints"
 import { z } from "zod"
 
 const REFERRAL_BONUS = 100 // 100 NP for new users who use a referral code
+const MAX_BONUS_REFERRALS = 5 // Only first 5 referrals get the bonus
 
 const applySchema = z.object({
   referralCode: z.string().min(1, "Referral code is required"),
@@ -74,7 +75,7 @@ export async function POST(req: Request) {
       },
     })
 
-    // Give the new user their referral bonus (skip referral commission for this)
+    // New users ALWAYS get the bonus
     await addNPoints(
       session.user.id,
       REFERRAL_BONUS,
@@ -83,6 +84,9 @@ export async function POST(req: Request) {
       undefined,
       true // Skip referral commission for the bonus itself
     )
+
+    // Give 50 NP to referrer (only for first 5 referrals)
+    await giveReferrerBonus(referrerProfile.userId, userProfile.nickname)
 
     return NextResponse.json({
       success: true,

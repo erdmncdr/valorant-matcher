@@ -430,7 +430,7 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
             <CardDescription>
               {t.language === 'tr'
                 ? 'Bir arkadaşının referans kodu varsa buraya gir ve 100 NP bonus kazan!'
-                : 'Enter a friend\'s referral code to earn 100 NP bonus!'}
+                : 'Enter a friend\'s referral code and get 100 NP bonus!'}
             </CardDescription>
           </CardHeader>
           <CardContent>

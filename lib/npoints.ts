@@ -4,6 +4,10 @@ import { TransactionType } from "@prisma/client"
 // Referral commission rate (5%)
 const REFERRAL_COMMISSION_RATE = 0.05
 
+// Referral reward for referrer (50 NP for first 5 referrals)
+const REFERRER_BONUS = 50
+const MAX_REFERRER_BONUS_COUNT = 5
+
 /**
  * Add N-Points to a user's balance
  * Also handles referral commission if the user was referred by someone
@@ -78,6 +82,7 @@ export async function addNPoints(
 
 /**
  * Add referral commission to referrer's piggy bank
+ * Only gives commission for the first 5 referrals
  * @param referrerProfileId - Profile ID of the referrer
  * @param referredUserId - User ID of the referred user who earned NP
  * @param sourceAmount - Original amount earned by referred user
@@ -99,6 +104,30 @@ async function addReferralCommission(
   }
 
   try {
+    // Get referrer's profile to check their userId
+    const referrerProfile = await prisma.playerProfile.findUnique({
+      where: { id: referrerProfileId },
+      select: { userId: true },
+    })
+
+    if (!referrerProfile) {
+      return
+    }
+
+    // Check how many referrals this referrer has (limit commission to first 5)
+    const referralCount = await prisma.playerProfile.count({
+      where: {
+        referredByUserId: referrerProfile.userId,
+      },
+    })
+
+    // Only give commission for first 5 referrals
+    const MAX_COMMISSION_REFERRALS = 5
+    if (referralCount > MAX_COMMISSION_REFERRALS) {
+      console.log(`⚠️ Referrer ${referrerProfileId} has ${referralCount} referrals, no commission (limit: ${MAX_COMMISSION_REFERRALS})`)
+      return
+    }
+
     // Update referrer's piggy bank balance
     await prisma.playerProfile.update({
       where: { id: referrerProfileId },
@@ -121,10 +150,53 @@ async function addReferralCommission(
       },
     })
 
-    console.log(`💰 Added ${commission} NP referral commission to profile ${referrerProfileId}`)
+    console.log(`💰 Added ${commission} NP referral commission to profile ${referrerProfileId} (${referralCount}/${MAX_COMMISSION_REFERRALS} referrals)`)
   } catch (error) {
     console.error("Error adding referral commission:", error)
     // Don't throw - referral commission failure shouldn't affect the main transaction
+  }
+}
+
+/**
+ * Give referrer bonus when someone uses their referral code
+ * Only gives 50 NP bonus for the first 5 referrals
+ * @param referrerUserId - User ID of the referrer
+ * @param referredUserNickname - Nickname of the user who used the referral code
+ * @returns Whether bonus was given
+ */
+export async function giveReferrerBonus(
+  referrerUserId: string,
+  referredUserNickname: string
+): Promise<boolean> {
+  try {
+    // Check how many referrals this referrer has
+    const referralCount = await prisma.playerProfile.count({
+      where: {
+        referredByUserId: referrerUserId,
+      },
+    })
+
+    // Only give bonus for first 5 referrals
+    if (referralCount > MAX_REFERRER_BONUS_COUNT) {
+      console.log(`⚠️ Referrer ${referrerUserId} has ${referralCount} referrals, no 50 NP bonus (limit: ${MAX_REFERRER_BONUS_COUNT})`)
+      return false
+    }
+
+    // Give 50 NP bonus to referrer
+    await addNPoints(
+      referrerUserId,
+      REFERRER_BONUS,
+      "EARN_REFERRAL_REWARD",
+      `Referans ödülü: ${referredUserNickname} senin kodunu kullandı!`,
+      undefined,
+      true // Skip referral commission for this bonus
+    )
+
+    console.log(`🎁 Gave ${REFERRER_BONUS} NP referrer bonus to ${referrerUserId} (${referralCount}/${MAX_REFERRER_BONUS_COUNT})`)
+    return true
+  } catch (error) {
+    console.error("Error giving referrer bonus:", error)
+    return false
   }
 }
 
