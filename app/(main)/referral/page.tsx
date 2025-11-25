@@ -166,21 +166,12 @@ export default function ReferralPage() {
         throw new Error(data.error || "Failed to apply referral code")
       }
 
-      if (data.getsBonus) {
-        toast({
-          title: "🎉 " + (language === "tr" ? "Referans Kodu Uygulandı!" : "Referral Code Applied!"),
-          description: language === "tr"
-            ? `${data.bonus} NP bonus kazandınız! (${data.referrerNickname} tarafından davet edildiniz)`
-            : `You earned ${data.bonus} NP bonus! (Referred by ${data.referrerNickname})`,
-        })
-      } else {
-        toast({
-          title: (language === "tr" ? "Referans Kodu Uygulandı" : "Referral Code Applied"),
-          description: language === "tr"
-            ? `${data.referrerNickname} tarafından davet edildiniz. Bonus slotları dolmuş ama onun kazançlarından %5 alacak!`
-            : `Referred by ${data.referrerNickname}. Bonus slots are full but they'll earn 5% from your earnings!`,
-        })
-      }
+      toast({
+        title: "🎉 " + (language === "tr" ? "Referans Kodu Uygulandı!" : "Referral Code Applied!"),
+        description: language === "tr"
+          ? `${data.bonus} NP bonus kazandınız! (${data.referrerNickname} tarafından davet edildiniz)`
+          : `You earned ${data.bonus} NP bonus! (Referred by ${data.referrerNickname})`,
+      })
 
       setReferralCodeInput("")
       fetchData()
@@ -303,8 +294,8 @@ export default function ReferralPage() {
                 </CardTitle>
                 <CardDescription>
                   {language === "tr"
-                    ? "Bu kodu arkadaşlarınla paylaş. İlk 5 kişi 100 NP bonus alır, tüm arkadaşların için kazançlarının %5'ini alırsın!"
-                    : "Share this code with friends. First 5 get 100 NP bonus, you earn 5% of all their earnings!"}
+                    ? "Bu kodu arkadaşlarınla paylaş. Herkes 100 NP bonus alır, sen de ilk 5 kişiden kazançlarının %5'ini alırsın!"
+                    : "Share this code with friends. Everyone gets 100 NP bonus, you earn 5% from your first 5 referrals!"}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -418,8 +409,8 @@ export default function ReferralPage() {
                   </CardTitle>
                   <CardDescription>
                     {language === "tr"
-                      ? "Bir arkadaşının referans kodunu gir. İlk 5 kişi 100 NP bonus alır!"
-                      : "Enter a friend's referral code. First 5 people get 100 NP bonus!"}
+                      ? "Bir arkadaşının referans kodunu gir ve 100 NP bonus kazan!"
+                      : "Enter a friend's referral code and get 100 NP bonus!"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -576,8 +567,8 @@ export default function ReferralPage() {
                     </h3>
                     <p className="text-sm text-muted-foreground">
                       {language === "tr"
-                        ? "İlk 5 arkadaşın senin kodunla 100 NP bonus alır"
-                        : "Your first 5 friends get 100 NP bonus with your code"}
+                        ? "Arkadaşın senin kodunla 100 NP bonus alır"
+                        : "Your friend gets 100 NP bonus with your code"}
                     </p>
                   </div>
                   <div className="text-center p-4">
@@ -589,8 +580,8 @@ export default function ReferralPage() {
                     </h3>
                     <p className="text-sm text-muted-foreground">
                       {language === "tr"
-                        ? "Arkadaşının kazandığı her NP'nin %5'i senin!"
-                        : "You earn 5% of everything your friend earns!"}
+                        ? "İlk 5 arkadaşının kazandığı her NP'nin %5'i senin!"
+                        : "You earn 5% from your first 5 friends' earnings!"}
                     </p>
                   </div>
                 </div>

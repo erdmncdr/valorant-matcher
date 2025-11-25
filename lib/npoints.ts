@@ -78,6 +78,7 @@ export async function addNPoints(
 
 /**
  * Add referral commission to referrer's piggy bank
+ * Only gives commission for the first 5 referrals
  * @param referrerProfileId - Profile ID of the referrer
  * @param referredUserId - User ID of the referred user who earned NP
  * @param sourceAmount - Original amount earned by referred user
@@ -99,6 +100,30 @@ async function addReferralCommission(
   }
 
   try {
+    // Get referrer's profile to check their userId
+    const referrerProfile = await prisma.playerProfile.findUnique({
+      where: { id: referrerProfileId },
+      select: { userId: true },
+    })
+
+    if (!referrerProfile) {
+      return
+    }
+
+    // Check how many referrals this referrer has (limit commission to first 5)
+    const referralCount = await prisma.playerProfile.count({
+      where: {
+        referredByUserId: referrerProfile.userId,
+      },
+    })
+
+    // Only give commission for first 5 referrals
+    const MAX_COMMISSION_REFERRALS = 5
+    if (referralCount > MAX_COMMISSION_REFERRALS) {
+      console.log(`⚠️ Referrer ${referrerProfileId} has ${referralCount} referrals, no commission (limit: ${MAX_COMMISSION_REFERRALS})`)
+      return
+    }
+
     // Update referrer's piggy bank balance
     await prisma.playerProfile.update({
       where: { id: referrerProfileId },
@@ -121,7 +146,7 @@ async function addReferralCommission(
       },
     })
 
-    console.log(`💰 Added ${commission} NP referral commission to profile ${referrerProfileId}`)
+    console.log(`💰 Added ${commission} NP referral commission to profile ${referrerProfileId} (${referralCount}/${MAX_COMMISSION_REFERRALS} referrals)`)
   } catch (error) {
     console.error("Error adding referral commission:", error)
     // Don't throw - referral commission failure shouldn't affect the main transaction
