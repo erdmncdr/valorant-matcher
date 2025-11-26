@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { LogOut, User, LayoutDashboard, ChevronDown, Languages, Shield, Trophy, ShoppingCart, Coins, Users } from "lucide-react"
+import { LogOut, User, LayoutDashboard, ChevronDown, Languages, Shield, Trophy, ShoppingCart, Coins, Users, FileText, Send } from "lucide-react"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { NotificationBell } from "@/components/notifications/notification-bell"
@@ -179,6 +179,18 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
                     <DropdownMenuItem className="cursor-pointer">
                       <LayoutDashboard className="mr-2 h-4 w-4" />
                       {t.nav.dashboard}
+                    </DropdownMenuItem>
+                  </Link>
+                  <Link href="/my-listings">
+                    <DropdownMenuItem className="cursor-pointer">
+                      <FileText className="mr-2 h-4 w-4" />
+                      {language === 'tr' ? 'İlanlarım' : 'My Listings'}
+                    </DropdownMenuItem>
+                  </Link>
+                  <Link href="/my-applications">
+                    <DropdownMenuItem className="cursor-pointer">
+                      <Send className="mr-2 h-4 w-4" />
+                      {language === 'tr' ? 'Başvurularım' : 'My Applications'}
                     </DropdownMenuItem>
                   </Link>
                   {profile.isAdmin && (
