@@ -74,14 +74,6 @@ export function Navbar({ profile, currentPage }: NavbarProps) {
                   {t.nav.leaderboard}
                 </Button>
               </Link>
-              <Link href="/my-listings">
-                <Button
-                  variant="ghost"
-                  className={currentPage === 'my-listings' ? 'text-primary' : 'text-foreground'}
-                >
-                  {t.nav.myListings}
-                </Button>
-              </Link>
               <Link href="/store">
                 <Button
                   variant="ghost"
