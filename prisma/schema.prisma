@@ -160,6 +160,7 @@ model PlayerProfile {
   bio             String?
   reputationScore Int           @default(0) // Calculated from ratings
   nPoints         Int           @default(0) // N-Points virtual currency
+  createdAt       DateTime      @default(now()) // When the profile was created
 
   // Referral System
   referralCode    String        @unique @default(cuid()) // Unique referral code
