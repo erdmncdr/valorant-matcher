@@ -68,7 +68,7 @@ export const translations = {
       gettingStarted: "Başlarken",
       gettingStartedDesc: "NeedOne Nasıl Kullanılır",
       step1: "Takım Bul:",
-      step1Desc: "5. oyuncu arayan takımların ilanlarına göz at",
+      step1Desc: "5. arayanların ilanlarına göz at",
       step2: "İlan Oluştur:",
       step2Desc: "Takım (4-stack) veya solo oyuncu olarak ilan ver",
       step3: "Bağlan:",

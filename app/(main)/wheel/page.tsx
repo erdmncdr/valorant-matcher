@@ -151,21 +151,22 @@ export default function WheelPage() {
       const normalizedAngles = calculateNormalizedAngles(prizes)
 
       // Calculate cumulative angle to the CENTER of the target segment
-      let cumulativeAngle = 0
+      // Start from -90 to match the wheel rendering (segments start at top = -90°)
+      let cumulativeAngle = -90
       for (let i = 0; i < prizeIndex; i++) {
         cumulativeAngle += normalizedAngles[i]
       }
 
-      // targetAngle is the offset from start (top), pointing to segment center
+      // targetAngle is the angle where the segment center is located
       const segmentAngle = normalizedAngles[prizeIndex]
       const targetAngle = cumulativeAngle + segmentAngle / 2
 
-      // The wheel is rendered with segments starting at top (-90 degrees in SVG)
-      // When we rotate the wheel by R degrees clockwise, the pointer (fixed at top)
-      // points at what was at angle (360 - R) from the top
-      // We want the pointer to point at targetAngle, so: 360 - R = targetAngle
-      // Therefore: R = 360 - targetAngle
-      const targetRotation = ((360 - targetAngle) % 360 + 360) % 360
+      // The pointer is fixed at top (-90°)
+      // We want to rotate the wheel so the target segment center is at the pointer
+      // After rotating by R, a point at angle A ends up at angle A + R
+      // We want: targetAngle + R = -90° (mod 360)
+      // Therefore: R = -90° - targetAngle (mod 360)
+      const targetRotation = ((-90 - targetAngle) % 360 + 360) % 360
 
       // Get current wheel position (normalized to 0-360)
       const currentPosition = ((rotation % 360) + 360) % 360
